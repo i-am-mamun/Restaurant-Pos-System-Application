@@ -12,42 +12,60 @@ class OrderSummaryPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final panelWidth = isBottomSheet ? double.infinity : 320.0;
-    
-    return Container(
-      width: isBottomSheet ? double.infinity : (screenWidth >= 1024 ? 360.0 : panelWidth),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: isBottomSheet ? const BorderRadius.vertical(top: Radius.circular(20)) : null,
-        boxShadow: isBottomSheet ? [] : [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 10,
-            offset: const Offset(-2, 0),
-          )
-        ],
+    final width = isBottomSheet ? double.infinity : (screenWidth >= 1024 ? 360.0 : panelWidth);
+
+    if (isBottomSheet) {
+      return Container(
+        width: double.infinity,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(
+          children: [
+            _OrderSummaryHeader(),
+            Divider(height: 1, thickness: 1, color: Colors.grey.shade100),
+            Expanded(child: _OrderItemsList()),
+            _OrderNoteField(),
+            _PriceBreakdown(),
+            _PlaceOrderButton(),
+          ],
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(
+        right: 16,
+        top: 0,
+        bottom: 16,
       ),
-      child: Column(
-        children: [
-          // Header
-          _OrderSummaryHeader(),
-
-          // Divider
-          Divider(height: 1, thickness: 1, color: Colors.grey.shade100),
-
-          // Item List
-          Expanded(
-            child: _OrderItemsList(),
+      child: Container(
+        width: width,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Column(
+            children: [
+              _OrderSummaryHeader(),
+              Divider(height: 1, thickness: 1, color: Colors.grey.shade100),
+              Expanded(child: _OrderItemsList()),
+              _OrderNoteField(),
+              _PriceBreakdown(),
+              _PlaceOrderButton(),
+            ],
           ),
-
-          // Note field
-          _OrderNoteField(),
-
-          // Price Breakdown
-          _PriceBreakdown(),
-
-          // Place Order Button
-          _PlaceOrderButton(),
-        ],
+        ),
       ),
     );
   }

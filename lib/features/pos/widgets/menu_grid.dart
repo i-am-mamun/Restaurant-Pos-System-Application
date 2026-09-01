@@ -11,42 +11,97 @@ class MenuGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white, // Setting background to white based on the image
-      child: Column(
-        children: [
-          // Menu Header with category title + view toggle
-          _MenuHeader(isMobile: isMobile),
-
-          // Grid Content
-          Expanded(
-            child: Consumer<POSProvider>(
-              builder: (context, provider, _) {
-                final items = provider.filteredMenuItems;
-                if (items.isEmpty) {
-                  return const Center(
-                    child: Text(
-                      'No items found',
-                      style: TextStyle(color: Colors.grey),
-                    ),
-                  );
-                }
-
-                if (provider.viewMode == 'list') {
-                  return _MenuListView(items: items, isMobile: isMobile);
-                }
-
-                return _MenuGridView(items: items, isMobile: isMobile);
-              },
+    if (isMobile) {
+      return Container(
+        color: Colors.white,
+        child: Column(
+          children: [
+            _MenuHeader(isMobile: isMobile),
+            Expanded(
+              child: Consumer<POSProvider>(
+                builder: (context, provider, _) {
+                  final items = provider.filteredMenuItems;
+                  if (items.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'No items found',
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    );
+                  }
+                  if (provider.viewMode == 'list') {
+                    return _MenuListView(items: items, isMobile: isMobile);
+                  }
+                  return _MenuGridView(items: items, isMobile: isMobile);
+                },
+              ),
             ),
-          ),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: _PaginationDots(),
+            ),
+          ],
+        ),
+      );
+    }
 
-          // Pagination Dots (Static for UI matching)
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: _PaginationDots(),
+    return Padding(
+      padding: const EdgeInsets.only(
+        left: 0,
+        right: 16,
+        top: 0,
+        bottom: 16,
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Column(
+            children: [
+              // Menu Header with category title + view toggle
+              _MenuHeader(isMobile: isMobile),
+
+              // Grid Content
+              Expanded(
+                child: Consumer<POSProvider>(
+                  builder: (context, provider, _) {
+                    final items = provider.filteredMenuItems;
+                    if (items.isEmpty) {
+                      return const Center(
+                        child: Text(
+                          'No items found',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      );
+                    }
+
+                    if (provider.viewMode == 'list') {
+                      return _MenuListView(items: items, isMobile: isMobile);
+                    }
+
+                    return _MenuGridView(items: items, isMobile: isMobile);
+                  },
+                ),
+              ),
+
+              // Pagination Dots (Static for UI matching)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: _PaginationDots(),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

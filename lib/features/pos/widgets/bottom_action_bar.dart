@@ -18,10 +18,10 @@ class BottomActionBar extends StatelessWidget {
     ];
 
     return Container(
-      color: Colors.white,
+      color: Colors.transparent,
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 12 : 24,
-        vertical: 16, // Matches the spacing seen in the image
+        vertical: 16,
       ),
       child: Row(
         children: actions.asMap().entries.map((entry) {
