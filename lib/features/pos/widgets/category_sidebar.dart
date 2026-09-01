@@ -22,7 +22,7 @@ class CategorySidebar extends StatelessWidget {
         left: isMobile ? 12 : 24,
         right: isMobile ? 12 : 24,
         top: 0,
-        bottom: 16,
+        bottom: 6,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

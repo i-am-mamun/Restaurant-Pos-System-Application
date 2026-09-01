@@ -21,7 +21,7 @@ class BottomActionBar extends StatelessWidget {
       color: Colors.transparent,
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 12 : 24,
-        vertical: 16,
+        vertical: 8,
       ),
       child: Row(
         children: actions.asMap().entries.map((entry) {

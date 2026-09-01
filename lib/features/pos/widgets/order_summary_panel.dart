@@ -38,7 +38,7 @@ class OrderSummaryPanel extends StatelessWidget {
       padding: const EdgeInsets.only(
         right: 16,
         top: 0,
-        bottom: 16,
+        bottom: 6,
       ),
       child: Container(
         width: width,

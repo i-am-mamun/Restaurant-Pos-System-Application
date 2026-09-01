@@ -50,7 +50,7 @@ class MenuGrid extends StatelessWidget {
         left: 0,
         right: 16,
         top: 0,
-        bottom: 16,
+        bottom: 6,
       ),
       child: Container(
         decoration: BoxDecoration(
