@@ -61,6 +61,10 @@ class _MenuHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (isMobile) {
+      return const SizedBox.shrink(); // Hide redundant header on mobile
+    }
+
     final primaryOrange = const Color(0xFFFF6D00);
 
     return Consumer<POSProvider>(
@@ -104,32 +108,33 @@ class _MenuHeader extends StatelessWidget {
 
               const Spacer(),
 
-              // View Toggle Button Group
-              Container(
-                margin: const EdgeInsets.only(bottom: 12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade200),
+              // View Toggle Button Group (Hide on mobile)
+              if (!isMobile)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.grey.shade200),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _ViewToggleBtn(
+                        icon: Icons.grid_view_rounded,
+                        label: 'Grid',
+                        isSelected: provider.viewMode == 'grid',
+                        onTap: () => provider.setViewMode('grid'),
+                      ),
+                      _ViewToggleBtn(
+                        icon: Icons.format_list_bulleted_rounded,
+                        label: 'List',
+                        isSelected: provider.viewMode == 'list',
+                        onTap: () => provider.setViewMode('list'),
+                      ),
+                    ],
+                  ),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _ViewToggleBtn(
-                      icon: Icons.grid_view_rounded,
-                      label: 'Grid',
-                      isSelected: provider.viewMode == 'grid',
-                      onTap: () => provider.setViewMode('grid'),
-                    ),
-                    _ViewToggleBtn(
-                      icon: Icons.format_list_bulleted_rounded,
-                      label: 'List',
-                      isSelected: provider.viewMode == 'list',
-                      onTap: () => provider.setViewMode('list'),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
         );

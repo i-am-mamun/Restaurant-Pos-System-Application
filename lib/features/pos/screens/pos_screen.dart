@@ -76,10 +76,10 @@ class _POSScreenState extends State<POSScreen> {
       builder: (context, provider, _) {
         return Stack(
           children: [
-            Row(
+            Column(
               children: [
-                // Left Sidebar - Categories (compact)
-                const CategorySidebar(isMobile: true),
+                // Top - Categories (Horizontal scroll)
+                const MobileCategoryBar(),
 
                 // Menu Grid
                 const Expanded(

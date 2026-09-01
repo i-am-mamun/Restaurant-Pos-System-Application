@@ -233,3 +233,71 @@ class _CategoryItem extends StatelessWidget {
     );
   }
 }
+
+class MobileCategoryBar extends StatelessWidget {
+  const MobileCategoryBar({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final primaryOrange = const Color(0xFFFF6D00);
+    final darkBrownText = const Color(0xFF5D4037);
+
+    return Container(
+      height: 70, // Slightly taller for premium feel and shadows
+      color: Colors.white,
+      child: Consumer<POSProvider>(
+        builder: (context, provider, _) {
+          return ListView.builder(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            itemCount: AppData.categories.length,
+            itemBuilder: (context, index) {
+              final category = AppData.categories[index];
+              final isSelected = provider.selectedCategory == category.id;
+
+              return GestureDetector(
+                onTap: () => provider.selectCategory(category.id),
+                behavior: HitTestBehavior.opaque,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOutCubic,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  margin: const EdgeInsets.only(right: 12),
+                  decoration: BoxDecoration(
+                    color: isSelected ? primaryOrange : Colors.white,
+                    borderRadius: BorderRadius.circular(30),
+                    boxShadow: [
+                      if (isSelected)
+                        BoxShadow(
+                          color: primaryOrange.withOpacity(0.4),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        )
+                      else
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Text(
+                      category.name == 'All' ? 'All Items' : category.name,
+                      style: TextStyle(
+                        color: isSelected ? Colors.white : darkBrownText,
+                        fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                        fontSize: 14,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
