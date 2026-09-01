@@ -14,9 +14,11 @@ class POSInfoBar extends StatelessWidget {
 
     return Padding(
       // The entire info bar is transparent, elements are individual white cards
-      padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 12 : 24,
-        vertical: 12,
+      padding: EdgeInsets.only(
+        left: isMobile ? 12 : 24,
+        right: isMobile ? 12 : 24,
+        top: isMobile ? 8 : 12,
+        bottom: isMobile ? 4 : 12,
       ),
       child: Row(
         children: [

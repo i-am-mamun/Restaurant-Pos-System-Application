@@ -331,24 +331,88 @@ class _MenuItemCard extends StatelessWidget {
                                 color: Colors.grey.shade600,
                               ),
                             ),
-                            GestureDetector(
-                              onTap: () => provider.addToCart(item),
-                              behavior: HitTestBehavior.opaque,
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 200),
-                                width: isMobile ? 30 : 34,
-                                height: isMobile ? 30 : 34,
-                                decoration: BoxDecoration(
-                                  color: inCart ? Colors.green : primaryOrange,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Icon(
-                                  inCart ? Icons.check : Icons.add,
-                                  color: Colors.white,
-                                  size: isMobile ? 18 : 22,
-                                ),
-                              ),
-                            ),
+                            // Quantity Controller (shows - qty + when in cart)
+                            inCart
+                                ? Container(
+                                    height: isMobile ? 30 : 34,
+                                    decoration: BoxDecoration(
+                                      color: primaryOrange.withOpacity(0.08),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        // Minus button
+                                        GestureDetector(
+                                          onTap: () => provider.decrementQuantity(item.id),
+                                          behavior: HitTestBehavior.opaque,
+                                          child: Container(
+                                            width: isMobile ? 26 : 30,
+                                            height: double.infinity,
+                                            alignment: Alignment.center,
+                                            decoration: BoxDecoration(
+                                              color: primaryOrange,
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            child: Icon(
+                                              Icons.remove,
+                                              color: Colors.white,
+                                              size: isMobile ? 14 : 16,
+                                            ),
+                                          ),
+                                        ),
+                                        // Quantity number
+                                        Container(
+                                          width: isMobile ? 26 : 30,
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            '${provider.getQuantity(item.id)}',
+                                            style: TextStyle(
+                                              fontSize: isMobile ? 13 : 14,
+                                              fontWeight: FontWeight.w800,
+                                              color: primaryOrange,
+                                            ),
+                                          ),
+                                        ),
+                                        // Plus button
+                                        GestureDetector(
+                                          onTap: () => provider.addToCart(item),
+                                          behavior: HitTestBehavior.opaque,
+                                          child: Container(
+                                            width: isMobile ? 26 : 30,
+                                            height: double.infinity,
+                                            alignment: Alignment.center,
+                                            decoration: BoxDecoration(
+                                              color: primaryOrange,
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            child: Icon(
+                                              Icons.add,
+                                              color: Colors.white,
+                                              size: isMobile ? 14 : 16,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : GestureDetector(
+                                    onTap: () => provider.addToCart(item),
+                                    behavior: HitTestBehavior.opaque,
+                                    child: Container(
+                                      width: isMobile ? 30 : 34,
+                                      height: isMobile ? 30 : 34,
+                                      decoration: BoxDecoration(
+                                        color: primaryOrange,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Icon(
+                                        Icons.add,
+                                        color: Colors.white,
+                                        size: isMobile ? 18 : 22,
+                                      ),
+                                    ),
+                                  ),
                           ],
                         ),
                       ],
@@ -479,23 +543,88 @@ class _MenuListView extends StatelessWidget {
                       ],
                     ),
                   ),
-                  GestureDetector(
-                    onTap: () => provider.addToCart(item),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: inCart ? Colors.green : const Color(0xFFFF6D00),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        inCart ? Icons.check : Icons.add,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                    ),
-                  ),
+                  // Quantity Controller (same as grid card)
+                  inCart
+                      ? Container(
+                          height: 36,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFF6D00).withOpacity(0.08),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              // Minus button
+                              GestureDetector(
+                                onTap: () => provider.decrementQuantity(item.id),
+                                behavior: HitTestBehavior.opaque,
+                                child: Container(
+                                  width: 36,
+                                  height: double.infinity,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFFF6D00),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Icon(
+                                    Icons.remove,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                ),
+                              ),
+                              // Quantity number
+                              Container(
+                                width: 36,
+                                alignment: Alignment.center,
+                                child: Text(
+                                  '${provider.getQuantity(item.id)}',
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w800,
+                                    color: Color(0xFFFF6D00),
+                                  ),
+                                ),
+                              ),
+                              // Plus button
+                              GestureDetector(
+                                onTap: () => provider.addToCart(item),
+                                behavior: HitTestBehavior.opaque,
+                                child: Container(
+                                  width: 36,
+                                  height: double.infinity,
+                                  alignment: Alignment.center,
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFFF6D00),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Icon(
+                                    Icons.add,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : GestureDetector(
+                          onTap: () => provider.addToCart(item),
+                          behavior: HitTestBehavior.opaque,
+                          child: Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFF6D00),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.add,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                          ),
+                        ),
                 ],
               ),
             );

@@ -150,4 +150,9 @@ class POSProvider extends ChangeNotifier {
   bool isInCart(int itemId) {
     return _cartItems.any((c) => c.menuItem.id == itemId);
   }
+
+  int getQuantity(int itemId) {
+    final index = _cartItems.indexWhere((c) => c.menuItem.id == itemId);
+    return index != -1 ? _cartItems[index].quantity : 0;
+  }
 }
