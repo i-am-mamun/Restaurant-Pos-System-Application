@@ -38,9 +38,6 @@ class _POSScreenState extends State<POSScreen> {
                 ? _buildTabletLayout(context)
                 : _buildMobileLayout(context),
           ),
-
-          // Bottom Action Bar
-          const BottomActionBar(),
         ],
       ),
     );
@@ -49,12 +46,23 @@ class _POSScreenState extends State<POSScreen> {
   Widget _buildTabletLayout(BuildContext context) {
     return Row(
       children: [
-        // Left Sidebar - Categories
-        const CategorySidebar(),
-
-        // Middle - Menu Grid
-        const Expanded(
-          child: MenuGrid(),
+        // Left side (Categories + Grid) with its own Bottom Action Bar
+        Expanded(
+          child: Column(
+            children: [
+              Expanded(
+                child: Row(
+                  children: [
+                    const CategorySidebar(),
+                    const Expanded(
+                      child: MenuGrid(),
+                    ),
+                  ],
+                ),
+              ),
+              const BottomActionBar(),
+            ],
+          ),
         ),
 
         // Right - Order Summary

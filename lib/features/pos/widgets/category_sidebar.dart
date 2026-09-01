@@ -10,85 +10,148 @@ class CategorySidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sidebarWidth = isMobile ? 64.0 : 140.0;
+    final sidebarWidth = isMobile ? 80.0 : 250.0;
+    
+    // Exact colors from the image
+    final primaryOrange = const Color(0xFFFF6D00);
+    final darkBrownIcon = const Color(0xFF5D4037);
 
     return Container(
       width: sidebarWidth,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(
-          right: BorderSide(color: AppColors.borderLight),
-        ),
+      padding: EdgeInsets.only(
+        left: isMobile ? 12 : 24,
+        right: isMobile ? 12 : 24,
+        top: 24,
+        bottom: 24,
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // ── MAIN WHITE CONTAINER ──
           Expanded(
-            child: Consumer<POSProvider>(
-              builder: (context, provider, _) {
-                return ListView.builder(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 8,
-                    horizontal: isMobile ? 4 : 8,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.02),
+                    blurRadius: 6,
+                    offset: const Offset(0, 3),
                   ),
-                  itemCount: AppData.categories.length,
-                  itemBuilder: (context, index) {
-                    final category = AppData.categories[index];
-                    final isSelected = provider.selectedCategory == category.id;
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Orange Header (All Items)
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    decoration: BoxDecoration(
+                      color: primaryOrange,
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(12),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.grid_view_rounded,
+                          color: Colors.white,
+                          size: isMobile ? 16 : 18,
+                        ),
+                        if (!isMobile) ...[
+                          const SizedBox(width: 8),
+                          const Text(
+                            'All Items',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
 
-                    return _CategoryItem(
-                      category: category,
-                      isSelected: isSelected,
-                      isMobile: isMobile,
-                      onTap: () => provider.selectCategory(category.id),
-                    );
-                  },
-                );
-              },
+                  // Categories List
+                  Expanded(
+                    child: Consumer<POSProvider>(
+                      builder: (context, provider, _) {
+                        return ListView.separated(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          itemCount: AppData.categories.length,
+                          separatorBuilder: (context, index) => Divider(
+                            color: Colors.grey.shade100,
+                            height: 1,
+                            thickness: 1,
+                            indent: 16,
+                            endIndent: 16,
+                          ),
+                          itemBuilder: (context, index) {
+                            final category = AppData.categories[index];
+                            final isSelected =
+                                provider.selectedCategory == category.id;
+
+                            return _CategoryItem(
+                              category: category,
+                              isSelected: isSelected,
+                              isMobile: isMobile,
+                              darkBrownIcon: darkBrownIcon,
+                              primaryOrange: primaryOrange,
+                              onTap: () => provider.selectCategory(category.id),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
 
-          // Custom Item Button
-          if (!isMobile)
-            Container(
-              margin: const EdgeInsets.all(8),
-              child: OutlinedButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.add_circle_outline, size: 14),
-                label: const Text(
-                  'Custom Item',
-                  style: TextStyle(fontSize: 11),
-                ),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.primary,
-                  side: const BorderSide(color: AppColors.primary),
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                  minimumSize: const Size(double.infinity, 36),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
+          const SizedBox(height: 16),
+
+          // ── CUSTOM ITEM BUTTON ──
+          Container(
+            height: 48,
+            decoration: BoxDecoration(
+              color: primaryOrange.withOpacity(0.04), // Faint orange background
+              border: Border.all(color: primaryOrange.withOpacity(0.2), width: 1.5),
+              borderRadius: BorderRadius.circular(8),
             ),
-          if (isMobile)
-            Container(
-              margin: const EdgeInsets.all(6),
-              child: GestureDetector(
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
                 onTap: () {},
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.primary),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(
-                    Icons.add,
-                    color: AppColors.primary,
-                    size: 16,
-                  ),
+                borderRadius: BorderRadius.circular(8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.soup_kitchen, // Chef hat/food icon
+                      color: primaryOrange,
+                      size: isMobile ? 20 : 22,
+                    ),
+                    if (!isMobile) ...[
+                      const SizedBox(width: 8),
+                      Text(
+                        'Custom Item',
+                        style: TextStyle(
+                          color: primaryOrange,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
             ),
+          ),
         ],
       ),
     );
@@ -99,101 +162,71 @@ class _CategoryItem extends StatelessWidget {
   final MenuCategory category;
   final bool isSelected;
   final bool isMobile;
+  final Color darkBrownIcon;
+  final Color primaryOrange;
   final VoidCallback onTap;
 
   const _CategoryItem({
     required this.category,
     required this.isSelected,
     required this.isMobile,
+    required this.darkBrownIcon,
+    required this.primaryOrange,
     required this.onTap,
   });
 
+  IconData _getIconForCategory(String name) {
+    final lowerName = name.toLowerCase();
+    if (lowerName.contains('popular')) return Icons.star_border;
+    if (lowerName.contains('starter')) return Icons.soup_kitchen_outlined;
+    if (lowerName.contains('main')) return Icons.set_meal_outlined;
+    if (lowerName.contains('pizza')) return Icons.local_pizza_outlined;
+    if (lowerName.contains('burger')) return Icons.lunch_dining_outlined;
+    if (lowerName.contains('pasta')) return Icons.dinner_dining_outlined;
+    if (lowerName.contains('rice')) return Icons.rice_bowl_outlined;
+    if (lowerName.contains('drink')) return Icons.local_cafe_outlined;
+    if (lowerName.contains('dessert')) return Icons.cake_outlined;
+    if (lowerName.contains('side')) return Icons.fastfood_outlined;
+    if (lowerName.contains('add')) return Icons.add_box_outlined;
+    return Icons.restaurant_menu;
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (isMobile) {
-      return GestureDetector(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          margin: const EdgeInsets.symmetric(vertical: 2),
-          width: 52,
-          height: 52,
-          decoration: BoxDecoration(
-            color: isSelected ? AppColors.primaryLight : Colors.transparent,
-            borderRadius: BorderRadius.circular(10),
-            border: isSelected
-                ? Border.all(color: AppColors.primary.withOpacity(0.3))
-                : null,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                category.icon,
-                style: const TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                category.name.split(' ')[0],
-                style: TextStyle(
-                  fontSize: 8,
-                  color:
-                      isSelected ? AppColors.primary : AppColors.textSecondary,
-                  fontWeight:
-                      isSelected ? FontWeight.w600 : FontWeight.w400,
+    final iconColor = isSelected ? primaryOrange : darkBrownIcon;
+    final textColor = isSelected ? primaryOrange : Colors.black87;
+
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: isMobile ? 0 : 20,
+          vertical: 12,
+        ),
+        color: isSelected ? primaryOrange.withOpacity(0.04) : Colors.transparent,
+        child: Row(
+          mainAxisAlignment: isMobile ? MainAxisAlignment.center : MainAxisAlignment.start,
+          children: [
+            Icon(
+              _getIconForCategory(category.name),
+              size: 20,
+              color: iconColor,
+            ),
+            if (!isMobile) ...[
+              const SizedBox(width: 14),
+              Expanded(
+                child: Text(
+                  category.name,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: textColor,
+                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
               ),
             ],
-          ),
-        ),
-      );
-    }
-
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        margin: const EdgeInsets.symmetric(vertical: 2),
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary : Colors.transparent,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Row(
-          children: [
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? Colors.white.withOpacity(0.2)
-                    : AppColors.background,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Center(
-                child: Text(
-                  category.icon,
-                  style: const TextStyle(fontSize: 14),
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                category.name,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: isSelected ? Colors.white : AppColors.textPrimary,
-                  fontWeight:
-                      isSelected ? FontWeight.w600 : FontWeight.w400,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ),
           ],
         ),
       ),

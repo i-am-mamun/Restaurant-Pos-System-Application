@@ -12,7 +12,7 @@ class MenuGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.background,
+      color: Colors.white, // Setting background to white based on the image
       child: Column(
         children: [
           // Menu Header with category title + view toggle
@@ -25,16 +25,9 @@ class MenuGrid extends StatelessWidget {
                 final items = provider.filteredMenuItems;
                 if (items.isEmpty) {
                   return const Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.search_off, size: 48, color: AppColors.textLight),
-                        SizedBox(height: 8),
-                        Text(
-                          'No items found',
-                          style: TextStyle(color: AppColors.textSecondary),
-                        ),
-                      ],
+                    child: Text(
+                      'No items found',
+                      style: TextStyle(color: Colors.grey),
                     ),
                   );
                 }
@@ -47,18 +40,29 @@ class MenuGrid extends StatelessWidget {
               },
             ),
           ),
+
+          // Pagination Dots (Static for UI matching)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 16),
+            child: _PaginationDots(),
+          ),
         ],
       ),
     );
   }
 }
 
+// ─────────────────────────────────────────────────────────────────
+// HEADER
+// ─────────────────────────────────────────────────────────────────
 class _MenuHeader extends StatelessWidget {
   final bool isMobile;
   const _MenuHeader({this.isMobile = false});
 
   @override
   Widget build(BuildContext context) {
+    final primaryOrange = const Color(0xFFFF6D00);
+
     return Consumer<POSProvider>(
       builder: (context, provider, _) {
         final categoryName = AppData.categories
@@ -66,44 +70,60 @@ class _MenuHeader extends StatelessWidget {
             .name;
 
         return Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: isMobile ? 8 : 16,
-            vertical: 10,
+          padding: EdgeInsets.only(
+            left: isMobile ? 12 : 24,
+            right: isMobile ? 12 : 24,
+            top: 16,
           ),
           decoration: BoxDecoration(
             color: Colors.white,
             border: Border(
-              bottom: BorderSide(color: AppColors.borderLight),
+              bottom: BorderSide(color: Colors.grey.shade100, width: 2),
             ),
           ),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(
-                categoryName,
-                style: TextStyle(
-                  fontSize: isMobile ? 13 : 15,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.textPrimary,
+              // Category Title with Bottom Border
+              Container(
+                padding: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: primaryOrange, width: 3),
+                  ),
+                ),
+                child: Text(
+                  categoryName == 'All' ? 'All Items' : categoryName,
+                  style: TextStyle(
+                    fontSize: isMobile ? 16 : 18,
+                    fontWeight: FontWeight.w700,
+                    color: primaryOrange,
+                  ),
                 ),
               ),
+
               const Spacer(),
-              // View Toggle
+
+              // View Toggle Button Group
               Container(
+                margin: const EdgeInsets.only(bottom: 12),
                 decoration: BoxDecoration(
-                  border: Border.all(color: AppColors.borderLight),
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade200),
                 ),
                 child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     _ViewToggleBtn(
-                      icon: Icons.grid_view,
-                      mode: 'grid',
+                      icon: Icons.grid_view_rounded,
+                      label: 'Grid',
                       isSelected: provider.viewMode == 'grid',
                       onTap: () => provider.setViewMode('grid'),
                     ),
                     _ViewToggleBtn(
-                      icon: Icons.list,
-                      mode: 'list',
+                      icon: Icons.format_list_bulleted_rounded,
+                      label: 'List',
                       isSelected: provider.viewMode == 'list',
                       onTap: () => provider.setViewMode('list'),
                     ),
@@ -120,41 +140,57 @@ class _MenuHeader extends StatelessWidget {
 
 class _ViewToggleBtn extends StatelessWidget {
   final IconData icon;
-  final String mode;
+  final String label;
   final bool isSelected;
   final VoidCallback onTap;
 
   const _ViewToggleBtn({
     required this.icon,
-    required this.mode,
+    required this.label,
     required this.isSelected,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final primaryOrange = const Color(0xFFFF6D00);
+
     return GestureDetector(
       onTap: onTap,
+      behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        width: 36,
-        height: 32,
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary : Colors.transparent,
-          borderRadius: mode == 'grid'
-              ? const BorderRadius.horizontal(left: Radius.circular(7))
-              : const BorderRadius.horizontal(right: Radius.circular(7)),
+          color: isSelected ? primaryOrange : Colors.transparent,
+          borderRadius: BorderRadius.circular(7),
         ),
-        child: Icon(
-          icon,
-          size: 16,
-          color: isSelected ? Colors.white : AppColors.textSecondary,
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              size: 16,
+              color: isSelected ? Colors.white : Colors.grey.shade700,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                color: isSelected ? Colors.white : Colors.grey.shade700,
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
+// ─────────────────────────────────────────────────────────────────
+// GRID VIEW
+// ─────────────────────────────────────────────────────────────────
 class _MenuGridView extends StatelessWidget {
   final List<MenuItem> items;
   final bool isMobile;
@@ -166,7 +202,7 @@ class _MenuGridView extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     int crossAxisCount;
     if (screenWidth >= 1200) {
-      crossAxisCount = 4;
+      crossAxisCount = 4; // Matches the image
     } else if (screenWidth >= 900) {
       crossAxisCount = 3;
     } else if (screenWidth >= 600) {
@@ -176,12 +212,15 @@ class _MenuGridView extends StatelessWidget {
     }
 
     return GridView.builder(
-      padding: EdgeInsets.all(isMobile ? 8 : 12),
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 12 : 24,
+        vertical: 24,
+      ),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,
-        crossAxisSpacing: isMobile ? 8 : 10,
-        mainAxisSpacing: isMobile ? 8 : 10,
-        childAspectRatio: isMobile ? 0.78 : 0.80,
+        crossAxisSpacing: isMobile ? 12 : 20,
+        mainAxisSpacing: isMobile ? 12 : 20,
+        childAspectRatio: isMobile ? 0.8 : 0.82,
       ),
       itemCount: items.length,
       itemBuilder: (context, index) => _MenuItemCard(
@@ -192,6 +231,186 @@ class _MenuGridView extends StatelessWidget {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────
+// ITEM CARD
+// ─────────────────────────────────────────────────────────────────
+class _MenuItemCard extends StatelessWidget {
+  final MenuItem item;
+  final bool isMobile;
+
+  const _MenuItemCard({required this.item, this.isMobile = false});
+
+  @override
+  Widget build(BuildContext context) {
+    final primaryOrange = const Color(0xFFFF6D00);
+
+    return Consumer<POSProvider>(
+      builder: (context, provider, _) {
+        final inCart = provider.isInCart(item.id);
+
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.grey.shade100, width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.03),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Stack(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Image Section (Full width, no padding, clipped to top corners)
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                      child: Container(
+                        width: double.infinity,
+                        color: Colors.grey.shade50, // very light background for image
+                        child: CachedNetworkImage(
+                          imageUrl: item.imageUrl,
+                          fit: BoxFit.cover, // Ensures it fills the space
+                          placeholder: (context, url) => const Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Color(0xFFFF6D00),
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => Center(
+                            child: Icon(
+                              Icons.fastfood,
+                              color: Colors.grey.shade300,
+                              size: 40,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Info Section (Name, Price, Add Button)
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isMobile ? 12 : 16,
+                      vertical: isMobile ? 10 : 12,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          item.name,
+                          style: TextStyle(
+                            fontSize: isMobile ? 14 : 16,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black87,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 8), // Perfect small gap
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              '\$${item.price.toStringAsFixed(2)}',
+                              style: TextStyle(
+                                fontSize: isMobile ? 14 : 15,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () => provider.addToCart(item),
+                              behavior: HitTestBehavior.opaque,
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                width: isMobile ? 30 : 34,
+                                height: isMobile ? 30 : 34,
+                                decoration: BoxDecoration(
+                                  color: inCart ? Colors.green : primaryOrange,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Icon(
+                                  inCart ? Icons.check : Icons.add,
+                                  color: Colors.white,
+                                  size: isMobile ? 18 : 22,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+              // Badges Section (Top Left and Top Right)
+              Positioned(
+                top: 10,
+                left: 10,
+                right: 10,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Top Left (Popular / Star)
+                    if (item.isPopular)
+                      Container(
+                        width: 26,
+                        height: 26,
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 2), // White border
+                        ),
+                        child: const Icon(
+                          Icons.star,
+                          color: Colors.white,
+                          size: 14,
+                        ),
+                      )
+                    else
+                      const SizedBox.shrink(),
+
+                    // Top Right (Veg / Leaf)
+                    if (item.isVeg)
+                      Container(
+                        width: 26,
+                        height: 26,
+                        decoration: BoxDecoration(
+                          color: Colors.green.shade600,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 2), // White border
+                        ),
+                        child: const Icon(
+                          Icons.eco,
+                          color: Colors.white,
+                          size: 14,
+                        ),
+                      )
+                    else
+                      const SizedBox.shrink(),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
+// LIST VIEW (Simplified for when user toggles to list)
+// ─────────────────────────────────────────────────────────────────
 class _MenuListView extends StatelessWidget {
   final List<MenuItem> items;
   final bool isMobile;
@@ -201,314 +420,116 @@ class _MenuListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      padding: EdgeInsets.all(isMobile ? 8 : 12),
-      itemCount: items.length,
-      itemBuilder: (context, index) => _MenuListItemCard(
-        item: items[index],
-        isMobile: isMobile,
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 12 : 24,
+        vertical: 16,
       ),
-    );
-  }
-}
-
-class _MenuItemCard extends StatelessWidget {
-  final MenuItem item;
-  final bool isMobile;
-
-  const _MenuItemCard({required this.item, this.isMobile = false});
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<POSProvider>(
-      builder: (context, provider, _) {
-        final inCart = provider.isInCart(item.id);
-
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        final item = items[index];
+        return Consumer<POSProvider>(
+          builder: (context, provider, _) {
+            final inCart = provider.isInCart(item.id);
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.grey.shade100, width: 1.5),
               ),
-            ],
-          ),
-          child: Stack(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 children: [
-                  // Image
-                  Expanded(
-                    flex: 6,
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(12),
-                      ),
-                      child: CachedNetworkImage(
-                        imageUrl: item.imageUrl,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        placeholder: (context, url) => Container(
-                          color: AppColors.background,
-                          child: const Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: AppColors.primary,
-                            ),
-                          ),
-                        ),
-                        errorWidget: (context, url, error) => Container(
-                          color: AppColors.background,
-                          child: const Icon(
-                            Icons.fastfood,
-                            color: AppColors.textLight,
-                            size: 40,
-                          ),
-                        ),
-                      ),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: CachedNetworkImage(
+                      imageUrl: item.imageUrl,
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.cover,
                     ),
                   ),
-
-                  // Info
+                  const SizedBox(width: 16),
                   Expanded(
-                    flex: 4,
-                    child: Padding(
-                      padding: EdgeInsets.all(isMobile ? 6 : 8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            item.name,
-                            style: TextStyle(
-                              fontSize: isMobile ? 11 : 12,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.name,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black87,
                           ),
-                          const Spacer(),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                '\$${item.price.toStringAsFixed(2)}',
-                                style: TextStyle(
-                                  fontSize: isMobile ? 12 : 13,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.textPrimary,
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () => provider.addToCart(item),
-                                child: AnimatedContainer(
-                                  duration: const Duration(milliseconds: 200),
-                                  width: isMobile ? 26 : 28,
-                                  height: isMobile ? 26 : 28,
-                                  decoration: BoxDecoration(
-                                    color: inCart
-                                        ? AppColors.success
-                                        : AppColors.primary,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Icon(
-                                    inCart ? Icons.check : Icons.add,
-                                    color: Colors.white,
-                                    size: isMobile ? 14 : 16,
-                                  ),
-                                ),
-                              ),
-                            ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          '\$${item.price.toStringAsFixed(2)}',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey.shade600,
                           ),
-                        ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => provider.addToCart(item),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: inCart ? Colors.green : const Color(0xFFFF6D00),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        inCart ? Icons.check : Icons.add,
+                        color: Colors.white,
+                        size: 20,
                       ),
                     ),
                   ),
                 ],
               ),
-
-              // Badges
-              Positioned(
-                top: 6,
-                left: 6,
-                child: Column(
-                  children: [
-                    if (item.isPopular)
-                      Container(
-                        width: 22,
-                        height: 22,
-                        decoration: const BoxDecoration(
-                          color: AppColors.primary,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.star,
-                          color: Colors.white,
-                          size: 12,
-                        ),
-                      ),
-                    if (item.isVeg) ...[
-                      const SizedBox(height: 4),
-                      Container(
-                        width: 22,
-                        height: 22,
-                        decoration: const BoxDecoration(
-                          color: AppColors.vegBadge,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.eco,
-                          color: Colors.white,
-                          size: 12,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
   }
 }
 
-class _MenuListItemCard extends StatelessWidget {
-  final MenuItem item;
-  final bool isMobile;
-
-  const _MenuListItemCard({required this.item, this.isMobile = false});
+// ─────────────────────────────────────────────────────────────────
+// PAGINATION DOTS (UI only, to match image)
+// ─────────────────────────────────────────────────────────────────
+class _PaginationDots extends StatelessWidget {
+  const _PaginationDots();
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<POSProvider>(
-      builder: (context, provider, _) {
-        final inCart = provider.isInCart(item.id);
+    final primaryOrange = const Color(0xFFFF6D00);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _buildDot(primaryOrange),
+        const SizedBox(width: 8),
+        _buildDot(Colors.grey.shade400),
+        const SizedBox(width: 8),
+        _buildDot(Colors.grey.shade400),
+      ],
+    );
+  }
 
-        return Container(
-          margin: const EdgeInsets.only(bottom: 8),
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: CachedNetworkImage(
-                  imageUrl: item.imageUrl,
-                  width: 60,
-                  height: 60,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    color: AppColors.background,
-                    width: 60,
-                    height: 60,
-                  ),
-                  errorWidget: (context, url, error) => Container(
-                    color: AppColors.background,
-                    width: 60,
-                    height: 60,
-                    child: const Icon(Icons.fastfood, color: AppColors.textLight),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        if (item.isPopular)
-                          Container(
-                            margin: const EdgeInsets.only(right: 4),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: AppColors.primary.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: const Text(
-                              'Popular',
-                              style: TextStyle(
-                                  fontSize: 9,
-                                  color: AppColors.primary,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                        if (item.isVeg)
-                          Container(
-                            margin: const EdgeInsets.only(right: 4),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: AppColors.vegBadge.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: const Text(
-                              'Veg',
-                              style: TextStyle(
-                                  fontSize: 9,
-                                  color: AppColors.vegBadge,
-                                  fontWeight: FontWeight.w600),
-                            ),
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      item.name,
-                      style: const TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    Text(
-                      '\$${item.price.toStringAsFixed(2)}',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              GestureDetector(
-                onTap: () => provider.addToCart(item),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  width: 34,
-                  height: 34,
-                  decoration: BoxDecoration(
-                    color: inCart ? AppColors.success : AppColors.primary,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    inCart ? Icons.check : Icons.add,
-                    color: Colors.white,
-                    size: 18,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+  Widget _buildDot(Color color) {
+    return Container(
+      width: 8,
+      height: 8,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+      ),
     );
   }
 }

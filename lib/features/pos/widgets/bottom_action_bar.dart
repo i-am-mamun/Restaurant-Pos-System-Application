@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_theme.dart';
 
 class BottomActionBar extends StatelessWidget {
   const BottomActionBar({super.key});
@@ -19,26 +18,26 @@ class BottomActionBar extends StatelessWidget {
     ];
 
     return Container(
-      height: isMobile ? 52 : 60,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, -2),
-          ),
-        ],
+      color: Colors.white,
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 12 : 24,
+        vertical: 16, // Matches the spacing seen in the image
       ),
       child: Row(
-        children: actions.map((action) {
+        children: actions.asMap().entries.map((entry) {
+          final index = entry.key;
+          final action = entry.value;
+          final isLast = index == actions.length - 1;
+
           return Expanded(
-            child: _BottomActionBtn(
-              icon: action['icon'] as IconData,
-              label: isMobile ? '' : (action['label'] as String),
-              iconLabel: isMobile ? (action['label'] as String) : null,
-              isMobile: isMobile,
-              onTap: () => _handleAction(context, action['label'] as String),
+            child: Padding(
+              padding: EdgeInsets.only(right: isLast ? 0 : 12), // Gap between buttons
+              child: _BottomActionBtn(
+                icon: action['icon'] as IconData,
+                label: action['label'] as String,
+                isMobile: isMobile,
+                onTap: () => _handleAction(context, action['label'] as String),
+              ),
             ),
           );
         }).toList(),
@@ -57,73 +56,60 @@ class BottomActionBar extends StatelessWidget {
   }
 }
 
-class _BottomActionBtn extends StatefulWidget {
+class _BottomActionBtn extends StatelessWidget {
   final IconData icon;
   final String label;
-  final String? iconLabel;
   final bool isMobile;
   final VoidCallback onTap;
 
   const _BottomActionBtn({
     required this.icon,
     required this.label,
-    this.iconLabel,
     this.isMobile = false,
     required this.onTap,
   });
 
   @override
-  State<_BottomActionBtn> createState() => _BottomActionBtnState();
-}
-
-class _BottomActionBtnState extends State<_BottomActionBtn> {
-  bool _isHovered = false;
-
-  @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 150),
-          decoration: BoxDecoration(
-            color: _isHovered ? AppColors.primaryLight : Colors.transparent,
-            border: Border(
-              right: BorderSide(color: AppColors.borderLight),
+    final primaryOrange = const Color(0xFFFF6D00);
+
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        height: isMobile ? 40 : 48,
+        decoration: BoxDecoration(
+          color: primaryOrange.withOpacity(0.04), // Faint orange background
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: primaryOrange.withOpacity(0.15), // Faint orange border
+            width: 1.5,
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: isMobile ? 16 : 18,
+              color: primaryOrange,
             ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                widget.icon,
-                size: widget.isMobile ? 18 : 20,
-                color: _isHovered ? AppColors.primary : AppColors.textSecondary,
-              ),
-              if (!widget.isMobile && widget.label.isNotEmpty) ...[
-                const SizedBox(height: 2),
-                Text(
-                  widget.label,
+            if (!isMobile) ...[
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  label,
                   style: TextStyle(
-                    fontSize: 10,
-                    color: _isHovered ? AppColors.primary : AppColors.textSecondary,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 13,
+                    color: primaryOrange,
+                    fontWeight: FontWeight.w700, // Bold orange text
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ] else if (widget.isMobile && widget.iconLabel != null) ...[
-                const SizedBox(height: 1),
-                Text(
-                  widget.iconLabel!,
-                  style: const TextStyle(
-                    fontSize: 8,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
-              ],
+              ),
             ],
-          ),
+          ],
         ),
       ),
     );
