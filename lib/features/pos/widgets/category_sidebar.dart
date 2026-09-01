@@ -21,8 +21,8 @@ class CategorySidebar extends StatelessWidget {
       padding: EdgeInsets.only(
         left: isMobile ? 12 : 24,
         right: isMobile ? 12 : 24,
-        top: 24,
-        bottom: 24,
+        top: 0,
+        bottom: 16,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -35,8 +35,8 @@ class CategorySidebar extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.02),
-                    blurRadius: 6,
+                    color: Colors.black.withOpacity(0.03),
+                    blurRadius: 8,
                     offset: const Offset(0, 3),
                   ),
                 ],
@@ -44,7 +44,7 @@ class CategorySidebar extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Orange Header (All Items)
+                  // Orange Header
                   Container(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     decoration: BoxDecoration(
@@ -80,28 +80,27 @@ class CategorySidebar extends StatelessWidget {
                   Expanded(
                     child: Consumer<POSProvider>(
                       builder: (context, provider, _) {
-                        return ListView.separated(
-                          padding: const EdgeInsets.symmetric(vertical: 8),
-                          itemCount: AppData.categories.length,
-                          separatorBuilder: (context, index) => Divider(
-                            color: Colors.grey.shade100,
-                            height: 1,
-                            thickness: 1,
-                            indent: 16,
-                            endIndent: 16,
+                        return ListView.builder(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isMobile ? 6 : 10,
+                            vertical: 8,
                           ),
+                          itemCount: AppData.categories.length,
                           itemBuilder: (context, index) {
                             final category = AppData.categories[index];
                             final isSelected =
                                 provider.selectedCategory == category.id;
 
-                            return _CategoryItem(
-                              category: category,
-                              isSelected: isSelected,
-                              isMobile: isMobile,
-                              darkBrownIcon: darkBrownIcon,
-                              primaryOrange: primaryOrange,
-                              onTap: () => provider.selectCategory(category.id),
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 6),
+                              child: _CategoryItem(
+                                category: category,
+                                isSelected: isSelected,
+                                isMobile: isMobile,
+                                darkBrownIcon: darkBrownIcon,
+                                primaryOrange: primaryOrange,
+                                onTap: () => provider.selectCategory(category.id),
+                              ),
                             );
                           },
                         );
@@ -113,26 +112,26 @@ class CategorySidebar extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 10),
 
           // ── CUSTOM ITEM BUTTON ──
           Container(
             height: 48,
             decoration: BoxDecoration(
-              color: primaryOrange.withOpacity(0.04), // Faint orange background
+              color: primaryOrange.withOpacity(0.04),
               border: Border.all(color: primaryOrange.withOpacity(0.2), width: 1.5),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: Material(
               color: Colors.transparent,
               child: InkWell(
                 onTap: () {},
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
-                      Icons.soup_kitchen, // Chef hat/food icon
+                      Icons.soup_kitchen,
                       color: primaryOrange,
                       size: isMobile ? 20 : 22,
                     ),
@@ -196,38 +195,80 @@ class _CategoryItem extends StatelessWidget {
     final iconColor = isSelected ? primaryOrange : darkBrownIcon;
     final textColor = isSelected ? primaryOrange : Colors.black87;
 
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: isMobile ? 0 : 20,
-          vertical: 12,
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      decoration: BoxDecoration(
+        color: isSelected ? primaryOrange.withOpacity(0.08) : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isSelected ? primaryOrange.withOpacity(0.4) : Colors.grey.shade200,
+          width: 1.5,
         ),
-        color: isSelected ? primaryOrange.withOpacity(0.04) : Colors.transparent,
-        child: Row(
-          mainAxisAlignment: isMobile ? MainAxisAlignment.center : MainAxisAlignment.start,
-          children: [
-            Icon(
-              _getIconForCategory(category.name),
-              size: 20,
-              color: iconColor,
-            ),
-            if (!isMobile) ...[
-              const SizedBox(width: 14),
-              Expanded(
-                child: Text(
-                  category.name,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: textColor,
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+        boxShadow: isSelected
+            ? [
+                BoxShadow(
+                  color: primaryOrange.withOpacity(0.12),
+                  blurRadius: 8,
+                  offset: const Offset(0, 3),
                 ),
-              ),
-            ],
-          ],
+              ]
+            : [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.03),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: isMobile ? 8 : 16,
+              vertical: 11,
+            ),
+            child: Row(
+              mainAxisAlignment: isMobile
+                  ? MainAxisAlignment.center
+                  : MainAxisAlignment.start,
+              children: [
+                Icon(
+                  _getIconForCategory(category.name),
+                  size: 20,
+                  color: iconColor,
+                ),
+                if (!isMobile) ...[
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      category.name,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: textColor,
+                        fontWeight:
+                            isSelected ? FontWeight.w700 : FontWeight.w600,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  if (isSelected)
+                    Container(
+                      width: 6,
+                      height: 6,
+                      decoration: BoxDecoration(
+                        color: primaryOrange,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                ],
+              ],
+            ),
+          ),
         ),
       ),
     );
