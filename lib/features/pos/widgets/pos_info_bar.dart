@@ -16,43 +16,47 @@ class POSInfoBar extends StatelessWidget {
       builder: (context, provider, _) {
         if (isMobile) {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(),
-              child: Row(
-                children: [
-                  _InfoCard(
-                    icon: Icons.groups_outlined,
-                    label: 'Table',
-                    value: provider.tableNumber,
-                    hasDropdown: true,
-                    isMobile: true,
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (_) => const TableSelectionDialog(),
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 6),
-                  _InfoCard(
-                    icon: Icons.person_outline,
-                    label: 'Waiter',
-                    value: provider.waiter,
-                    hasDropdown: true,
-                    isMobile: true,
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (_) => const WaiterSelectionDialog(),
-                      );
-                    },
-                  ),
-                  const SizedBox(width: 8),
-                  _ActionButtons(isMobile: true, isTablet: isTablet),
-                ],
-              ),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // ── Left Side: Table & Waiter (always left-aligned) ──
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _InfoCard(
+                      icon: Icons.groups_outlined,
+                      label: 'Table',
+                      value: provider.tableNumber,
+                      hasDropdown: true,
+                      isMobile: true,
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => const TableSelectionDialog(),
+                        );
+                      },
+                    ),
+                    const SizedBox(width: 6),
+                    _InfoCard(
+                      icon: Icons.person_outline,
+                      label: 'Waiter',
+                      value: provider.waiter,
+                      hasDropdown: true,
+                      isMobile: true,
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => const WaiterSelectionDialog(),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+
+                // ── Right Side: Action Buttons (always right-aligned) ──
+                _ActionButtons(isMobile: true, isTablet: isTablet),
+              ],
             ),
           );
         }

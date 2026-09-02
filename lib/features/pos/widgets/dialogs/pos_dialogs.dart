@@ -30,7 +30,8 @@ class TableSelectionDialog extends StatelessWidget {
     final primaryOrange = const Color(0xFFFF6D00);
 
     return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      contentPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       title: Row(
         children: [
           Container(
@@ -42,27 +43,35 @@ class TableSelectionDialog extends StatelessWidget {
             child: Icon(Icons.table_restaurant_rounded, color: primaryOrange),
           ),
           const SizedBox(width: 12),
-          const Text(
-            'Select Table',
-            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+          const Expanded(
+            child: Text(
+              'Select Table',
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+            ),
           ),
         ],
       ),
-      content: SizedBox(
-        width: 500,
+      content: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: 500,
+          maxHeight: MediaQuery.of(context).size.height * 0.65,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Legend
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                _buildLegend(Colors.green.shade600, 'Available'),
-                const SizedBox(width: 20),
-                _buildLegend(Colors.orange.shade800, 'Occupied'),
-                const SizedBox(width: 20),
-                _buildLegend(primaryOrange, 'Selected'),
-              ],
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildLegend(Colors.green.shade600, 'Available'),
+                  const SizedBox(width: 16),
+                  _buildLegend(Colors.orange.shade800, 'Occupied'),
+                  const SizedBox(width: 16),
+                  _buildLegend(primaryOrange, 'Selected'),
+                ],
+              ),
             ),
             const SizedBox(height: 16),
             Flexible(
@@ -192,6 +201,8 @@ class WaiterSelectionDialog extends StatelessWidget {
 
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      contentPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       title: Row(
         children: [
           Container(
@@ -203,15 +214,21 @@ class WaiterSelectionDialog extends StatelessWidget {
             child: Icon(Icons.person_outline_rounded, color: primaryOrange),
           ),
           const SizedBox(width: 12),
-          const Text(
-            'Select Server / Waiter',
-            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+          const Expanded(
+            child: Text(
+              'Select Server / Waiter',
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+            ),
           ),
         ],
       ),
-      content: SizedBox(
-        width: 360,
-        child: Column(
+      content: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: 360,
+          maxHeight: MediaQuery.of(context).size.height * 0.65,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
           mainAxisSize: MainAxisSize.min,
           children: waiters.map((w) {
             final isSelected = provider.waiter == w['name'];
@@ -245,6 +262,7 @@ class WaiterSelectionDialog extends StatelessWidget {
               ),
             );
           }).toList(),
+          ),
         ),
       ),
       actions: [
@@ -270,6 +288,8 @@ class HeldOrdersDialog extends StatelessWidget {
 
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      contentPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       title: Row(
         children: [
           Container(
@@ -281,11 +301,12 @@ class HeldOrdersDialog extends StatelessWidget {
             child: Icon(Icons.pause_circle_outline_rounded, color: primaryOrange),
           ),
           const SizedBox(width: 12),
-          const Text(
-            'Held Orders',
-            style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+          const Expanded(
+            child: Text(
+              'Held Orders',
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+            ),
           ),
-          const Spacer(),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
@@ -300,7 +321,7 @@ class HeldOrdersDialog extends StatelessWidget {
         ],
       ),
       content: SizedBox(
-        width: MediaQuery.of(context).size.width > 540 ? 480 : MediaQuery.of(context).size.width * 0.85,
+        width: double.maxFinite,
         height: 360,
         child: provider.heldOrders.isEmpty
             ? Center(
@@ -1267,6 +1288,8 @@ class BillPrintDialog extends StatelessWidget {
 
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      contentPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       title: Row(
         children: [
           Container(
@@ -1278,11 +1301,16 @@ class BillPrintDialog extends StatelessWidget {
             child: Icon(Icons.print_rounded, color: primaryOrange),
           ),
           const SizedBox(width: 12),
-          const Text('Bill / Receipt Preview', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+          const Expanded(
+            child: Text('Bill / Receipt Preview', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+          ),
         ],
       ),
-      content: SizedBox(
-        width: 380,
+      content: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.65,
+          maxWidth: 380,
+        ),
         child: SingleChildScrollView(
           child: Container(
             padding: const EdgeInsets.all(16),
@@ -1301,15 +1329,17 @@ class BillPrintDialog extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Table: ${provider.tableNumber}', style: const TextStyle(fontWeight: FontWeight.w700)),
-                    Text('Server: ${provider.waiter}', style: const TextStyle(fontSize: 12)),
+                    Flexible(child: Text('Table: ${provider.tableNumber}', style: const TextStyle(fontWeight: FontWeight.w700), overflow: TextOverflow.ellipsis)),
+                    const SizedBox(width: 8),
+                    Flexible(child: Text('Server: ${provider.waiter}', style: const TextStyle(fontSize: 12), overflow: TextOverflow.ellipsis, textAlign: TextAlign.right)),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Type: ${provider.selectedOrderType.toUpperCase()}', style: const TextStyle(fontSize: 12)),
-                    Text('Guests: ${provider.guests}', style: const TextStyle(fontSize: 12)),
+                    Flexible(child: Text('Type: ${provider.selectedOrderType.toUpperCase()}', style: const TextStyle(fontSize: 12), overflow: TextOverflow.ellipsis)),
+                    const SizedBox(width: 8),
+                    Flexible(child: Text('Guests: ${provider.guests}', style: const TextStyle(fontSize: 12), overflow: TextOverflow.ellipsis, textAlign: TextAlign.right)),
                   ],
                 ),
                 const Divider(height: 24),
@@ -1409,6 +1439,8 @@ class _CheckoutPaymentDialogState extends State<CheckoutPaymentDialog> {
 
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      contentPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       title: Row(
         children: [
           Container(
@@ -1420,11 +1452,16 @@ class _CheckoutPaymentDialogState extends State<CheckoutPaymentDialog> {
             child: Icon(Icons.payments_rounded, color: primaryOrange),
           ),
           const SizedBox(width: 12),
-          const Text('Checkout & Payment', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+          const Expanded(
+            child: Text('Checkout & Payment', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+          ),
         ],
       ),
-      content: SizedBox(
-        width: 420,
+      content: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.65,
+          maxWidth: 420,
+        ),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -1440,7 +1477,10 @@ class _CheckoutPaymentDialogState extends State<CheckoutPaymentDialog> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('Total Amount Due:', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                    const Flexible(
+                      child: Text('Total Amount Due:', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                    ),
+                    const SizedBox(width: 8),
                     Text(
                       '\$${total.toStringAsFixed(2)}',
                       style: TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: primaryOrange),
