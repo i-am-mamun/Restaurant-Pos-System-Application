@@ -413,7 +413,9 @@ class _RightIcons extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           onSelected: (val) {
             final provider = Provider.of<POSProvider>(context, listen: false);
-            if (val == 'custom_item') {
+            if (val == 'waiter') {
+              showDialog(context: context, builder: (_) => const WaiterSelectionDialog());
+            } else if (val == 'custom_item') {
               showDialog(context: context, builder: (_) => const CustomItemDialog());
             } else if (val == 'split') {
               showDialog(context: context, builder: (_) => const SplitBillDialog());
@@ -440,47 +442,16 @@ class _RightIcons extends StatelessWidget {
             return [
               if (isMobile) ...[
                 PopupMenuItem(
-                  value: 'guests',
-                  enabled: false,
+                  value: 'waiter',
                   child: Consumer<POSProvider>(
                     builder: (context, pos, _) {
                       return Row(
                         children: [
-                          const Icon(Icons.groups_outlined, size: 18, color: Color(0xFFFF6D00)),
+                          const Icon(Icons.person_outline, size: 18, color: Color(0xFFFF6D00)),
                           const SizedBox(width: 8),
                           Text(
-                            'Guests: ${pos.guests}',
-                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87),
-                          ),
-                          const Spacer(),
-                          GestureDetector(
-                            onTap: () {
-                              pos.decrementGuests();
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade100,
-                                border: Border.all(color: Colors.grey.shade300),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: const Text('-', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87)),
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          GestureDetector(
-                            onTap: () {
-                              pos.incrementGuests();
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                              decoration: BoxDecoration(
-                                color: Colors.grey.shade100,
-                                border: Border.all(color: Colors.grey.shade300),
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: const Text('+', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87)),
-                            ),
+                            'Waiter: ${pos.waiter}',
+                            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                           ),
                         ],
                       );

@@ -38,19 +38,7 @@ class POSInfoBar extends StatelessWidget {
                       },
                     ),
                     const SizedBox(width: 6),
-                    _InfoCard(
-                      icon: Icons.person_outline,
-                      label: 'Waiter',
-                      value: provider.waiter,
-                      hasDropdown: true,
-                      isMobile: true,
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (_) => const WaiterSelectionDialog(),
-                        );
-                      },
-                    ),
+                    const _GuestsCard(isMobile: true),
                   ],
                 ),
 
