@@ -74,17 +74,78 @@ class HomeScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-                  // Settings button
-                  IconButton(
-                    icon: Icon(
-                      Icons.tune_rounded,
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                  
+                  // New Header Actions (Theme & Language)
+                  if (MediaQuery.of(context).size.width >= 600) ...[
+                    IconButton(
+                      icon: Icon(
+                        appProvider.isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      ),
+                      onPressed: () => appProvider.toggleTheme(),
+                      tooltip: AppStrings.get(appProvider.isDarkMode ? 'light_mode' : 'dark_mode', locale),
                     ),
-                    onPressed: () => _showSettings(context, appProvider, locale, theme),
-                  ),
+
+                    const SizedBox(width: 4),
+                    _HeaderLangButton(appProvider: appProvider, locale: locale, theme: theme),
+                    const SizedBox(width: 12),
+                  ],
+
+                  // 3-dot menu for mobile (Settings, Theme, Lang)
+                  if (MediaQuery.of(context).size.width < 600)
+                    PopupMenuButton<String>(
+                      icon: Icon(Icons.more_vert_rounded, color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                      color: surfaceColor,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      onSelected: (val) {
+                        if (val == 'settings') {
+                          _showSettings(context, appProvider, locale, theme);
+                        } else if (val == 'toggle_theme') {
+                          appProvider.toggleTheme();
+                        } else if (val == 'toggle_lang') {
+                          appProvider.setLocale(appProvider.locale == 'en' ? 'bn' : 'en');
+                        }
+                      },
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          value: 'toggle_theme',
+                          child: Row(
+                            children: [
+                              Icon(appProvider.isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded, size: 20),
+                              const SizedBox(width: 12),
+                              Text(AppStrings.get(appProvider.isDarkMode ? 'light_mode' : 'dark_mode', locale)),
+                            ],
+                          ),
+                        ),
+
+                        PopupMenuItem(
+                          value: 'toggle_lang',
+                          child: Row(
+                            children: [
+                              const Icon(Icons.language_rounded, size: 20),
+                              const SizedBox(width: 12),
+                              Text(appProvider.locale == 'en' ? 'বাংলা' : 'English'),
+                            ],
+                          ),
+                        ),
+                        const PopupMenuDivider(),
+                        PopupMenuItem(
+                          value: 'settings',
+                          child: Row(
+                            children: [
+                              const Icon(Icons.settings_input_composite_rounded, size: 20),
+                              const SizedBox(width: 12),
+                              Text(AppStrings.get('hardware_settings', locale)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                 ],
               ),
             ),
+
+
 
             // ── Grid ─────────────────────────────────────────────────────
             Expanded(
@@ -192,6 +253,41 @@ class HomeScreen extends StatelessWidget {
       builder: (_) => ChangeNotifierProvider.value(
         value: appProvider,
         child: const _SettingsDialog(),
+      ),
+    );
+  }
+}
+
+// ── Header Language Button ──────────────────────────────────────
+class _HeaderLangButton extends StatelessWidget {
+  final AppProvider appProvider;
+  final String locale;
+  final ThemeData theme;
+
+  const _HeaderLangButton({required this.appProvider, required this.locale, required this.theme});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        appProvider.setLocale(appProvider.locale == 'en' ? 'bn' : 'en');
+      },
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.onSurface.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.1)),
+        ),
+        child: Text(
+          appProvider.locale == 'en' ? 'BN' : 'EN',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w800,
+            color: theme.colorScheme.onSurface.withOpacity(0.8),
+          ),
+        ),
       ),
     );
   }

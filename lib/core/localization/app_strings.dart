@@ -62,6 +62,7 @@ class AppStrings {
     'settings': {'en': 'Settings', 'bn': 'সেটিংস'},
     'appearance': {'en': 'Appearance', 'bn': 'চেহারা'},
     'dark_mode': {'en': 'Dark Mode', 'bn': 'ডার্ক মোড'},
+    'light_mode': {'en': 'Light Mode', 'bn': 'লাইট মোড'},
     'language': {'en': 'Language', 'bn': 'ভাষা'},
     'currency': {'en': 'Currency', 'bn': 'মুদ্রা'},
     'currency_desc': {

@@ -327,11 +327,43 @@ class _RightIcons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<POSProvider>(context);
+    final appProvider = Provider.of<AppProvider>(context);
+    const primaryOrange = Color(0xFFFF6D00);
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        if (!isMobile) ...[
+          // Theme Toggle
+          IconButton(
+            icon: Icon(
+              appProvider.isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+              color: Colors.white,
+            ),
+            onPressed: () => appProvider.toggleTheme(),
+            tooltip: AppStrings.get(appProvider.isDarkMode ? 'light_mode' : 'dark_mode', locale),
+          ),
+
+          // Language Toggle
+          TextButton(
+            onPressed: () {
+              appProvider.setLocale(appProvider.locale == 'en' ? 'bn' : 'en');
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.white.withOpacity(0.1),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+            child: Text(
+              appProvider.locale == 'en' ? 'BN' : 'EN',
+              style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13),
+            ),
+          ),
+          const SizedBox(width: 12),
+        ],
         if (isMobile) ...[
+
           IconButton(
             icon: Icon(
               provider.isMobileSearchOpen ? Icons.close : Icons.search,
@@ -397,6 +429,7 @@ class _RightIcons extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           onSelected: (val) {
             final posProvider = Provider.of<POSProvider>(context, listen: false);
+            final appProv = Provider.of<AppProvider>(context, listen: false);
             if (val == 'waiter') {
               showDialog(context: context, builder: (_) => const WaiterSelectionDialog());
             } else if (val == 'custom_item') {
@@ -423,13 +456,40 @@ class _RightIcons extends StatelessWidget {
                 applicationVersion: '1.0.0',
                 applicationLegalese: '© 2026 ZestBite Technologies Inc.',
               );
+            } else if (val == 'toggle_theme') {
+              appProv.toggleTheme();
+            } else if (val == 'toggle_lang') {
+              appProv.setLocale(appProv.locale == 'en' ? 'bn' : 'en');
             }
           },
           itemBuilder: (context) {
             final textStyle = TextStyle(color: context.textPrimary);
+            final appProvider = Provider.of<AppProvider>(context, listen: false);
             
             return [
               if (isMobile) ...[
+                PopupMenuItem(
+                  value: 'toggle_theme',
+                  child: Row(
+                    children: [
+                      Icon(appProvider.isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded, size: 18, color: primaryOrange),
+                      const SizedBox(width: 8),
+                      Text(AppStrings.get(appProvider.isDarkMode ? 'light_mode' : 'dark_mode', locale), style: textStyle),
+                    ],
+                  ),
+                ),
+
+                PopupMenuItem(
+                  value: 'toggle_lang',
+                  child: Row(
+                    children: [
+                      const Icon(Icons.language_rounded, size: 18, color: primaryOrange),
+                      const SizedBox(width: 8),
+                      Text(appProvider.locale == 'en' ? 'বাংলা' : 'English', style: textStyle),
+                    ],
+                  ),
+                ),
+                const PopupMenuDivider(),
                 PopupMenuItem(
                   value: 'waiter',
                   child: Consumer<POSProvider>(
