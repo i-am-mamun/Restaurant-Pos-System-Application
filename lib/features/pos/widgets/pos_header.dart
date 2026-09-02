@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/pos_provider.dart';
 import 'dialogs/pos_dialogs.dart';
+import 'dialogs/hardware_settings_dialog.dart';
 
 
 class POSHeader extends StatelessWidget {
@@ -429,6 +430,8 @@ class _RightIcons extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Daily Shift Sales Total: \$248.50 | Cash Drawer: \$500.00'), backgroundColor: Color(0xFFFF6D00)),
               );
+            } else if (val == 'hardware') {
+              showDialog(context: context, builder: (_) => const HardwareSettingsDialog());
             } else if (val == 'help') {
               showAboutDialog(
                 context: context,
@@ -493,6 +496,17 @@ class _RightIcons extends StatelessWidget {
               const PopupMenuItem(value: 'held', child: Row(children: [Icon(Icons.pause_circle_outline, size: 18), SizedBox(width: 8), Text('Held Orders')])),
               const PopupMenuItem(value: 'shift', child: Row(children: [Icon(Icons.point_of_sale, size: 18), SizedBox(width: 8), Text('Shift Report')])),
               const PopupMenuItem(value: 'clear', child: Row(children: [Icon(Icons.cleaning_services, size: 18), SizedBox(width: 8), Text('Clear Cart')])),
+              const PopupMenuDivider(),
+              const PopupMenuItem(
+                value: 'hardware',
+                child: Row(
+                  children: [
+                    Icon(Icons.settings_input_composite_rounded, size: 18, color: Color(0xFF607D8B)),
+                    SizedBox(width: 8),
+                    Text('Hardware Settings'),
+                  ],
+                ),
+              ),
               const PopupMenuItem(value: 'help', child: Row(children: [Icon(Icons.info_outline, size: 18), SizedBox(width: 8), Text('System Info')])),
             ];
           },
