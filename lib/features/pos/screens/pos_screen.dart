@@ -24,21 +24,36 @@ class _POSScreenState extends State<POSScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: Column(
-        children: [
-          // Top Header Bar
-          const POSHeader(),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxHeight < 200) {
+            return SingleChildScrollView(
+              child: Column(
+                children: const [
+                  POSHeader(),
+                  POSInfoBar(),
+                ],
+              ),
+            );
+          }
 
-          // Info Bar (Table, Guests, Waiter, Actions)
-          const POSInfoBar(),
+          return Column(
+            children: [
+              // Top Header Bar
+              const POSHeader(),
 
-          // Main Content
-          Expanded(
-            child: isTablet
-                ? _buildTabletLayout(context)
-                : _buildMobileLayout(context),
-          ),
-        ],
+              // Info Bar (Table, Guests, Waiter, Actions)
+              const POSInfoBar(),
+
+              // Main Content
+              Expanded(
+                child: isTablet
+                    ? _buildTabletLayout(context)
+                    : _buildMobileLayout(context),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

@@ -25,21 +25,28 @@ class POSHeader extends StatelessWidget {
             children: [
               // ── LOGO ──
               _LogoWidget(isMobile: isMobile),
-              SizedBox(width: isMobile ? 10 : 32),
 
-              // ── ORDER TYPE BUTTONS (Single White Pill) ──
+              SizedBox(width: isMobile ? 6 : 36),
+
+              // ── ORDER TYPE BUTTONS & RIGHT ICONS ──
               if (!isMobile) ...[
                 const OrderTypeSegmentedControl(),
                 const Spacer(),
-                // ── SEARCH BAR (White Pill) ──
-                const Flexible(child: _SearchBar()),
-                const SizedBox(width: 16),
+                const _SearchBar(),
+                const SizedBox(width: 24),
+                const _RightIcons(isMobile: false),
               ] else ...[
-                const Spacer(),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerRight,
+                      child: _RightIcons(isMobile: true),
+                    ),
+                  ),
+                ),
               ],
-
-              // ── RIGHT ICONS (No borders) ──
-              _RightIcons(isMobile: isMobile),
             ],
           ),
         ),
@@ -283,7 +290,7 @@ class _SearchBar extends StatelessWidget {
     return Consumer<POSProvider>(
       builder: (context, provider, _) {
         return Container(
-          constraints: BoxConstraints(maxWidth: barWidth),
+          width: barWidth,
           height: 44,
           decoration: BoxDecoration(
             color: Colors.white,
@@ -313,7 +320,6 @@ class _SearchBar extends StatelessWidget {
                   ),
                 ),
               ),
-              Icon(Icons.search, color: Colors.grey.shade500, size: 20),
               const SizedBox(width: 16),
             ],
           ),
@@ -397,17 +403,24 @@ class _RightIcons extends StatelessWidget {
         ),
         const SizedBox(width: 4),
         PopupMenuButton<String>(
+          offset: Offset(0, isMobile ? 50 : 56),
           icon: const Icon(Icons.more_vert, color: Colors.white),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           onSelected: (val) {
             final provider = Provider.of<POSProvider>(context, listen: false);
-            if (val == 'held') {
+            if (val == 'custom_item') {
+              showDialog(context: context, builder: (_) => const CustomItemDialog());
+            } else if (val == 'split') {
+              showDialog(context: context, builder: (_) => const SplitBillDialog());
+            } else if (val == 'transfer') {
+              showDialog(context: context, builder: (_) => const TransferOrderDialog());
+            } else if (val == 'held') {
               showDialog(context: context, builder: (_) => const HeldOrdersDialog());
             } else if (val == 'clear') {
               provider.clearCart();
             } else if (val == 'shift') {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Daily Shift Sales Total: \$${248.50} | Cash Drawer: \$500.00'), backgroundColor: Color(0xFFFF6D00)),
+                const SnackBar(content: Text('Daily Shift Sales Total: \$248.50 | Cash Drawer: \$500.00'), backgroundColor: Color(0xFFFF6D00)),
               );
             } else if (val == 'help') {
               showAboutDialog(
@@ -418,12 +431,95 @@ class _RightIcons extends StatelessWidget {
               );
             }
           },
-          itemBuilder: (context) => [
-            const PopupMenuItem(value: 'held', child: Row(children: [Icon(Icons.pause_circle_outline, size: 18), SizedBox(width: 8), Text('Held Orders')])),
-            const PopupMenuItem(value: 'shift', child: Row(children: [Icon(Icons.point_of_sale, size: 18), SizedBox(width: 8), Text('Shift Report')])),
-            const PopupMenuItem(value: 'clear', child: Row(children: [Icon(Icons.cleaning_services, size: 18), SizedBox(width: 8), Text('Clear Cart')])),
-            const PopupMenuItem(value: 'help', child: Row(children: [Icon(Icons.info_outline, size: 18), SizedBox(width: 8), Text('System Info')])),
-          ],
+          itemBuilder: (context) {
+            return [
+              if (isMobile) ...[
+                PopupMenuItem(
+                  value: 'guests',
+                  enabled: false,
+                  child: Consumer<POSProvider>(
+                    builder: (context, pos, _) {
+                      return Row(
+                        children: [
+                          const Icon(Icons.groups_outlined, size: 18, color: Color(0xFFFF6D00)),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Guests: ${pos.guests}',
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87),
+                          ),
+                          const Spacer(),
+                          GestureDetector(
+                            onTap: () {
+                              pos.decrementGuests();
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade100,
+                                border: Border.all(color: Colors.grey.shade300),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: const Text('-', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87)),
+                            ),
+                          ),
+                          const SizedBox(width: 6),
+                          GestureDetector(
+                            onTap: () {
+                              pos.incrementGuests();
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade100,
+                                border: Border.all(color: Colors.grey.shade300),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: const Text('+', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black87)),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'custom_item',
+                  child: Row(
+                    children: [
+                      Icon(Icons.soup_kitchen_outlined, size: 18, color: Color(0xFFFF6D00)),
+                      SizedBox(width: 8),
+                      Text('Custom Item'),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'split',
+                  child: Row(
+                    children: [
+                      Icon(Icons.call_split, size: 18, color: Color(0xFF2196F3)),
+                      SizedBox(width: 8),
+                      Text('Split Bill'),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'transfer',
+                  child: Row(
+                    children: [
+                      Icon(Icons.sync_alt, size: 18, color: Color(0xFF4CAF50)),
+                      SizedBox(width: 8),
+                      Text('Transfer Order'),
+                    ],
+                  ),
+                ),
+                const PopupMenuDivider(),
+              ],
+              const PopupMenuItem(value: 'held', child: Row(children: [Icon(Icons.pause_circle_outline, size: 18), SizedBox(width: 8), Text('Held Orders')])),
+              const PopupMenuItem(value: 'shift', child: Row(children: [Icon(Icons.point_of_sale, size: 18), SizedBox(width: 8), Text('Shift Report')])),
+              const PopupMenuItem(value: 'clear', child: Row(children: [Icon(Icons.cleaning_services, size: 18), SizedBox(width: 8), Text('Clear Cart')])),
+              const PopupMenuItem(value: 'help', child: Row(children: [Icon(Icons.info_outline, size: 18), SizedBox(width: 8), Text('System Info')])),
+            ];
+          },
         ),
       ],
     );

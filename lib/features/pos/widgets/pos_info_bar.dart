@@ -14,13 +14,51 @@ class POSInfoBar extends StatelessWidget {
 
     return Consumer<POSProvider>(
       builder: (context, provider, _) {
+        if (isMobile) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              child: Row(
+                children: [
+                  _InfoCard(
+                    icon: Icons.groups_outlined,
+                    label: 'Table',
+                    value: provider.tableNumber,
+                    hasDropdown: true,
+                    isMobile: true,
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => const TableSelectionDialog(),
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 6),
+                  _InfoCard(
+                    icon: Icons.person_outline,
+                    label: 'Waiter',
+                    value: provider.waiter,
+                    hasDropdown: true,
+                    isMobile: true,
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => const WaiterSelectionDialog(),
+                      );
+                    },
+                  ),
+                  const SizedBox(width: 8),
+                  _ActionButtons(isMobile: true, isTablet: isTablet),
+                ],
+              ),
+            ),
+          );
+        }
+
         return Padding(
-          padding: EdgeInsets.only(
-            left: isMobile ? 12 : 24,
-            right: isMobile ? 12 : 24,
-            top: isMobile ? 8 : 12,
-            bottom: isMobile ? 4 : 12,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           child: Row(
             children: [
               // ── Left Side Info (Table, Guests, Waiter) ──
@@ -29,7 +67,7 @@ class POSInfoBar extends StatelessWidget {
                 label: 'Table',
                 value: provider.tableNumber,
                 hasDropdown: true,
-                isMobile: isMobile,
+                isMobile: false,
                 onTap: () {
                   showDialog(
                     context: context,
@@ -37,39 +75,31 @@ class POSInfoBar extends StatelessWidget {
                   );
                 },
               ),
-              
-              SizedBox(width: isMobile ? 8 : 16),
-              
-              _GuestsCard(isMobile: isMobile),
-              
-              SizedBox(width: isMobile ? 8 : 16),
-              
-              if (!isMobile) ...[
-                _InfoCard(
-                  icon: Icons.person_outline,
-                  label: 'Waiter',
-                  value: provider.waiter,
-                  hasDropdown: true,
-                  isMobile: isMobile,
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => const WaiterSelectionDialog(),
-                    );
-                  },
-                ),
-              ],
-
+              const SizedBox(width: 16),
+              const _GuestsCard(isMobile: false),
+              const SizedBox(width: 16),
+              _InfoCard(
+                icon: Icons.person_outline,
+                label: 'Waiter',
+                value: provider.waiter,
+                hasDropdown: true,
+                isMobile: false,
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => const WaiterSelectionDialog(),
+                  );
+                },
+              ),
               const SizedBox(width: 12),
-
-              // ── Right Side Actions (Scrollable horizontally if screen is narrow) ──
+              // ── Right Side Actions ──
               Expanded(
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     physics: const BouncingScrollPhysics(),
-                    child: _ActionButtons(isMobile: isMobile, isTablet: isTablet),
+                    child: _ActionButtons(isMobile: false, isTablet: isTablet),
                   ),
                 ),
               ),
@@ -109,12 +139,12 @@ class _InfoCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(
-          horizontal: isMobile ? 8 : 16,
-          vertical: isMobile ? 6 : 10,
+          horizontal: isMobile ? 7 : 16,
+          vertical: isMobile ? 4 : 10,
         ),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(8),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.02),
@@ -128,10 +158,10 @@ class _InfoCard extends StatelessWidget {
           children: [
             Icon(
               icon, 
-              size: isMobile ? 18 : 26, 
+              size: isMobile ? 15 : 26, 
               color: darkBrown,
             ),
-            SizedBox(width: isMobile ? 6 : 12),
+            SizedBox(width: isMobile ? 5 : 12),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -139,16 +169,16 @@ class _InfoCard extends StatelessWidget {
                 Text(
                   label,
                   style: TextStyle(
-                    fontSize: isMobile ? 9 : 11,
+                    fontSize: isMobile ? 8.5 : 11,
                     color: Colors.grey.shade500,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 1),
                 Text(
                   value,
                   style: TextStyle(
-                    fontSize: isMobile ? 13 : 16,
+                    fontSize: isMobile ? 12 : 16,
                     color: Colors.black87,
                     fontWeight: FontWeight.w800,
                     height: 1.1,
@@ -157,8 +187,8 @@ class _InfoCard extends StatelessWidget {
               ],
             ),
             if (hasDropdown) ...[
-              SizedBox(width: isMobile ? 10 : 20),
-              Icon(Icons.keyboard_arrow_down, size: isMobile ? 14 : 18, color: darkBrown),
+              SizedBox(width: isMobile ? 6 : 20),
+              Icon(Icons.keyboard_arrow_down, size: isMobile ? 13 : 18, color: darkBrown),
             ],
           ],
         ),
@@ -396,7 +426,7 @@ class _ActionButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: isMobile ? 8 : 12),
+      margin: EdgeInsets.only(left: isMobile ? 5 : 12),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -404,8 +434,8 @@ class _ActionButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           child: Container(
             padding: EdgeInsets.symmetric(
-              horizontal: isMobile || isTablet ? 12 : 16,
-              vertical: isMobile || isTablet ? 8 : 10,
+              horizontal: isMobile ? 8 : (isTablet ? 12 : 16),
+              vertical: isMobile ? 6 : (isTablet ? 8 : 10),
             ),
             decoration: BoxDecoration(
               color: color.withOpacity(0.04), // Very faint background
@@ -417,7 +447,7 @@ class _ActionButton extends StatelessWidget {
               children: [
                 Icon(
                   icon,
-                  size: isMobile || isTablet ? 16 : 18,
+                  size: isMobile ? 14 : (isTablet ? 16 : 18),
                   color: color,
                 ),
                 if (!isMobile) ...[
