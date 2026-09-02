@@ -5,6 +5,7 @@ import '../../../core/providers/app_provider.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/models/menu_item.dart';
 import '../../../core/theme/theme_extensions.dart';
+import '../../../core/utils/number_utils.dart';
 import 'dialogs/pos_dialogs.dart';
 import 'bottom_action_bar.dart';
 
@@ -103,7 +104,7 @@ class _OrderSummaryHeader extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  '${provider.cartItems.length} ${AppStrings.get('items', locale)}',
+                  '${NumberUtils.toLocalized(provider.cartItems.length, locale)} ${AppStrings.get('items', locale)}',
                   style: const TextStyle(
                     fontSize: 12,
                     color: primaryOrange,
@@ -220,7 +221,7 @@ class _OrderItemRow extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        '$index',
+                        NumberUtils.toLocalized(index, locale),
                         style: const TextStyle(color: primaryOrange, fontSize: 12, fontWeight: FontWeight.w800),
                       ),
                     ),
@@ -263,7 +264,7 @@ class _OrderItemRow extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    '৳${item.menuItem.price.toStringAsFixed(2)}',
+                    '৳${NumberUtils.toLocalized(item.menuItem.price.toStringAsFixed(2), locale)}',
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: context.textPrimary),
                   ),
                   const SizedBox(width: 12),
@@ -322,7 +323,7 @@ class _QuantityControl extends StatelessWidget {
           Container(
             width: 24,
             alignment: Alignment.center,
-            child: Text('$quantity', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: context.textPrimary)),
+            child: Text(NumberUtils.toLocalized(quantity, context.watch<AppProvider>().locale), style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: context.textPrimary)),
           ),
           GestureDetector(
             onTap: onIncrement,
@@ -404,7 +405,7 @@ class _PriceBreakdown extends StatelessWidget {
             children: [
               _PriceRow(
                 label: AppStrings.get('subtotal', locale),
-                value: '৳${provider.subtotal.toStringAsFixed(2)}',
+                value: '৳${NumberUtils.toLocalized(provider.subtotal.toStringAsFixed(2), locale)}',
                 labelColor: context.textSecondary,
                 valueColor: context.textPrimary,
               ),
@@ -412,7 +413,7 @@ class _PriceBreakdown extends StatelessWidget {
                 const SizedBox(height: 8),
                 _PriceRow(
                   label: '${AppStrings.get('discount_label', locale)} (${provider.appliedCoupon ?? ""})',
-                  value: '-৳${provider.discountValue.toStringAsFixed(2)}',
+                  value: '-৳${NumberUtils.toLocalized(provider.discountValue.toStringAsFixed(2), locale)}',
                   labelColor: context.textSecondary,
                   valueColor: Colors.green.shade600,
                 ),
@@ -420,14 +421,14 @@ class _PriceBreakdown extends StatelessWidget {
               const SizedBox(height: 8),
               _PriceRow(
                 label: AppStrings.get('tax', locale),
-                value: '৳${provider.tax.toStringAsFixed(2)}',
+                value: '৳${NumberUtils.toLocalized(provider.tax.toStringAsFixed(2), locale)}',
                 labelColor: context.textSecondary,
                 valueColor: context.textPrimary,
               ),
               const SizedBox(height: 8),
               _PriceRow(
                 label: AppStrings.get('service_charge', locale),
-                value: '৳${provider.serviceCharge.toStringAsFixed(2)}',
+                value: '৳${NumberUtils.toLocalized(provider.serviceCharge.toStringAsFixed(2), locale)}',
                 labelColor: context.textSecondary,
                 valueColor: context.textPrimary,
               ),
@@ -442,7 +443,7 @@ class _PriceBreakdown extends StatelessWidget {
                     style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: primaryOrange),
                   ),
                   Text(
-                    '৳${provider.totalPayable.toStringAsFixed(2)}',
+                    '৳${NumberUtils.toLocalized(provider.totalPayable.toStringAsFixed(2), locale)}',
                     style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: primaryOrange),
                   ),
                 ],
@@ -540,7 +541,7 @@ class _PlaceOrderButton extends StatelessWidget {
                       ),
                       child: Center(
                         child: Text(
-                          '৳${provider.totalPayable.toStringAsFixed(2)}',
+                          '৳${NumberUtils.toLocalized(provider.totalPayable.toStringAsFixed(2), locale)}',
                           style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900),
                         ),
                       ),

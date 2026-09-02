@@ -5,6 +5,7 @@ import '../../../core/providers/app_provider.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/models/menu_item.dart';
 import '../../../core/theme/theme_extensions.dart';
+import '../../../core/utils/number_utils.dart';
 import 'dialogs/pos_dialogs.dart';
 
 class CategorySidebar extends StatelessWidget {

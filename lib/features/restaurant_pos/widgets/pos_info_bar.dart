@@ -4,6 +4,7 @@ import '../../../core/providers/pos_provider.dart';
 import '../../../core/providers/app_provider.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/theme/theme_extensions.dart';
+import '../../../core/utils/number_utils.dart';
 import 'dialogs/pos_dialogs.dart';
 
 class POSInfoBar extends StatelessWidget {
@@ -30,7 +31,7 @@ class POSInfoBar extends StatelessWidget {
                     _InfoCard(
                       icon: Icons.groups_outlined,
                       label: AppStrings.get('table', locale),
-                      value: provider.tableNumber,
+                      value: NumberUtils.toLocalized(provider.tableNumber, locale),
                       hasDropdown: true,
                       isMobile: true,
                       onTap: () {
@@ -54,7 +55,7 @@ class POSInfoBar extends StatelessWidget {
               _InfoCard(
                 icon: Icons.groups_outlined,
                 label: AppStrings.get('table', locale),
-                value: provider.tableNumber,
+                value: NumberUtils.toLocalized(provider.tableNumber, locale),
                 hasDropdown: true,
                 isMobile: false,
                 onTap: () {
@@ -193,7 +194,7 @@ class _GuestsCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    '${provider.guests}',
+                    NumberUtils.toLocalized(provider.guests, locale),
                     style: TextStyle(fontSize: isMobile ? 13 : 16, color: context.textPrimary, fontWeight: FontWeight.w800, height: 1.1),
                   ),
                 ],

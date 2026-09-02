@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../../core/providers/app_provider.dart';
+import '../../../../core/localization/app_strings.dart';
+import '../../../../core/utils/number_utils.dart';
 
 // ─────────────────────────────────────────────────────────────────
 // HARDWARE SETTINGS DIALOG
-// POS Hardware integration UI:
-//  🖨️ Thermal Receipt Printer (Bluetooth / USB / Network)
-//  💵 Cash Drawer             (USB / RJ11)
-//  🔍 Barcode Scanner         (USB / Bluetooth / Camera)
-//  🍳 Kitchen Printer         (Network IP)
-//  💳 Card Terminal           (Bluetooth / USB / Network)
-//  📺 Customer Display        (USB / HDMI / Network)
 // ─────────────────────────────────────────────────────────────────
 
 class HardwareSettingsDialog extends StatefulWidget {
@@ -48,6 +45,8 @@ class _HardwareSettingsDialogState extends State<HardwareSettingsDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final locale = context.watch<AppProvider>().locale;
+
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
@@ -63,10 +62,10 @@ class _HardwareSettingsDialogState extends State<HardwareSettingsDialog> {
             child: const Icon(Icons.settings_input_composite_rounded, color: primaryOrange),
           ),
           const SizedBox(width: 12),
-          const Expanded(
+          Expanded(
             child: Text(
-              'Hardware Settings',
-              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+              AppStrings.get('hardware_settings_title', locale),
+              style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
             ),
           ),
         ],
@@ -85,9 +84,11 @@ class _HardwareSettingsDialogState extends State<HardwareSettingsDialog> {
               // 1. Thermal Receipt Printer
               _HardwareTile(
                 icon: Icons.print_rounded,
-                label: 'Thermal Receipt Printer',
+                label: AppStrings.get('thermal_printer', locale),
                 badge: '🖨️',
-                statusText: _printerEnabled ? _printerStatus : 'Disabled',
+                statusText: _printerEnabled 
+                  ? (_printerStatus == 'Connected' ? AppStrings.get('connected', locale) : _printerStatus) 
+                  : AppStrings.get('disabled', locale),
                 statusColor: _printerEnabled
                     ? (_printerStatus == 'Connected' ? Colors.green : Colors.orange)
                     : Colors.grey,
@@ -98,40 +99,43 @@ class _HardwareSettingsDialogState extends State<HardwareSettingsDialog> {
                 onConnectionChanged: (v) => setState(() => _printerConnection = v!),
                 onTest: () {
                   setState(() => _printerStatus = 'Connected');
-                  _snack(context, '🖨️ Test print sent to thermal printer');
+                  _snack(context, '🖨️ ${AppStrings.get('test_print_sent', locale)}');
                 },
+                locale: locale,
               ),
               const Divider(height: 28),
 
               // 2. Cash Drawer
               _HardwareTile(
                 icon: Icons.point_of_sale_rounded,
-                label: 'Cash Drawer',
+                label: AppStrings.get('cash_drawer', locale),
                 badge: '💵',
-                statusText: _drawerEnabled ? 'Ready to trigger' : 'Disabled',
+                statusText: _drawerEnabled ? AppStrings.get('ready_to_trigger', locale) : AppStrings.get('disabled', locale),
                 statusColor: _drawerEnabled ? Colors.green : Colors.grey,
                 enabled: _drawerEnabled,
                 onToggle: (v) => setState(() => _drawerEnabled = v),
                 connectionOptions: const ['USB', 'RJ11 (via Printer)'],
                 selectedConnection: _drawerConnection,
                 onConnectionChanged: (v) => setState(() => _drawerConnection = v!),
-                onTest: () => _snack(context, '💵 Cash drawer open signal sent'),
+                onTest: () => _snack(context, '💵 ${AppStrings.get('cash_drawer_open', locale)}'),
+                locale: locale,
               ),
               const Divider(height: 28),
 
               // 3. Barcode Scanner
               _HardwareTile(
                 icon: Icons.qr_code_scanner_rounded,
-                label: 'Barcode Scanner',
+                label: AppStrings.get('barcode_scanner', locale),
                 badge: '🔍',
-                statusText: _scannerEnabled ? 'Listening for scans' : 'Disabled',
+                statusText: _scannerEnabled ? AppStrings.get('listening_scans', locale) : AppStrings.get('disabled', locale),
                 statusColor: _scannerEnabled ? Colors.green : Colors.grey,
                 enabled: _scannerEnabled,
                 onToggle: (v) => setState(() => _scannerEnabled = v),
                 connectionOptions: const ['USB', 'Bluetooth', 'Camera'],
                 selectedConnection: _scannerConnection,
                 onConnectionChanged: (v) => setState(() => _scannerConnection = v!),
-                onTest: () => _snack(context, '🔍 Scan a barcode to test scanner'),
+                onTest: () => _snack(context, '🔍 ${AppStrings.get('scan_test_msg', locale)}'),
+                locale: locale,
               ),
               const Divider(height: 28),
 
@@ -141,39 +145,42 @@ class _HardwareSettingsDialogState extends State<HardwareSettingsDialog> {
                 ipAddress: _kitchenIp,
                 onToggle: (v) => setState(() => _kitchenEnabled = v),
                 onIpChanged: (v) => setState(() => _kitchenIp = v),
-                onTest: () => _snack(context, '🍳 Test print sent to kitchen printer'),
+                onTest: () => _snack(context, '🍳 ${AppStrings.get('test_print_sent', locale)}'),
+                locale: locale,
               ),
               const Divider(height: 28),
 
               // 5. Card Terminal
               _HardwareTile(
                 icon: Icons.credit_card_rounded,
-                label: 'Card Terminal',
+                label: AppStrings.get('card_terminal', locale),
                 badge: '💳',
-                statusText: _cardEnabled ? 'Ready for payment' : 'Disabled',
+                statusText: _cardEnabled ? AppStrings.get('ready_for_payment', locale) : AppStrings.get('disabled', locale),
                 statusColor: _cardEnabled ? Colors.green : Colors.grey,
                 enabled: _cardEnabled,
                 onToggle: (v) => setState(() => _cardEnabled = v),
                 connectionOptions: const ['Bluetooth', 'USB', 'Network'],
                 selectedConnection: _cardConnection,
                 onConnectionChanged: (v) => setState(() => _cardConnection = v!),
-                onTest: () => _snack(context, '💳 Card terminal ping sent'),
+                onTest: () => _snack(context, '💳 ${AppStrings.get('card_terminal_ping', locale)}'),
+                locale: locale,
               ),
               const Divider(height: 28),
 
               // 6. Customer Display
               _HardwareTile(
                 icon: Icons.tv_rounded,
-                label: 'Customer Display',
+                label: AppStrings.get('customer_display', locale),
                 badge: '📺',
-                statusText: _displayEnabled ? 'Showing customer view' : 'Disabled',
+                statusText: _displayEnabled ? AppStrings.get('showing_customer_view', locale) : AppStrings.get('disabled', locale),
                 statusColor: _displayEnabled ? Colors.green : Colors.grey,
                 enabled: _displayEnabled,
                 onToggle: (v) => setState(() => _displayEnabled = v),
                 connectionOptions: const ['USB', 'HDMI', 'Network'],
                 selectedConnection: _displayConnection,
                 onConnectionChanged: (v) => setState(() => _displayConnection = v!),
-                onTest: () => _snack(context, '📺 Customer display test sent'),
+                onTest: () => _snack(context, '📺 ${AppStrings.get('customer_display_test', locale)}'),
+                locale: locale,
               ),
 
               const SizedBox(height: 16),
@@ -193,8 +200,7 @@ class _HardwareSettingsDialogState extends State<HardwareSettingsDialog> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
-                        'Full hardware activation requires SDK/driver integration. '
-                        'UI is ready — connect ESC/POS, Bluetooth or USB packages in the backend to activate.',
+                        AppStrings.get('hardware_notice', locale),
                         style: TextStyle(fontSize: 11, color: Colors.blue.shade800),
                       ),
                     ),
@@ -209,12 +215,12 @@ class _HardwareSettingsDialogState extends State<HardwareSettingsDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Close'),
+          child: Text(AppStrings.get('close', locale)),
         ),
         ElevatedButton.icon(
           onPressed: () {
             Navigator.of(context).pop();
-            _snack(context, '✅ Hardware settings saved');
+            _snack(context, '✅ ${AppStrings.get('settings_saved', locale)}');
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: primaryOrange,
@@ -222,7 +228,7 @@ class _HardwareSettingsDialogState extends State<HardwareSettingsDialog> {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
           icon: const Icon(Icons.save_rounded, size: 18),
-          label: const Text('Save Settings'),
+          label: Text(AppStrings.get('save_settings', locale)),
         ),
       ],
     );
@@ -253,6 +259,7 @@ class _HardwareTile extends StatelessWidget {
   final String selectedConnection;
   final ValueChanged<String?> onConnectionChanged;
   final VoidCallback onTest;
+  final String locale;
 
   static const primaryOrange = Color(0xFFFF6D00);
 
@@ -268,6 +275,7 @@ class _HardwareTile extends StatelessWidget {
     required this.selectedConnection,
     required this.onConnectionChanged,
     required this.onTest,
+    required this.locale,
   });
 
   @override
@@ -321,7 +329,7 @@ class _HardwareTile extends StatelessWidget {
                   value: selectedConnection,
                   isDense: true,
                   decoration: InputDecoration(
-                    labelText: 'Connection type',
+                    labelText: AppStrings.get('connection_type', locale),
                     labelStyle: const TextStyle(fontSize: 12),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
@@ -346,7 +354,7 @@ class _HardwareTile extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 ),
                 icon: const Icon(Icons.cable_rounded, size: 15),
-                label: const Text('Test', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                label: Text(AppStrings.get('test', locale), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
               ),
             ],
           ),
@@ -363,6 +371,7 @@ class _KitchenPrinterTile extends StatelessWidget {
   final ValueChanged<bool> onToggle;
   final ValueChanged<String> onIpChanged;
   final VoidCallback onTest;
+  final String locale;
 
   static const primaryOrange = Color(0xFFFF6D00);
 
@@ -372,6 +381,7 @@ class _KitchenPrinterTile extends StatelessWidget {
     required this.onToggle,
     required this.onIpChanged,
     required this.onTest,
+    required this.locale,
   });
 
   @override
@@ -394,7 +404,7 @@ class _KitchenPrinterTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('🍳  Kitchen Printer', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13.5)),
+                  Text('🍳  ${AppStrings.get('kitchen_printer', locale)}', style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13.5)),
                   const SizedBox(height: 3),
                   Row(
                     children: [
@@ -408,7 +418,7 @@ class _KitchenPrinterTile extends StatelessWidget {
                       ),
                       const SizedBox(width: 5),
                       Text(
-                        enabled ? 'Network · $ipAddress' : 'Disabled',
+                        enabled ? 'Network · ${NumberUtils.toLocalized(ipAddress, locale)}' : AppStrings.get('disabled', locale),
                         style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
                       ),
                     ],
@@ -430,7 +440,7 @@ class _KitchenPrinterTile extends StatelessWidget {
                   onChanged: onIpChanged,
                   style: const TextStyle(fontSize: 13),
                   decoration: InputDecoration(
-                    labelText: 'Printer IP Address',
+                    labelText: AppStrings.get('printer_ip', locale),
                     labelStyle: const TextStyle(fontSize: 12),
                     hintText: '192.168.1.100',
                     contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
@@ -452,7 +462,7 @@ class _KitchenPrinterTile extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 ),
                 icon: const Icon(Icons.cable_rounded, size: 15),
-                label: const Text('Test', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                label: Text(AppStrings.get('test', locale), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
               ),
             ],
           ),

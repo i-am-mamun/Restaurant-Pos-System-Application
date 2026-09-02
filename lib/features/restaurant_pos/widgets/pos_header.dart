@@ -4,6 +4,7 @@ import '../../../core/providers/pos_provider.dart';
 import '../../../core/providers/app_provider.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/theme/theme_extensions.dart';
+import '../../../core/utils/number_utils.dart';
 import 'dialogs/pos_dialogs.dart';
 import 'dialogs/hardware_settings_dialog.dart';
 
@@ -376,7 +377,7 @@ class _RightIcons extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: const Text(
-                  '3',
+                  '৩',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 10,
@@ -409,15 +410,16 @@ class _RightIcons extends StatelessWidget {
             } else if (val == 'clear') {
               posProvider.clearCart();
             } else if (val == 'shift') {
+              final msg = '${AppStrings.get('shift_sales_total', locale)}: ৳${NumberUtils.toLocalized('248.50', locale)} | ${AppStrings.get('cash_drawer', locale)}: ৳${NumberUtils.toLocalized('500.00', locale)}';
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Daily Shift Sales Total: ৳248.50 | Cash Drawer: ৳500.00'), backgroundColor: Color(0xFFFF6D00)),
+                SnackBar(content: Text(msg), backgroundColor: const Color(0xFFFF6D00)),
               );
             } else if (val == 'hardware') {
               showDialog(context: context, builder: (_) => const HardwareSettingsDialog());
             } else if (val == 'help') {
               showAboutDialog(
                 context: context,
-                applicationName: 'ZestBite POS System',
+                applicationName: locale == 'bn' ? 'জেস্টবাইট POS সিস্টেম' : 'ZestBite POS System',
                 applicationVersion: '1.0.0',
                 applicationLegalese: '© 2026 ZestBite Technologies Inc.',
               );

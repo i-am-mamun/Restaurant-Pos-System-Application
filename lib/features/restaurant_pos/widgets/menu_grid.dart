@@ -6,6 +6,7 @@ import '../../../core/providers/app_provider.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../../core/models/menu_item.dart';
 import '../../../core/theme/theme_extensions.dart';
+import '../../../core/utils/number_utils.dart';
 
 class MenuGrid extends StatelessWidget {
   final bool isMobile;
@@ -300,7 +301,7 @@ class _MenuItemCard extends StatelessWidget {
                           children: [
                             Expanded(
                               child: Text(
-                                '৳${item.price.toStringAsFixed(2)}',
+                                '৳${NumberUtils.toLocalized(item.price.toStringAsFixed(2), locale)}',
                                 style: TextStyle(fontSize: isMobile ? 12 : 15, fontWeight: FontWeight.w700, color: context.textSecondary),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
@@ -329,7 +330,7 @@ class _MenuItemCard extends StatelessWidget {
                                         Container(
                                           width: isMobile ? 16 : 30, alignment: Alignment.center,
                                           child: Text(
-                                            '${provider.getQuantity(item.id)}',
+                                            NumberUtils.toLocalized(provider.getQuantity(item.id), locale),
                                             style: TextStyle(fontSize: isMobile ? 10 : 14, fontWeight: FontWeight.w800, color: primaryOrange),
                                           ),
                                         ),
@@ -438,7 +439,7 @@ class _MenuListView extends StatelessWidget {
                       children: [
                         Text(item.localizedName(locale), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: context.textPrimary)),
                         const SizedBox(height: 8),
-                        Text('৳${item.price.toStringAsFixed(2)}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: context.textSecondary)),
+                        Text('৳${NumberUtils.toLocalized(item.price.toStringAsFixed(2), locale)}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: context.textSecondary)),
                       ],
                     ),
                   ),
@@ -460,7 +461,7 @@ class _MenuListView extends StatelessWidget {
                               ),
                               Container(
                                 width: 36, alignment: Alignment.center,
-                                child: Text('${provider.getQuantity(item.id)}', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: primaryOrange)),
+                                child: Text(NumberUtils.toLocalized(provider.getQuantity(item.id), locale), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: primaryOrange)),
                               ),
                               GestureDetector(
                                 onTap: () => provider.addToCart(item),
