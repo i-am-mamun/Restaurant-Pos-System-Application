@@ -50,6 +50,75 @@ class MenuCategory {
   const MenuCategory({required this.id, required this.name, required this.icon});
 }
 
+class HeldOrder {
+  final String id;
+  final String tableNumber;
+  final String waiter;
+  final int guests;
+  final String orderType;
+  final List<CartItem> items;
+  final String note;
+  final DateTime timestamp;
+
+  HeldOrder({
+    required this.id,
+    required this.tableNumber,
+    required this.waiter,
+    required this.guests,
+    required this.orderType,
+    required this.items,
+    this.note = '',
+    required this.timestamp,
+  });
+
+  double get total => items.fold(0, (sum, i) => sum + i.totalPrice);
+}
+
+class CompletedOrder {
+  final String id;
+  final String orderType;
+  final String tableNumber;
+  final String waiter;
+  final List<CartItem> items;
+  final double subtotal;
+  final double discount;
+  final double tax;
+  final double serviceCharge;
+  final double total;
+  final String paymentMethod;
+  final DateTime timestamp;
+
+  CompletedOrder({
+    required this.id,
+    required this.orderType,
+    required this.tableNumber,
+    required this.waiter,
+    required this.items,
+    required this.subtotal,
+    required this.discount,
+    required this.tax,
+    required this.serviceCharge,
+    required this.total,
+    required this.paymentMethod,
+    required this.timestamp,
+  });
+}
+
+class CouponModel {
+  final String code;
+  final String description;
+  final double discountPercentage;
+  final double? fixedDiscountAmount;
+
+  const CouponModel({
+    required this.code,
+    required this.description,
+    this.discountPercentage = 0.0,
+    this.fixedDiscountAmount,
+  });
+}
+
+
 // Sample Data
 class AppData {
   static const List<MenuCategory> categories = [

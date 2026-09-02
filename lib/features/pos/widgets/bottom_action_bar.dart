@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dialogs/pos_dialogs.dart';
 
 class BottomActionBar extends StatelessWidget {
   const BottomActionBar({super.key});
@@ -31,7 +32,7 @@ class BottomActionBar extends StatelessWidget {
 
           return Expanded(
             child: Padding(
-              padding: EdgeInsets.only(right: isLast ? 0 : 12), // Gap between buttons
+              padding: EdgeInsets.only(right: isLast ? 0 : 12),
               child: _BottomActionBtn(
                 icon: action['icon'] as IconData,
                 label: action['label'] as String,
@@ -46,12 +47,33 @@ class BottomActionBar extends StatelessWidget {
   }
 
   void _handleAction(BuildContext context, String action) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$action tapped'),
-        duration: const Duration(seconds: 1),
-        behavior: SnackBarBehavior.floating,
-      ),
+    Widget dialog;
+    switch (action) {
+      case 'Coupon':
+        dialog = const CouponDialog();
+        break;
+      case 'Discount':
+        dialog = const DiscountDialog();
+        break;
+      case 'Promo':
+        dialog = const PromoDialog();
+        break;
+      case 'Note':
+        dialog = const NoteDialog(isKitchenNote: false);
+        break;
+      case 'Kitchen Note':
+        dialog = const NoteDialog(isKitchenNote: true);
+        break;
+      case 'Bill Print':
+        dialog = const BillPrintDialog();
+        break;
+      default:
+        return;
+    }
+
+    showDialog(
+      context: context,
+      builder: (_) => dialog,
     );
   }
 }
@@ -79,10 +101,10 @@ class _BottomActionBtn extends StatelessWidget {
       child: Container(
         height: isMobile ? 40 : 48,
         decoration: BoxDecoration(
-          color: primaryOrange.withOpacity(0.04), // Faint orange background
+          color: primaryOrange.withOpacity(0.04),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: primaryOrange.withOpacity(0.15), // Faint orange border
+            color: primaryOrange.withOpacity(0.15),
             width: 1.5,
           ),
         ),
@@ -102,7 +124,7 @@ class _BottomActionBtn extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 13,
                     color: primaryOrange,
-                    fontWeight: FontWeight.w700, // Bold orange text
+                    fontWeight: FontWeight.w700,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/theme/app_theme.dart';
 import '../../../core/providers/pos_provider.dart';
 import '../../../core/models/menu_item.dart';
+import 'dialogs/pos_dialogs.dart';
 
 class OrderSummaryPanel extends StatelessWidget {
   final bool isBottomSheet;
@@ -113,7 +113,29 @@ class _OrderSummaryHeader extends StatelessWidget {
               const Spacer(),
               // Clear All
               GestureDetector(
-                onTap: provider.clearCart,
+                onTap: () {
+                  if (provider.cartItems.isNotEmpty) {
+                    showDialog(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        title: const Text('Clear Cart?'),
+                        content: const Text('Are you sure you want to clear all items in the cart?'),
+                        actions: [
+                          TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Cancel')),
+                          ElevatedButton(
+                            onPressed: () {
+                              provider.clearCart();
+                              Navigator.of(ctx).pop();
+                            },
+                            style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+                            child: const Text('Clear All'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                },
                 behavior: HitTestBehavior.opaque,
                 child: Row(
                   children: [
@@ -291,7 +313,7 @@ class _OrderItemRow extends StatelessWidget {
               const SizedBox(height: 12),
               Row(
                 children: [
-                  const SizedBox(width: 36), // Align with text
+                  const SizedBox(width: 36),
                   _QuantityControl(
                     quantity: item.quantity,
                     onDecrement: () => provider.decrementQuantity(item.menuItem.id),
@@ -320,7 +342,7 @@ class _QuantityControl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final darkBrown = const Color(0xFF5D4037);
+    const darkBrown = Color(0xFF5D4037);
 
     return Container(
       decoration: BoxDecoration(
@@ -336,7 +358,7 @@ class _QuantityControl extends StatelessWidget {
             behavior: HitTestBehavior.opaque,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              child: Icon(Icons.remove, size: 14, color: darkBrown),
+              child: const Icon(Icons.remove, size: 14, color: darkBrown),
             ),
           ),
           Container(
@@ -356,7 +378,7 @@ class _QuantityControl extends StatelessWidget {
             behavior: HitTestBehavior.opaque,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              child: Icon(Icons.add, size: 14, color: darkBrown),
+              child: const Icon(Icons.add, size: 14, color: darkBrown),
             ),
           ),
         ],
@@ -371,29 +393,47 @@ class _QuantityControl extends StatelessWidget {
 class _OrderNoteField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: const Color(0xFFFF6D00).withOpacity(0.15), width: 1.5),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              'Add Order Note...',
-              style: TextStyle(
-                fontSize: 13,
-                color: Colors.grey.shade500,
-                fontWeight: FontWeight.w500,
-              ),
+    return Consumer<POSProvider>(
+      builder: (context, provider, _) {
+        final noteText = provider.orderNote.isEmpty
+            ? 'Add Order Note...'
+            : provider.orderNote;
+
+        return GestureDetector(
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (_) => const NoteDialog(isKitchenNote: false),
+            );
+          },
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border.all(color: const Color(0xFFFF6D00).withOpacity(0.15), width: 1.5),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    noteText,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: provider.orderNote.isEmpty ? Colors.grey.shade500 : const Color(0xFFFF6D00),
+                      fontWeight: provider.orderNote.isEmpty ? FontWeight.w500 : FontWeight.w700,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Icon(Icons.edit_note, size: 20, color: provider.orderNote.isEmpty ? Colors.grey.shade600 : const Color(0xFFFF6D00)),
+              ],
             ),
           ),
-          Icon(Icons.edit_note, size: 20, color: Colors.grey.shade600),
-        ],
-      ),
+        );
+      },
     );
   }
 }
@@ -409,13 +449,21 @@ class _PriceBreakdown extends StatelessWidget {
     return Consumer<POSProvider>(
       builder: (context, provider, _) {
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
           child: Column(
             children: [
               _PriceRow(
                 label: 'Subtotal',
                 value: '\$${provider.subtotal.toStringAsFixed(2)}',
               ),
+              if (provider.discountValue > 0) ...[
+                const SizedBox(height: 8),
+                _PriceRow(
+                  label: 'Discount (${provider.appliedCoupon ?? ""})',
+                  value: '-\$${provider.discountValue.toStringAsFixed(2)}',
+                  valueColor: Colors.green.shade700,
+                ),
+              ],
               const SizedBox(height: 8),
               _PriceRow(
                 label: 'Tax (8%)',
@@ -426,9 +474,9 @@ class _PriceBreakdown extends StatelessWidget {
                 label: 'Service Charge (4%)',
                 value: '\$${provider.serviceCharge.toStringAsFixed(2)}',
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               Divider(height: 1, thickness: 1, color: Colors.grey.shade100),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -461,8 +509,9 @@ class _PriceBreakdown extends StatelessWidget {
 class _PriceRow extends StatelessWidget {
   final String label;
   final String value;
+  final Color? valueColor;
 
-  const _PriceRow({required this.label, required this.value});
+  const _PriceRow({required this.label, required this.value, this.valueColor});
 
   @override
   Widget build(BuildContext context) {
@@ -471,17 +520,17 @@ class _PriceRow extends StatelessWidget {
       children: [
         Text(
           label,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 13,
-            color: Colors.black87, // Solid black like image
+            color: Colors.black87,
             fontWeight: FontWeight.w600,
           ),
         ),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 13,
-            color: Colors.black87,
+            color: valueColor ?? Colors.black87,
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -502,9 +551,16 @@ class _PlaceOrderButton extends StatelessWidget {
     return Consumer<POSProvider>(
       builder: (context, provider, _) {
         return Container(
-          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20, top: 8),
+          padding: const EdgeInsets.only(left: 20, right: 20, bottom: 16, top: 4),
           child: GestureDetector(
-            onTap: provider.cartItems.isEmpty ? null : () {},
+            onTap: provider.cartItems.isEmpty
+                ? null
+                : () {
+                    showDialog(
+                      context: context,
+                      builder: (_) => const CheckoutPaymentDialog(),
+                    );
+                  },
             child: Container(
               height: 56,
               decoration: BoxDecoration(
@@ -513,7 +569,6 @@ class _PlaceOrderButton extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  // Left side (Text + Arrow)
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -538,7 +593,6 @@ class _PlaceOrderButton extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Right side (Darker Price Box)
                   if (provider.cartItems.isNotEmpty)
                     Container(
                       height: double.infinity,

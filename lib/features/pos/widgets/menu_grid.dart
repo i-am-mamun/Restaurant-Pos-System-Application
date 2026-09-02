@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import '../../../core/theme/app_theme.dart';
 import '../../../core/providers/pos_provider.dart';
 import '../../../core/models/menu_item.dart';
 

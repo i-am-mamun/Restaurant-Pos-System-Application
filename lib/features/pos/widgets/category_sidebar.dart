@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/theme/app_theme.dart';
 import '../../../core/providers/pos_provider.dart';
 import '../../../core/models/menu_item.dart';
+import 'dialogs/pos_dialogs.dart';
+
 
 class CategorySidebar extends StatelessWidget {
   final bool isMobile;
@@ -125,7 +126,12 @@ class CategorySidebar extends StatelessWidget {
             child: Material(
               color: Colors.transparent,
               child: InkWell(
-                onTap: () {},
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => const CustomItemDialog(),
+                  );
+                },
                 borderRadius: BorderRadius.circular(12),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

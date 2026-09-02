@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/theme/app_theme.dart';
 import '../../../core/providers/pos_provider.dart';
+import 'dialogs/pos_dialogs.dart';
+
 
 class POSHeader extends StatelessWidget {
   const POSHeader({super.key});
@@ -322,7 +323,12 @@ class _RightIcons extends StatelessWidget {
         if (!isMobile) ...[
           IconButton(
             icon: const Icon(Icons.qr_code_scanner, color: Colors.white),
-            onPressed: () {},
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (_) => const BarcodeScannerDialog(),
+              );
+            },
             splashRadius: 24,
           ),
           const SizedBox(width: 4),
@@ -333,7 +339,12 @@ class _RightIcons extends StatelessWidget {
           children: [
             IconButton(
               icon: const Icon(Icons.notifications_none, color: Colors.white),
-              onPressed: () {},
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => const NotificationListDialog(),
+                );
+              },
               splashRadius: 24,
             ),
             Positioned(
@@ -359,12 +370,37 @@ class _RightIcons extends StatelessWidget {
           ],
         ),
         const SizedBox(width: 4),
-        IconButton(
+        PopupMenuButton<String>(
           icon: const Icon(Icons.more_vert, color: Colors.white),
-          onPressed: () {},
-          splashRadius: 24,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          onSelected: (val) {
+            final provider = Provider.of<POSProvider>(context, listen: false);
+            if (val == 'held') {
+              showDialog(context: context, builder: (_) => const HeldOrdersDialog());
+            } else if (val == 'clear') {
+              provider.clearCart();
+            } else if (val == 'shift') {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Daily Shift Sales Total: \$${248.50} | Cash Drawer: \$500.00'), backgroundColor: Color(0xFFFF6D00)),
+              );
+            } else if (val == 'help') {
+              showAboutDialog(
+                context: context,
+                applicationName: 'ZestBite POS System',
+                applicationVersion: '1.0.0',
+                applicationLegalese: '© 2026 ZestBite Technologies Inc.',
+              );
+            }
+          },
+          itemBuilder: (context) => [
+            const PopupMenuItem(value: 'held', child: Row(children: [Icon(Icons.pause_circle_outline, size: 18), SizedBox(width: 8), Text('Held Orders')])),
+            const PopupMenuItem(value: 'shift', child: Row(children: [Icon(Icons.point_of_sale, size: 18), SizedBox(width: 8), Text('Shift Report')])),
+            const PopupMenuItem(value: 'clear', child: Row(children: [Icon(Icons.cleaning_services, size: 18), SizedBox(width: 8), Text('Clear Cart')])),
+            const PopupMenuItem(value: 'help', child: Row(children: [Icon(Icons.info_outline, size: 18), SizedBox(width: 8), Text('System Info')])),
+          ],
         ),
       ],
     );
   }
 }
+
