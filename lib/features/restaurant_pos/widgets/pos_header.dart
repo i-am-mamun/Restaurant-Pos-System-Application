@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/pos_provider.dart';
+import '../../../core/providers/app_provider.dart';
+import '../../../core/localization/app_strings.dart';
+import '../../../core/theme/theme_extensions.dart';
 import 'dialogs/pos_dialogs.dart';
 import 'dialogs/hardware_settings_dialog.dart';
-
 
 class POSHeader extends StatelessWidget {
   const POSHeader({super.key});
@@ -12,6 +14,7 @@ class POSHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < 768;
+    final locale = context.watch<AppProvider>().locale;
 
     return SizedBox(
       height: isMobile ? 64 : 74,
@@ -40,13 +43,13 @@ class POSHeader extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         if (!isMobile) ...[
-                          const OrderTypeSegmentedControl(),
+                          OrderTypeSegmentedControl(locale: locale),
                           const SizedBox(width: 16),
-                          const _SearchBar(),
+                          _SearchBar(locale: locale),
                           const SizedBox(width: 16),
-                          const _RightIcons(isMobile: false),
+                          _RightIcons(isMobile: false, locale: locale),
                         ] else ...[
-                          _RightIcons(isMobile: true),
+                          _RightIcons(isMobile: true, locale: locale),
                         ],
                       ],
                     ),
@@ -62,7 +65,7 @@ class POSHeader extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// BACKGROUND PAINTER (Exact match to image: one clean wave)
+// BACKGROUND PAINTER
 // ─────────────────────────────────────────────────────────────────
 class _SimpleWavePainter extends CustomPainter {
   @override
@@ -71,39 +74,24 @@ class _SimpleWavePainter extends CustomPainter {
     final h = size.height;
     final rect = Rect.fromLTWH(0, 0, w, h);
 
-    // 1. Base gradient (Lighter orange to Mid orange)
     final basePaint = Paint()
       ..shader = const LinearGradient(
-        colors: [
-          Color(0xFFFF7A45),
-          Color(0xFFFF5722),
-        ],
+        colors: [Color(0xFFFF7A45), Color(0xFFFF5722)],
         begin: Alignment.centerLeft,
         end: Alignment.centerRight,
       ).createShader(rect);
     canvas.drawRect(rect, basePaint);
 
-    // 2. Single clean wave on the right side
     final wavePaint = Paint()
       ..shader = const LinearGradient(
-        colors: [
-          Color(0xFFFF5722),
-          Color(0xFFE64A19), // Darker orange at the bottom right
-        ],
+        colors: [Color(0xFFFF5722), Color(0xFFE64A19)],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ).createShader(rect);
 
     final wavePath = Path();
-    // Start the wave a bit after the logo
     wavePath.moveTo(w * 0.25, 0);
-    // Smooth curve down and to the right
-    wavePath.cubicTo(
-      w * 0.35, 0,       // control point 1
-      w * 0.30, h * 0.8, // control point 2
-      w * 0.50, h,       // end point
-    );
-    // Complete the path along the bottom and right edges
+    wavePath.cubicTo(w * 0.35, 0, w * 0.30, h * 0.8, w * 0.50, h);
     wavePath.lineTo(w, h);
     wavePath.lineTo(w, 0);
     wavePath.close();
@@ -116,7 +104,7 @@ class _SimpleWavePainter extends CustomPainter {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// LOGO (No borders, pure white icons/text)
+// LOGO
 // ─────────────────────────────────────────────────────────────────
 class _LogoWidget extends StatelessWidget {
   final bool isMobile;
@@ -127,12 +115,7 @@ class _LogoWidget extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Chef hat / food icon
-        Icon(
-          Icons.soup_kitchen, // Closest to chef hat with steam/bowl
-          color: Colors.white,
-          size: isMobile ? 32 : 40,
-        ),
+        Icon(Icons.soup_kitchen, color: Colors.white, size: isMobile ? 32 : 40),
         const SizedBox(width: 8),
         Column(
           mainAxisSize: MainAxisSize.min,
@@ -148,7 +131,7 @@ class _LogoWidget extends StatelessWidget {
                 height: 1.1,
               ),
             ),
-            Text(
+            const Text(
               'POS SYSTEM',
               style: TextStyle(
                 color: Colors.white,
@@ -166,27 +149,24 @@ class _LogoWidget extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// ORDER TYPE BUTTONS (Single white pill container)
+// ORDER TYPE BUTTONS
 // ─────────────────────────────────────────────────────────────────
 class OrderTypeSegmentedControl extends StatelessWidget {
   final bool isMobile;
-  const OrderTypeSegmentedControl({super.key, this.isMobile = false});
+  final String? locale;
+  const OrderTypeSegmentedControl({super.key, this.isMobile = false, this.locale});
 
   @override
   Widget build(BuildContext context) {
+    final currentLocale = locale ?? context.watch<AppProvider>().locale;
+    
     return Container(
       height: isMobile ? 36 : 44,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: context.inputBg,
         borderRadius: BorderRadius.circular(22),
         boxShadow: isMobile
-            ? [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ]
+            ? [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 8, offset: const Offset(0, 2))]
             : null,
       ),
       child: Consumer<POSProvider>(
@@ -196,7 +176,7 @@ class OrderTypeSegmentedControl extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               _SegmentButton(
-                label: 'Dine In',
+                label: AppStrings.get('dine_in', currentLocale),
                 icon: Icons.dining,
                 isSelected: selected == 'dine_in',
                 isMobile: isMobile,
@@ -204,7 +184,7 @@ class OrderTypeSegmentedControl extends StatelessWidget {
               ),
               _VerticalDivider(),
               _SegmentButton(
-                label: 'Take Away',
+                label: AppStrings.get('take_away', currentLocale),
                 icon: Icons.shopping_bag_outlined,
                 isSelected: selected == 'take_away',
                 isMobile: isMobile,
@@ -212,7 +192,7 @@ class OrderTypeSegmentedControl extends StatelessWidget {
               ),
               _VerticalDivider(),
               _SegmentButton(
-                label: 'Delivery',
+                label: AppStrings.get('delivery', currentLocale),
                 icon: Icons.delivery_dining,
                 isSelected: selected == 'delivery',
                 isMobile: isMobile,
@@ -243,8 +223,7 @@ class _SegmentButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Exact colors from the image
-    final color = isSelected ? const Color(0xFFFF5722) : Colors.black87;
+    final color = isSelected ? const Color(0xFFFF5722) : context.textPrimary;
     
     return GestureDetector(
       onTap: onTap,
@@ -277,16 +256,17 @@ class _VerticalDivider extends StatelessWidget {
     return Container(
       width: 1,
       height: 20,
-      color: Colors.grey.shade300,
+      color: context.dividerColor,
     );
   }
 }
 
 // ─────────────────────────────────────────────────────────────────
-// SEARCH BAR (White pill)
+// SEARCH BAR
 // ─────────────────────────────────────────────────────────────────
 class _SearchBar extends StatelessWidget {
-  const _SearchBar();
+  final String locale;
+  const _SearchBar({required this.locale});
 
   @override
   Widget build(BuildContext context) {
@@ -299,25 +279,25 @@ class _SearchBar extends StatelessWidget {
           width: barWidth,
           height: 44,
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.inputBg,
             borderRadius: BorderRadius.circular(22),
           ),
           child: Row(
             children: [
               const SizedBox(width: 16),
-              Icon(Icons.search, color: Colors.grey.shade500, size: 20),
+              Icon(Icons.search, color: context.textHint, size: 20),
               const SizedBox(width: 10),
               Expanded(
                 child: TextField(
                   onChanged: provider.setSearchQuery,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
-                    color: Colors.black87,
+                    color: context.textPrimary,
                   ),
                   decoration: InputDecoration(
-                    hintText: 'Search menu items...',
+                    hintText: AppStrings.get('search_hint', locale),
                     hintStyle: TextStyle(
-                      color: Colors.grey.shade400,
+                      color: context.textHint,
                       fontSize: 14,
                     ),
                     border: InputBorder.none,
@@ -336,11 +316,12 @@ class _SearchBar extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// RIGHT ICONS (Pure white icons, no borders/backgrounds)
+// RIGHT ICONS
 // ─────────────────────────────────────────────────────────────────
 class _RightIcons extends StatelessWidget {
   final bool isMobile;
-  const _RightIcons({this.isMobile = false});
+  final String locale;
+  const _RightIcons({this.isMobile = false, required this.locale});
 
   @override
   Widget build(BuildContext context) {
@@ -409,11 +390,12 @@ class _RightIcons extends StatelessWidget {
         ),
         const SizedBox(width: 4),
         PopupMenuButton<String>(
+          color: context.cardBg,
           offset: Offset(0, isMobile ? 50 : 56),
           icon: const Icon(Icons.more_vert, color: Colors.white),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           onSelected: (val) {
-            final provider = Provider.of<POSProvider>(context, listen: false);
+            final posProvider = Provider.of<POSProvider>(context, listen: false);
             if (val == 'waiter') {
               showDialog(context: context, builder: (_) => const WaiterSelectionDialog());
             } else if (val == 'custom_item') {
@@ -425,10 +407,10 @@ class _RightIcons extends StatelessWidget {
             } else if (val == 'held') {
               showDialog(context: context, builder: (_) => const HeldOrdersDialog());
             } else if (val == 'clear') {
-              provider.clearCart();
+              posProvider.clearCart();
             } else if (val == 'shift') {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Daily Shift Sales Total: \$248.50 | Cash Drawer: \$500.00'), backgroundColor: Color(0xFFFF6D00)),
+                const SnackBar(content: Text('Daily Shift Sales Total: ৳248.50 | Cash Drawer: ৳500.00'), backgroundColor: Color(0xFFFF6D00)),
               );
             } else if (val == 'hardware') {
               showDialog(context: context, builder: (_) => const HardwareSettingsDialog());
@@ -442,6 +424,8 @@ class _RightIcons extends StatelessWidget {
             }
           },
           itemBuilder: (context) {
+            final textStyle = TextStyle(color: context.textPrimary);
+            
             return [
               if (isMobile) ...[
                 PopupMenuItem(
@@ -453,61 +437,61 @@ class _RightIcons extends StatelessWidget {
                           const Icon(Icons.person_outline, size: 18, color: Color(0xFFFF6D00)),
                           const SizedBox(width: 8),
                           Text(
-                            'Waiter: ${pos.waiter}',
-                            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                            '${AppStrings.get('waiter_menu', locale)}: ${pos.waiter}',
+                            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: context.textPrimary),
                           ),
                         ],
                       );
                     },
                   ),
                 ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'custom_item',
                   child: Row(
                     children: [
-                      Icon(Icons.soup_kitchen_outlined, size: 18, color: Color(0xFFFF6D00)),
-                      SizedBox(width: 8),
-                      Text('Custom Item'),
+                      const Icon(Icons.soup_kitchen_outlined, size: 18, color: Color(0xFFFF6D00)),
+                      const SizedBox(width: 8),
+                      Text(AppStrings.get('custom_item', locale), style: textStyle),
                     ],
                   ),
                 ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'split',
                   child: Row(
                     children: [
-                      Icon(Icons.call_split, size: 18, color: Color(0xFF2196F3)),
-                      SizedBox(width: 8),
-                      Text('Split Bill'),
+                      const Icon(Icons.call_split, size: 18, color: Color(0xFF2196F3)),
+                      const SizedBox(width: 8),
+                      Text(AppStrings.get('split_bill', locale), style: textStyle),
                     ],
                   ),
                 ),
-                const PopupMenuItem(
+                PopupMenuItem(
                   value: 'transfer',
                   child: Row(
                     children: [
-                      Icon(Icons.sync_alt, size: 18, color: Color(0xFF4CAF50)),
-                      SizedBox(width: 8),
-                      Text('Transfer Order'),
+                      const Icon(Icons.sync_alt, size: 18, color: Color(0xFF4CAF50)),
+                      const SizedBox(width: 8),
+                      Text(AppStrings.get('transfer_order', locale), style: textStyle),
                     ],
                   ),
                 ),
                 const PopupMenuDivider(),
               ],
-              const PopupMenuItem(value: 'held', child: Row(children: [Icon(Icons.pause_circle_outline, size: 18), SizedBox(width: 8), Text('Held Orders')])),
-              const PopupMenuItem(value: 'shift', child: Row(children: [Icon(Icons.point_of_sale, size: 18), SizedBox(width: 8), Text('Shift Report')])),
-              const PopupMenuItem(value: 'clear', child: Row(children: [Icon(Icons.cleaning_services, size: 18), SizedBox(width: 8), Text('Clear Cart')])),
+              PopupMenuItem(value: 'held', child: Row(children: [const Icon(Icons.pause_circle_outline, size: 18), const SizedBox(width: 8), Text(AppStrings.get('held_orders', locale), style: textStyle)])),
+              PopupMenuItem(value: 'shift', child: Row(children: [const Icon(Icons.point_of_sale, size: 18), const SizedBox(width: 8), Text(AppStrings.get('shift_report', locale), style: textStyle)])),
+              PopupMenuItem(value: 'clear', child: Row(children: [const Icon(Icons.cleaning_services, size: 18), const SizedBox(width: 8), Text(AppStrings.get('clear_cart_menu', locale), style: textStyle)])),
               const PopupMenuDivider(),
-              const PopupMenuItem(
+              PopupMenuItem(
                 value: 'hardware',
                 child: Row(
                   children: [
-                    Icon(Icons.settings_input_composite_rounded, size: 18, color: Color(0xFF607D8B)),
-                    SizedBox(width: 8),
-                    Text('Hardware Settings'),
+                    const Icon(Icons.settings_input_composite_rounded, size: 18, color: Color(0xFF607D8B)),
+                    const SizedBox(width: 8),
+                    Text(AppStrings.get('hardware_settings', locale), style: textStyle),
                   ],
                 ),
               ),
-              const PopupMenuItem(value: 'help', child: Row(children: [Icon(Icons.info_outline, size: 18), SizedBox(width: 8), Text('System Info')])),
+              PopupMenuItem(value: 'help', child: Row(children: [const Icon(Icons.info_outline, size: 18), const SizedBox(width: 8), Text(AppStrings.get('system_info', locale), style: textStyle)])),
             ];
           },
         ),
@@ -515,4 +499,3 @@ class _RightIcons extends StatelessWidget {
     );
   }
 }
-

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../core/providers/app_provider.dart';
+import '../../../core/localization/app_strings.dart';
 import '../../restaurant_pos/screens/pos_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -6,23 +9,27 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 768;
+    final appProvider = context.watch<AppProvider>();
+    final locale = appProvider.locale;
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final surfaceColor = isDark ? const Color(0xFF1A1A1A) : Colors.white;
+    final bgColor = isDark ? const Color(0xFF0F0F0F) : Colors.grey.shade50;
 
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: bgColor,
       body: SafeArea(
         child: Column(
           children: [
-            // Header
+            // ── Header ───────────────────────────────────────────────────
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: surfaceColor,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.02),
-                    blurRadius: 10,
+                    color: Colors.black.withOpacity(isDark ? 0.3 : 0.06),
+                    blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
                 ],
@@ -32,7 +39,7 @@ class HomeScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFF6D00).withOpacity(0.1),
+                      color: const Color(0xFFFF6D00).withOpacity(0.12),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
@@ -42,44 +49,44 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  const Expanded(
+                  Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'ZestBite Enterprise',
+                          AppStrings.get('app_name', locale),
                           style: TextStyle(
-                            fontSize: 22,
+                            fontSize: 20,
                             fontWeight: FontWeight.w900,
-                            color: Colors.black87,
+                            color: theme.colorScheme.onSurface,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          'Select a point of sale system',
+                          AppStrings.get('app_subtitle', locale),
                           style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: theme.colorScheme.onSurface.withOpacity(0.55),
+                            fontWeight: FontWeight.w500,
                           ),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
                   ),
+                  // Settings button
                   IconButton(
-                    icon: const Icon(Icons.settings_outlined, color: Colors.grey),
-                    onPressed: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Global Settings Coming Soon')),
-                      );
-                    },
+                    icon: Icon(
+                      Icons.tune_rounded,
+                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                    ),
+                    onPressed: () => _showSettings(context, appProvider, locale, theme),
                   ),
                 ],
               ),
             ),
-            
-            // Grid Content
+
+            // ── Grid ─────────────────────────────────────────────────────
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(24),
@@ -87,62 +94,71 @@ class HomeScreen extends StatelessWidget {
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(maxWidth: 1000),
                     child: Wrap(
-                      spacing: 24,
-                      runSpacing: 24,
+                      spacing: 20,
+                      runSpacing: 20,
                       alignment: WrapAlignment.center,
                       children: [
                         _ModuleCard(
-                          title: 'Restaurant POS',
-                          description: 'Dine-in, Takeaway, Tables, Kitchen',
+                          title: AppStrings.get('restaurant_pos', locale),
+                          description: AppStrings.get('restaurant_pos_desc', locale),
                           icon: Icons.restaurant_rounded,
                           color: const Color(0xFFFF6D00),
                           isActive: true,
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (_) => const POSScreen()),
-                            );
-                          },
+                          isDark: isDark,
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const POSScreen()),
+                          ),
                         ),
                         _ModuleCard(
-                          title: 'Grocery POS',
-                          description: 'Barcode scanning, Weight scaling, Inventory',
+                          title: AppStrings.get('grocery_pos', locale),
+                          description: AppStrings.get('grocery_pos_desc', locale),
                           icon: Icons.local_grocery_store_rounded,
-                          color: Colors.green.shade600,
+                          color: const Color(0xFF2E7D32),
                           isActive: false,
-                          onTap: () => _showComingSoon(context, 'Grocery POS'),
+                          isDark: isDark,
+                          comingSoonLabel: AppStrings.get('coming_soon', locale),
+                          onTap: () => _snack(context, '🛒 ${AppStrings.get('grocery_pos', locale)} ${AppStrings.get('coming_soon_msg', locale)}'),
                         ),
                         _ModuleCard(
-                          title: 'Pharmacy POS',
-                          description: 'Prescriptions, Expiry tracking, Batch mgmt',
+                          title: AppStrings.get('pharmacy_pos', locale),
+                          description: AppStrings.get('pharmacy_pos_desc', locale),
                           icon: Icons.local_pharmacy_rounded,
-                          color: Colors.blue.shade600,
+                          color: const Color(0xFF1565C0),
                           isActive: false,
-                          onTap: () => _showComingSoon(context, 'Pharmacy POS'),
+                          isDark: isDark,
+                          comingSoonLabel: AppStrings.get('coming_soon', locale),
+                          onTap: () => _snack(context, '💊 ${AppStrings.get('pharmacy_pos', locale)} ${AppStrings.get('coming_soon_msg', locale)}'),
                         ),
                         _ModuleCard(
-                          title: 'Wholesaler POS',
-                          description: 'Bulk orders, Customer credit, B2B pricing',
+                          title: AppStrings.get('wholesaler_pos', locale),
+                          description: AppStrings.get('wholesaler_pos_desc', locale),
                           icon: Icons.inventory_2_rounded,
-                          color: Colors.purple.shade600,
+                          color: const Color(0xFF6A1B9A),
                           isActive: false,
-                          onTap: () => _showComingSoon(context, 'Wholesaler POS'),
+                          isDark: isDark,
+                          comingSoonLabel: AppStrings.get('coming_soon', locale),
+                          onTap: () => _snack(context, '📦 ${AppStrings.get('wholesaler_pos', locale)} ${AppStrings.get('coming_soon_msg', locale)}'),
                         ),
                         _ModuleCard(
-                          title: 'Fashion & Retail',
-                          description: 'Variants, Sizes, Colors, Returns',
+                          title: AppStrings.get('fashion_retail', locale),
+                          description: AppStrings.get('fashion_retail_desc', locale),
                           icon: Icons.checkroom_rounded,
-                          color: Colors.pink.shade500,
+                          color: const Color(0xFFC62828),
                           isActive: false,
-                          onTap: () => _showComingSoon(context, 'Fashion Retail POS'),
+                          isDark: isDark,
+                          comingSoonLabel: AppStrings.get('coming_soon', locale),
+                          onTap: () => _snack(context, '👗 ${AppStrings.get('fashion_retail', locale)} ${AppStrings.get('coming_soon_msg', locale)}'),
                         ),
                         _ModuleCard(
-                          title: 'Dashboard & Reports',
-                          description: 'Analytics, Multi-store management',
+                          title: AppStrings.get('dashboard', locale),
+                          description: AppStrings.get('dashboard_desc', locale),
                           icon: Icons.analytics_rounded,
-                          color: Colors.teal.shade600,
+                          color: const Color(0xFF00695C),
                           isActive: false,
-                          onTap: () => _showComingSoon(context, 'Enterprise Dashboard'),
+                          isDark: isDark,
+                          comingSoonLabel: AppStrings.get('coming_soon', locale),
+                          onTap: () => _snack(context, '📊 ${AppStrings.get('dashboard', locale)} ${AppStrings.get('coming_soon_msg', locale)}'),
                         ),
                       ],
                     ),
@@ -156,24 +172,333 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  void _showComingSoon(BuildContext context, String moduleName) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('🚀 $moduleName is coming soon!'),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        backgroundColor: Colors.black87,
+  void _snack(BuildContext context, String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(msg),
+      behavior: SnackBarBehavior.floating,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      backgroundColor: Colors.black87,
+    ));
+  }
+
+  void _showSettings(
+    BuildContext context,
+    AppProvider appProvider,
+    String locale,
+    ThemeData theme,
+  ) {
+    showDialog(
+      context: context,
+      builder: (_) => ChangeNotifierProvider.value(
+        value: appProvider,
+        child: const _SettingsDialog(),
       ),
     );
   }
 }
 
+// ─────────────────────────────────────────────────────────────────
+// SETTINGS DIALOG
+// ─────────────────────────────────────────────────────────────────
+class _SettingsDialog extends StatelessWidget {
+  const _SettingsDialog();
+
+  static const primaryOrange = Color(0xFFFF6D00);
+
+  @override
+  Widget build(BuildContext context) {
+    final appProvider = context.watch<AppProvider>();
+    final locale = appProvider.locale;
+    final isDark = appProvider.isDarkMode;
+    final theme = Theme.of(context);
+    final surfaceColor = isDark ? const Color(0xFF1A1A1A) : Colors.white;
+    final dividerColor = isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade100;
+    final textColor = theme.colorScheme.onSurface;
+
+    return AlertDialog(
+      backgroundColor: surfaceColor,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+      contentPadding: EdgeInsets.zero,
+      titlePadding: EdgeInsets.zero,
+      title: Container(
+        padding: const EdgeInsets.fromLTRB(20, 20, 8, 16),
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(color: dividerColor)),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: primaryOrange.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.tune_rounded, color: primaryOrange, size: 20),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                AppStrings.get('settings', locale),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: textColor,
+                ),
+              ),
+            ),
+            IconButton(
+              icon: Icon(Icons.close_rounded, color: textColor.withOpacity(0.5)),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+      ),
+      content: SizedBox(
+        width: 320,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // ── APPEARANCE ───────────────────────────────────────────
+            _SettingsSectionHeader(
+              label: AppStrings.get('appearance', locale),
+              icon: Icons.palette_outlined,
+              textColor: textColor,
+            ),
+
+            // Dark Mode toggle
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? Colors.indigo.shade900.withOpacity(0.5)
+                          : Colors.indigo.shade50,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Icon(
+                      isDark ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
+                      color: isDark ? Colors.indigo.shade300 : Colors.indigo.shade700,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Text(
+                      AppStrings.get('dark_mode', locale),
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: textColor,
+                      ),
+                    ),
+                  ),
+                  Switch(
+                    value: isDark,
+                    onChanged: (_) => appProvider.toggleTheme(),
+                    activeColor: primaryOrange,
+                  ),
+                ],
+              ),
+            ),
+
+            Divider(color: dividerColor, height: 20, indent: 16, endIndent: 16),
+
+            // ── LANGUAGE ─────────────────────────────────────────────
+            _SettingsSectionHeader(
+              label: AppStrings.get('language', locale),
+              icon: Icons.language_rounded,
+              textColor: textColor,
+            ),
+
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _LangButton(
+                      label: 'English',
+                      flag: '🇬🇧',
+                      selected: locale == 'en',
+                      isDark: isDark,
+                      onTap: () => appProvider.setLocale('en'),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: _LangButton(
+                      label: 'বাংলা',
+                      flag: '🇧🇩',
+                      selected: locale == 'bn',
+                      isDark: isDark,
+                      onTap: () => appProvider.setLocale('bn'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            Divider(color: dividerColor, height: 20, indent: 16, endIndent: 16),
+
+            // ── CURRENCY ─────────────────────────────────────────────
+            _SettingsSectionHeader(
+              label: AppStrings.get('currency', locale),
+              icon: Icons.monetization_on_outlined,
+              textColor: textColor,
+            ),
+
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF006400).withOpacity(isDark ? 0.2 : 0.07),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: const Color(0xFF006400).withOpacity(0.25),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Text('৳', style: TextStyle(fontSize: 22, color: Color(0xFF006400), fontWeight: FontWeight.w900)),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            AppStrings.get('currency_desc', locale),
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF006400),
+                            ),
+                          ),
+                          Text(
+                            locale == 'en' ? 'Fixed — cannot be changed' : 'নির্ধারিত — পরিবর্তন করা যাবে না',
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: const Color(0xFF006400).withOpacity(0.75),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.lock_outline_rounded, color: Color(0xFF006400), size: 18),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ── Settings Section Header ──────────────────────────────────────
+class _SettingsSectionHeader extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final Color textColor;
+
+  const _SettingsSectionHeader({
+    required this.label,
+    required this.icon,
+    required this.textColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+      child: Row(
+        children: [
+          Icon(icon, size: 14, color: textColor.withOpacity(0.45)),
+          const SizedBox(width: 6),
+          Text(
+            label.toUpperCase(),
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w800,
+              color: textColor.withOpacity(0.45),
+              letterSpacing: 0.8,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Language Button ──────────────────────────────────────────────
+class _LangButton extends StatelessWidget {
+  final String label;
+  final String flag;
+  final bool selected;
+  final bool isDark;
+  final VoidCallback onTap;
+
+  const _LangButton({
+    required this.label,
+    required this.flag,
+    required this.selected,
+    required this.isDark,
+    required this.onTap,
+  });
+
+  static const primaryOrange = Color(0xFFFF6D00);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          color: selected
+              ? primaryOrange.withOpacity(isDark ? 0.2 : 0.1)
+              : (isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade100),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: selected ? primaryOrange : Colors.transparent,
+            width: 1.5,
+          ),
+        ),
+        child: Column(
+          children: [
+            Text(flag, style: const TextStyle(fontSize: 22)),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: selected ? primaryOrange : Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
+// MODULE CARD
+// ─────────────────────────────────────────────────────────────────
 class _ModuleCard extends StatelessWidget {
   final String title;
   final String description;
   final IconData icon;
   final Color color;
   final bool isActive;
+  final bool isDark;
+  final String comingSoonLabel;
   final VoidCallback onTap;
 
   const _ModuleCard({
@@ -182,27 +507,36 @@ class _ModuleCard extends StatelessWidget {
     required this.icon,
     required this.color,
     required this.isActive,
+    required this.isDark,
+    this.comingSoonLabel = 'SOON',
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final cardColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
+    final textColor = isDark ? Colors.white : Colors.black87;
+    final subtextColor = isDark ? Colors.grey.shade400 : Colors.grey.shade500;
+    final borderColor = isActive
+        ? color.withOpacity(0.4)
+        : (isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade200);
+
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        width: 300,
-        height: 180,
-        padding: const EdgeInsets.all(24),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        width: 280,
+        height: 170,
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: cardColor,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isActive ? color.withOpacity(0.5) : Colors.grey.shade200,
-            width: isActive ? 2 : 1,
-          ),
+          border: Border.all(color: borderColor, width: isActive ? 2 : 1),
           boxShadow: [
             BoxShadow(
-              color: isActive ? color.withOpacity(0.15) : Colors.black.withOpacity(0.04),
+              color: isActive
+                  ? color.withOpacity(isDark ? 0.25 : 0.15)
+                  : Colors.black.withOpacity(isDark ? 0.3 : 0.05),
               blurRadius: 16,
               offset: const Offset(0, 8),
             ),
@@ -216,30 +550,32 @@ class _ModuleCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(11),
                   decoration: BoxDecoration(
-                    color: isActive ? color.withOpacity(0.1) : Colors.grey.shade100,
-                    borderRadius: BorderRadius.circular(14),
+                    color: isActive
+                        ? color.withOpacity(isDark ? 0.2 : 0.1)
+                        : (isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade100),
+                    borderRadius: BorderRadius.circular(13),
                   ),
                   child: Icon(
                     icon,
-                    size: 32,
-                    color: isActive ? color : Colors.grey.shade500,
+                    size: 28,
+                    color: isActive ? color : (isDark ? Colors.grey.shade500 : Colors.grey.shade400),
                   ),
                 ),
                 if (!isActive)
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
+                      color: isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade100,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Text(
-                      'SOON',
+                    child: Text(
+                      comingSoonLabel,
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey,
+                        color: isDark ? Colors.grey.shade500 : Colors.grey,
                       ),
                     ),
                   ),
@@ -249,17 +585,17 @@ class _ModuleCard extends StatelessWidget {
             Text(
               title,
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 17,
                 fontWeight: FontWeight.w800,
-                color: isActive ? Colors.black87 : Colors.grey.shade600,
+                color: isActive ? textColor : subtextColor,
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 5),
             Text(
               description,
               style: TextStyle(
-                fontSize: 13,
-                color: Colors.grey.shade500,
+                fontSize: 12,
+                color: subtextColor,
                 fontWeight: FontWeight.w500,
                 height: 1.3,
               ),

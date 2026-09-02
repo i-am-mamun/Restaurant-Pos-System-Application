@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/models/menu_item.dart';
 import '../../../../core/providers/pos_provider.dart';
+import '../../../../core/providers/app_provider.dart';
+import '../../../../core/localization/app_strings.dart';
+import '../../../../core/theme/theme_extensions.dart';
 
 // ─────────────────────────────────────────────────────────────────
 // TABLE SELECTION DIALOG
@@ -397,7 +400,7 @@ class HeldOrdersDialog extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              '\$${held.total.toStringAsFixed(2)}',
+                              '৳${held.total.toStringAsFixed(2)}',
                               style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15, color: Colors.black87),
                             ),
                           ],
@@ -525,7 +528,7 @@ class _SplitBillDialogState extends State<SplitBillDialog> {
                 children: [
                   const Text('Total Bill:', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
                   Text(
-                    '\$${total.toStringAsFixed(2)}',
+                    '৳${total.toStringAsFixed(2)}',
                     style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20, color: primaryOrange),
                   ),
                 ],
@@ -571,7 +574,7 @@ class _SplitBillDialogState extends State<SplitBillDialog> {
                     children: [
                       Text('Each Person Pays:', style: TextStyle(color: Colors.grey.shade700, fontWeight: FontWeight.w600)),
                       Text(
-                        '\$${perPerson.toStringAsFixed(2)}',
+                        '৳${perPerson.toStringAsFixed(2)}',
                         style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20, color: Colors.black87),
                       ),
                     ],
@@ -592,7 +595,7 @@ class _SplitBillDialogState extends State<SplitBillDialog> {
             Navigator.of(context).pop();
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Bill split into $_splitCount receipts (\$${perPerson.toStringAsFixed(2)} each)'),
+                content: Text('Bill split into $_splitCount receipts (৳${perPerson.toStringAsFixed(2)} each)'),
                 backgroundColor: primaryOrange,
               ),
             );
@@ -745,9 +748,9 @@ class _CustomItemDialogState extends State<CustomItemDialog> {
               controller: _priceController,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
               decoration: InputDecoration(
-                labelText: 'Price (\$)',
+                labelText: 'Price (৳)',
                 hintText: 'e.g. 12.50',
-                prefixText: '\$ ',
+                prefixText: '৳ ',
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
@@ -1012,7 +1015,7 @@ class _DiscountDialogState extends State<DiscountDialog> {
             SegmentedButton<bool>(
               segments: const [
                 ButtonSegment(value: true, label: Text('Percentage (%)')),
-                ButtonSegment(value: false, label: Text('Fixed Amount (\$)')),
+                ButtonSegment(value: false, label: Text('Fixed Amount (৳)')),
               ],
               selected: {_isPercentage},
               onSelectionChanged: (val) => setState(() => _isPercentage = val.first),
@@ -1023,7 +1026,7 @@ class _DiscountDialogState extends State<DiscountDialog> {
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
               decoration: InputDecoration(
                 labelText: _isPercentage ? 'Discount Percentage' : 'Discount Amount',
-                suffixText: _isPercentage ? '%' : '\$',
+                suffixText: _isPercentage ? '%' : '৳',
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
@@ -1044,7 +1047,7 @@ class _DiscountDialogState extends State<DiscountDialog> {
                     }).toList()
                   : [2, 5, 10, 15, 20].map((a) {
                       return ActionChip(
-                        label: Text('\$$a'),
+                        label: Text('৳$a'),
                         onPressed: () {
                           provider.applyDiscount(amount: a.toDouble());
                           Navigator.of(context).pop();
@@ -1097,7 +1100,7 @@ class PromoDialog extends StatelessWidget {
 
     final promos = [
       {'title': 'Happy Hour 15% OFF', 'desc': 'Valid 2:00 PM - 5:00 PM', 'action': () => provider.applyDiscount(percent: 15)},
-      {'title': 'Chef Special Deal', 'desc': '\$5 Off on orders \$30+', 'action': () => provider.applyDiscount(amount: 5)},
+      {'title': 'Chef Special Deal', 'desc': '৳5 Off on orders ৳30+', 'action': () => provider.applyDiscount(amount: 5)},
       {'title': 'Weekend Combo 10%', 'desc': 'Applicable on main course', 'action': () => provider.applyDiscount(percent: 10)},
     ];
 
@@ -1278,15 +1281,23 @@ class _NoteDialogState extends State<NoteDialog> {
 // ─────────────────────────────────────────────────────────────────
 // BILL PRINT DIALOG
 // ─────────────────────────────────────────────────────────────────
+// BILL PRINT / RECEIPT DIALOG
+// ─────────────────────────────────────────────────────────────────
 class BillPrintDialog extends StatelessWidget {
   const BillPrintDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<POSProvider>(context);
-    final primaryOrange = const Color(0xFFFF6D00);
+    final locale = context.watch<AppProvider>().locale;
+    const primaryOrange = Color(0xFFFF6D00);
+    final isBn = locale == 'bn';
+    final now = DateTime.now();
+    final dateStr = '${now.day.toString().padLeft(2, '0')}/${now.month.toString().padLeft(2, '0')}/${now.year}'
+        '  ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
 
     return AlertDialog(
+      backgroundColor: context.cardBg,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       contentPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
@@ -1294,100 +1305,187 @@ class BillPrintDialog extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: primaryOrange.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(Icons.print_rounded, color: primaryOrange),
+            decoration: BoxDecoration(color: primaryOrange.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+            child: const Icon(Icons.receipt_long_rounded, color: primaryOrange),
           ),
           const SizedBox(width: 12),
-          const Expanded(
-            child: Text('Bill / Receipt Preview', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+          Expanded(
+            child: Text(
+              isBn ? 'বিল / রসিদ' : 'Bill / Receipt',
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: context.textPrimary),
+            ),
           ),
         ],
       ),
       content: ConstrainedBox(
         constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.65,
-          maxWidth: 380,
+          maxHeight: MediaQuery.of(context).size.height * 0.70,
+          maxWidth: 400,
         ),
         child: SingleChildScrollView(
           child: Container(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: const Color(0xFFFAFAFA),
-              border: Border.all(color: Colors.grey.shade300),
+              color: context.isDark ? const Color(0xFF1A1A1A) : Colors.white,
+              border: Border.all(color: context.borderColor),
               borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(color: Colors.black.withOpacity(context.isDark ? 0.4 : 0.06), blurRadius: 12, offset: const Offset(0, 4)),
+              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text('ZESTBITE RESTAURANT', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
-                const Text('123 Culinary Ave, Foodville', style: TextStyle(fontSize: 11, color: Colors.grey)),
-                const Text('Tel: (555) 123-4567', style: TextStyle(fontSize: 11, color: Colors.grey)),
-                const Divider(height: 24),
+                // ── Header ────────────────────────────────────
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: primaryOrange,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Column(
+                    children: [
+                      Text(
+                        isBn ? 'জেস্টবাইট রেস্তোরাঁ' : 'ZESTBITE RESTAURANT',
+                        style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: Colors.white, letterSpacing: 0.5),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        isBn ? '১২৩ কুলিনারি এভিনিউ, ফুডভিল' : '123 Culinary Ave, Foodville',
+                        style: const TextStyle(fontSize: 11, color: Colors.white70),
+                      ),
+                      Text(
+                        isBn ? 'ফোন: ০১৭০০-০০০০০০' : 'Tel: (555) 123-4567',
+                        style: const TextStyle(fontSize: 11, color: Colors.white70),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 14),
+
+                // ── Order Info ────────────────────────────────
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: context.inputBg,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: context.borderColor),
+                  ),
+                  child: Column(
+                    children: [
+                      _infoRow(context, isBn ? 'টেবিল' : 'Table', provider.tableNumber, isBn ? 'সার্ভার' : 'Server', provider.waiter),
+                      const SizedBox(height: 6),
+                      _infoRow(context, isBn ? 'ধরন' : 'Type', isBn ? _translateOrderType(provider.selectedOrderType) : provider.selectedOrderType.toUpperCase(), isBn ? 'অতিথি' : 'Guests', '${provider.guests}'),
+                      const SizedBox(height: 6),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(isBn ? 'তারিখ ও সময়' : 'Date & Time', style: TextStyle(fontSize: 11, color: context.textSecondary, fontWeight: FontWeight.w600)),
+                          Text(dateStr, style: TextStyle(fontSize: 11, color: context.textPrimary, fontWeight: FontWeight.w700)),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 14),
+
+                // ── Items Header ──────────────────────────────
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Flexible(child: Text('Table: ${provider.tableNumber}', style: const TextStyle(fontWeight: FontWeight.w700), overflow: TextOverflow.ellipsis)),
-                    const SizedBox(width: 8),
-                    Flexible(child: Text('Server: ${provider.waiter}', style: const TextStyle(fontSize: 12), overflow: TextOverflow.ellipsis, textAlign: TextAlign.right)),
+                    Expanded(child: Text(isBn ? 'আইটেম' : 'Item', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: context.textPrimary))),
+                    Text(isBn ? 'পরিমাণ' : 'Qty', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: context.textSecondary)),
+                    const SizedBox(width: 16),
+                    SizedBox(width: 70, child: Text(isBn ? 'মূল্য' : 'Price', textAlign: TextAlign.right, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: context.textSecondary))),
                   ],
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Flexible(child: Text('Type: ${provider.selectedOrderType.toUpperCase()}', style: const TextStyle(fontSize: 12), overflow: TextOverflow.ellipsis)),
-                    const SizedBox(width: 8),
-                    Flexible(child: Text('Guests: ${provider.guests}', style: const TextStyle(fontSize: 12), overflow: TextOverflow.ellipsis, textAlign: TextAlign.right)),
-                  ],
-                ),
-                const Divider(height: 24),
+                Divider(color: context.dividerColor, height: 16),
+
+                // ── Items List ────────────────────────────────
                 ...provider.cartItems.map((item) {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 2),
+                    padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Text(
-                            '${item.quantity}x ${item.menuItem.name}',
-                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                            item.menuItem.localizedName(locale),
+                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: context.textPrimary),
                           ),
                         ),
-                        Text('\$${item.totalPrice.toStringAsFixed(2)}', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
+                        Text('${item.quantity}', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: context.textSecondary)),
+                        const SizedBox(width: 16),
+                        SizedBox(
+                          width: 70,
+                          child: Text('৳${item.totalPrice.toStringAsFixed(2)}',
+                            textAlign: TextAlign.right,
+                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: context.textPrimary)),
+                        ),
                       ],
                     ),
                   );
                 }),
-                const Divider(height: 24),
-                _priceRow('Subtotal', '\$${provider.subtotal.toStringAsFixed(2)}'),
+                Divider(color: context.dividerColor, height: 20),
+
+                // ── Price Breakdown ───────────────────────────
+                _receiptRow(context, isBn ? 'সাবটোটাল' : 'Subtotal', '৳${provider.subtotal.toStringAsFixed(2)}'),
                 if (provider.discountValue > 0)
-                  _priceRow('Discount', '-\$${provider.discountValue.toStringAsFixed(2)}'),
-                _priceRow('Tax (8%)', '\$${provider.tax.toStringAsFixed(2)}'),
-                _priceRow('Service (4%)', '\$${provider.serviceCharge.toStringAsFixed(2)}'),
-                const Divider(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text('TOTAL PAYABLE', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14)),
-                    Text('\$${provider.totalPayable.toStringAsFixed(2)}', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: primaryOrange)),
-                  ],
+                  _receiptRow(context, isBn ? 'ছাড়' : 'Discount', '-৳${provider.discountValue.toStringAsFixed(2)}', valueColor: Colors.green),
+                _receiptRow(context, isBn ? 'ট্যাক্স (৮%)' : 'Tax (8%)', '৳${provider.tax.toStringAsFixed(2)}'),
+                _receiptRow(context, isBn ? 'সার্ভিস চার্জ (৪%)' : 'Service (4%)', '৳${provider.serviceCharge.toStringAsFixed(2)}'),
+                Divider(color: context.dividerColor, height: 16),
+
+                // ── Total ─────────────────────────────────────
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: primaryOrange.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: primaryOrange.withOpacity(0.25)),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(isBn ? 'মোট পরিশোধযোগ্য' : 'TOTAL PAYABLE',
+                        style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14, color: context.textPrimary)),
+                      Text('৳${provider.totalPayable.toStringAsFixed(2)}',
+                        style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20, color: primaryOrange)),
+                    ],
+                  ),
                 ),
                 const SizedBox(height: 16),
-                const Text('Thank you for dining with us!', style: TextStyle(fontStyle: FontStyle.italic, fontSize: 11, color: Colors.grey)),
+
+                // ── Footer ────────────────────────────────────
+                Text(
+                  isBn ? 'আমাদের সাথে খাওয়ার জন্য ধন্যবাদ!' : 'Thank you for dining with us!',
+                  style: TextStyle(fontStyle: FontStyle.italic, fontSize: 12, color: context.textHint),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  isBn ? 'অনুগ্রহ করে আবার আসুন 🙏' : 'Please visit us again 🙏',
+                  style: TextStyle(fontSize: 11, color: context.textHint),
+                  textAlign: TextAlign.center,
+                ),
               ],
             ),
           ),
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Close')),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(isBn ? 'বন্ধ করুন' : 'Close', style: const TextStyle(color: Colors.grey)),
+        ),
         ElevatedButton.icon(
           onPressed: () {
             Navigator.of(context).pop();
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: const Text('Sending receipt to thermal printer...'), backgroundColor: primaryOrange),
+              SnackBar(
+                content: Text(isBn ? 'থার্মাল প্রিন্টারে রসিদ পাঠানো হচ্ছে...' : 'Sending receipt to thermal printer...'),
+                backgroundColor: primaryOrange,
+              ),
             );
           },
           style: ElevatedButton.styleFrom(
@@ -1396,25 +1494,48 @@ class BillPrintDialog extends StatelessWidget {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
           icon: const Icon(Icons.print, size: 18),
-          label: const Text('Print Now'),
+          label: Text(isBn ? 'প্রিন্ট করুন' : 'Print Now'),
         ),
       ],
     );
   }
 
-  Widget _priceRow(String label, String val) {
+  Widget _infoRow(BuildContext context, String l1, String v1, String l2, String v2) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text('$l1: ', style: TextStyle(fontSize: 11, color: context.textSecondary, fontWeight: FontWeight.w600)),
+        Text(v1, style: TextStyle(fontSize: 11, color: context.textPrimary, fontWeight: FontWeight.w700)),
+        const Spacer(),
+        Text('$l2: ', style: TextStyle(fontSize: 11, color: context.textSecondary, fontWeight: FontWeight.w600)),
+        Text(v2, style: TextStyle(fontSize: 11, color: context.textPrimary, fontWeight: FontWeight.w700)),
+      ],
+    );
+  }
+
+  Widget _receiptRow(BuildContext context, String label, String val, {Color? valueColor}) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
+      padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(fontSize: 12, color: Colors.black87)),
-          Text(val, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+          Text(label, style: TextStyle(fontSize: 12, color: context.textSecondary)),
+          Text(val, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: valueColor ?? context.textPrimary)),
         ],
       ),
     );
   }
+
+  String _translateOrderType(String type) {
+    switch (type) {
+      case 'dine_in': return 'ডাইন-ইন';
+      case 'take_away': return 'টেকঅ্যাওয়ে';
+      case 'delivery': return 'ডেলিভারি';
+      default: return type;
+    }
+  }
 }
+
 
 // ─────────────────────────────────────────────────────────────────
 // CHECKOUT PAYMENT DIALOG
@@ -1433,11 +1554,14 @@ class _CheckoutPaymentDialogState extends State<CheckoutPaymentDialog> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<POSProvider>(context);
+    final locale = context.watch<AppProvider>().locale;
+    final isBn = locale == 'bn';
     final total = provider.totalPayable;
     final change = _cashTendered > total ? _cashTendered - total : 0.0;
-    final primaryOrange = const Color(0xFFFF6D00);
+    const primaryOrange = Color(0xFFFF6D00);
 
     return AlertDialog(
+      backgroundColor: context.cardBg,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       contentPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
@@ -1445,15 +1569,15 @@ class _CheckoutPaymentDialogState extends State<CheckoutPaymentDialog> {
         children: [
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: primaryOrange.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(Icons.payments_rounded, color: primaryOrange),
+            decoration: BoxDecoration(color: primaryOrange.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+            child: const Icon(Icons.payments_rounded, color: primaryOrange),
           ),
           const SizedBox(width: 12),
-          const Expanded(
-            child: Text('Checkout & Payment', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+          Expanded(
+            child: Text(
+              isBn ? 'চেকআউট ও পেমেন্ট' : 'Checkout & Payment',
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: context.textPrimary),
+            ),
           ),
         ],
       ),
@@ -1467,67 +1591,105 @@ class _CheckoutPaymentDialogState extends State<CheckoutPaymentDialog> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // ── Total Amount Box ──
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: primaryOrange.withOpacity(0.08),
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: primaryOrange.withOpacity(0.2)),
+                  border: Border.all(color: primaryOrange.withOpacity(0.25)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Flexible(
-                      child: Text('Total Amount Due:', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+                    Flexible(
+                      child: Text(
+                        isBn ? 'মোট পরিমাণ:' : 'Total Amount Due:',
+                        style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: context.textPrimary),
+                      ),
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      '\$${total.toStringAsFixed(2)}',
-                      style: TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: primaryOrange),
-                    ),
+                    Text('৳${total.toStringAsFixed(2)}',
+                      style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: primaryOrange)),
                   ],
                 ),
               ),
               const SizedBox(height: 16),
-              const Text('Select Payment Method:', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+
+              // ── Payment Method ──
+              Text(
+                isBn ? 'পেমেন্ট পদ্ধতি বেছে নিন:' : 'Select Payment Method:',
+                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: context.textPrimary),
+              ),
               const SizedBox(height: 8),
               Row(
                 children: [
-                  _methodTile('Cash', Icons.money),
+                  _methodTile(context, isBn ? 'নগদ' : 'Cash', 'Cash', Icons.money, isBn),
                   const SizedBox(width: 8),
-                  _methodTile('Card', Icons.credit_card),
+                  _methodTile(context, isBn ? 'কার্ড' : 'Card', 'Card', Icons.credit_card, isBn),
                   const SizedBox(width: 8),
-                  _methodTile('QR Pay', Icons.qr_code),
+                  _methodTile(context, isBn ? 'QR পে' : 'QR Pay', 'QR Pay', Icons.qr_code, isBn),
                 ],
               ),
               const SizedBox(height: 16),
+
+              // ── Cash Tendered ──
               if (_selectedMethod == 'Cash') ...[
-                const Text('Cash Tendered:', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+                Text(
+                  isBn ? 'প্রদত্ত নগদ:' : 'Cash Tendered:',
+                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: context.textPrimary),
+                ),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
-                  children: [20, 50, 100].map((amt) {
-                    return ChoiceChip(
-                      label: Text('\$$amt'),
-                      selected: _cashTendered == amt.toDouble(),
-                      onSelected: (_) => setState(() => _cashTendered = amt.toDouble()),
+                  children: [20, 50, 100, 200, 500].map((amt) {
+                    final selected = _cashTendered == amt.toDouble();
+                    return GestureDetector(
+                      onTap: () => setState(() => _cashTendered = amt.toDouble()),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        margin: const EdgeInsets.only(bottom: 8),
+                        decoration: BoxDecoration(
+                          color: selected ? primaryOrange : context.inputBg,
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: selected ? primaryOrange : context.borderColor),
+                        ),
+                        child: Text('৳$amt',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: selected ? Colors.white : context.textPrimary,
+                          ),
+                        ),
+                      ),
                     );
                   }).toList(),
                 ),
                 const SizedBox(height: 12),
                 Container(
-                  padding: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
+                    color: change > 0
+                        ? Colors.green.withOpacity(context.isDark ? 0.15 : 0.08)
+                        : context.inputBg,
                     borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: change > 0 ? Colors.green.withOpacity(0.4) : context.borderColor,
+                    ),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Change to Return:'),
                       Text(
-                        '\$${change.toStringAsFixed(2)}',
-                        style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: change > 0 ? Colors.green : Colors.black87),
+                        isBn ? 'ফেরত দেওয়ার পরিমাণ:' : 'Change to Return:',
+                        style: TextStyle(color: context.textPrimary, fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        '৳${change.toStringAsFixed(2)}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 18,
+                          color: change > 0 ? Colors.green : context.textSecondary,
+                        ),
                       ),
                     ],
                   ),
@@ -1538,12 +1700,15 @@ class _CheckoutPaymentDialogState extends State<CheckoutPaymentDialog> {
         ),
       ),
       actions: [
-        TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Cancel')),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(isBn ? 'বাতিল' : 'Cancel', style: const TextStyle(color: Colors.grey)),
+        ),
         ElevatedButton(
           onPressed: () {
             final completedOrder = provider.placeOrder(paymentMethod: _selectedMethod);
             Navigator.of(context).pop();
-            _showSuccessDialog(context, completedOrder);
+            _showSuccessDialog(context, completedOrder, locale);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: primaryOrange,
@@ -1551,33 +1716,35 @@ class _CheckoutPaymentDialogState extends State<CheckoutPaymentDialog> {
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
-          child: const Text('Complete Order', style: TextStyle(fontWeight: FontWeight.bold)),
+          child: Text(isBn ? 'অর্ডার সম্পন্ন করুন' : 'Complete Order', style: const TextStyle(fontWeight: FontWeight.bold)),
         ),
       ],
     );
   }
 
-  Widget _methodTile(String label, IconData icon) {
-    final isSel = _selectedMethod == label;
-    final primaryOrange = const Color(0xFFFF6D00);
-
+  Widget _methodTile(BuildContext context, String displayLabel, String key, IconData icon, bool isBn) {
+    final isSel = _selectedMethod == key;
+    const primaryOrange = Color(0xFFFF6D00);
     return Expanded(
       child: GestureDetector(
-        onTap: () => setState(() => _selectedMethod = label),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12),
+        onTap: () => setState(() => _selectedMethod = key),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
-            color: isSel ? primaryOrange : Colors.grey.shade100,
-            borderRadius: BorderRadius.circular(10),
+            color: isSel ? primaryOrange : context.inputBg,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: isSel ? primaryOrange : context.borderColor),
+            boxShadow: isSel ? [BoxShadow(color: primaryOrange.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 3))] : [],
           ),
           child: Column(
             children: [
-              Icon(icon, color: isSel ? Colors.white : Colors.black87),
-              const SizedBox(height: 4),
+              Icon(icon, color: isSel ? Colors.white : context.textSecondary, size: 24),
+              const SizedBox(height: 6),
               Text(
-                label,
+                displayLabel,
                 style: TextStyle(
-                  color: isSel ? Colors.white : Colors.black87,
+                  color: isSel ? Colors.white : context.textPrimary,
                   fontWeight: FontWeight.w700,
                   fontSize: 12,
                 ),
@@ -1589,21 +1756,36 @@ class _CheckoutPaymentDialogState extends State<CheckoutPaymentDialog> {
     );
   }
 
-  void _showSuccessDialog(BuildContext context, CompletedOrder order) {
+  void _showSuccessDialog(BuildContext context, CompletedOrder order, String locale) {
+    final isBn = locale == 'bn';
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
+        backgroundColor: ctx.cardBg,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.check_circle_rounded, color: Colors.green, size: 64),
+            Container(
+              width: 72, height: 72,
+              decoration: BoxDecoration(color: Colors.green.withOpacity(0.12), shape: BoxShape.circle),
+              child: const Icon(Icons.check_circle_rounded, color: Colors.green, size: 48),
+            ),
             const SizedBox(height: 16),
-            const Text('Order Placed Successfully!', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+            Text(
+              isBn ? 'অর্ডার সফলভাবে সম্পন্ন!' : 'Order Placed Successfully!',
+              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: ctx.textPrimary),
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: 6),
-            Text('Order ID: ${order.id}', style: const TextStyle(color: Colors.grey, fontWeight: FontWeight.bold)),
+            Text('${isBn ? 'অর্ডার ID' : 'Order ID'}: ${order.id}',
+              style: TextStyle(color: ctx.textSecondary, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
-            Text('Total Paid: \$${order.total.toStringAsFixed(2)} via ${order.paymentMethod}', style: const TextStyle(fontWeight: FontWeight.w600)),
+            Text(
+              '${isBn ? 'পেমেন্ট' : 'Total Paid'}: ৳${order.total.toStringAsFixed(2)} ${isBn ? 'via' : 'via'} ${order.paymentMethod}',
+              style: TextStyle(fontWeight: FontWeight.w600, color: ctx.textPrimary),
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => Navigator.of(ctx).pop(),
@@ -1612,7 +1794,7 @@ class _CheckoutPaymentDialogState extends State<CheckoutPaymentDialog> {
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
-              child: const Text('Start New Order'),
+              child: Text(isBn ? 'নতুন অর্ডার শুরু করুন' : 'Start New Order'),
             ),
           ],
         ),

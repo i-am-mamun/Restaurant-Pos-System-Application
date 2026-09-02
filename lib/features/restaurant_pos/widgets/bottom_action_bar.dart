@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../core/providers/app_provider.dart';
+import '../../../core/localization/app_strings.dart';
+import '../../../core/theme/theme_extensions.dart';
 import 'dialogs/pos_dialogs.dart';
 
 class BottomActionBar extends StatelessWidget {
@@ -8,14 +12,15 @@ class BottomActionBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < 600;
+    final locale = context.watch<AppProvider>().locale;
 
     final actions = [
-      {'label': 'Coupon', 'icon': Icons.local_offer_outlined},
-      {'label': 'Discount', 'icon': Icons.percent},
-      {'label': 'Promo', 'icon': Icons.card_giftcard_outlined},
-      {'label': 'Note', 'icon': Icons.note_alt_outlined},
-      {'label': 'Kitchen Note', 'icon': Icons.kitchen_outlined},
-      {'label': 'Bill Print', 'icon': Icons.print_outlined},
+      {'label': AppStrings.get('coupon', locale), 'action': 'Coupon', 'icon': Icons.local_offer_outlined},
+      {'label': AppStrings.get('discount', locale), 'action': 'Discount', 'icon': Icons.percent},
+      {'label': AppStrings.get('promo', locale), 'action': 'Promo', 'icon': Icons.card_giftcard_outlined},
+      {'label': AppStrings.get('note', locale), 'action': 'Note', 'icon': Icons.note_alt_outlined},
+      {'label': AppStrings.get('kitchen_note', locale), 'action': 'Kitchen Note', 'icon': Icons.kitchen_outlined},
+      {'label': AppStrings.get('bill_print', locale), 'action': 'Bill Print', 'icon': Icons.print_outlined},
     ];
 
     return Container(
@@ -45,7 +50,7 @@ class BottomActionBar extends StatelessWidget {
                         icon: action['icon'] as IconData,
                         label: action['label'] as String,
                         isMobile: isMobile,
-                        onTap: () => _handleAction(context, action['label'] as String),
+                        onTap: () => _handleAction(context, action['action'] as String),
                       ),
                     ),
                   );
@@ -67,7 +72,7 @@ class BottomActionBar extends StatelessWidget {
                     icon: action['icon'] as IconData,
                     label: action['label'] as String,
                     isMobile: isMobile,
-                    onTap: () => _handleAction(context, action['label'] as String),
+                    onTap: () => _handleAction(context, action['action'] as String),
                   ),
                 ),
               );
@@ -125,7 +130,7 @@ class _BottomActionBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primaryOrange = const Color(0xFFFF6D00);
+    const primaryOrange = Color(0xFFFF6D00);
 
     return GestureDetector(
       onTap: onTap,
@@ -133,10 +138,10 @@ class _BottomActionBtn extends StatelessWidget {
       child: Container(
         height: isMobile ? 40 : 48,
         decoration: BoxDecoration(
-          color: primaryOrange.withOpacity(0.04),
+          color: context.isDark ? primaryOrange.withValues(alpha: 0.1) : primaryOrange.withValues(alpha: 0.04),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: primaryOrange.withOpacity(0.15),
+            color: primaryOrange.withValues(alpha: context.isDark ? 0.3 : 0.15),
             width: 1.5,
           ),
         ),
@@ -153,7 +158,7 @@ class _BottomActionBtn extends StatelessWidget {
               Flexible(
                 child: Text(
                   label,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 13,
                     color: primaryOrange,
                     fontWeight: FontWeight.w700,

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/pos_provider.dart';
+import '../../../core/providers/app_provider.dart';
+import '../../../core/localization/app_strings.dart';
+import '../../../core/theme/theme_extensions.dart';
 import 'dialogs/pos_dialogs.dart';
 
 class POSInfoBar extends StatelessWidget {
@@ -11,6 +14,7 @@ class POSInfoBar extends StatelessWidget {
     final screenWidth = MediaQuery.of(context).size.width;
     final isMobile = screenWidth < 768;
     final isTablet = screenWidth >= 768 && screenWidth < 1100;
+    final locale = context.watch<AppProvider>().locale;
 
     return Consumer<POSProvider>(
       builder: (context, provider, _) {
@@ -20,30 +24,24 @@ class POSInfoBar extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // ── Left Side: Table & Waiter (always left-aligned) ──
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     _InfoCard(
                       icon: Icons.groups_outlined,
-                      label: 'Table',
+                      label: AppStrings.get('table', locale),
                       value: provider.tableNumber,
                       hasDropdown: true,
                       isMobile: true,
                       onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (_) => const TableSelectionDialog(),
-                        );
+                        showDialog(context: context, builder: (_) => const TableSelectionDialog());
                       },
                     ),
                     const SizedBox(width: 6),
-                    const _GuestsCard(isMobile: true),
+                    _GuestsCard(isMobile: true, locale: locale),
                   ],
                 ),
-
-                // ── Right Side: Action Buttons (always right-aligned) ──
-                _ActionButtons(isMobile: true, isTablet: isTablet),
+                _ActionButtons(isMobile: true, isTablet: isTablet, locale: locale),
               ],
             ),
           );
@@ -53,45 +51,37 @@ class POSInfoBar extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           child: Row(
             children: [
-              // ── Left Side Info (Table, Guests, Waiter) ──
               _InfoCard(
                 icon: Icons.groups_outlined,
-                label: 'Table',
+                label: AppStrings.get('table', locale),
                 value: provider.tableNumber,
                 hasDropdown: true,
                 isMobile: false,
                 onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (_) => const TableSelectionDialog(),
-                  );
+                  showDialog(context: context, builder: (_) => const TableSelectionDialog());
                 },
               ),
               const SizedBox(width: 16),
-              const _GuestsCard(isMobile: false),
+              _GuestsCard(isMobile: false, locale: locale),
               const SizedBox(width: 16),
               _InfoCard(
                 icon: Icons.person_outline,
-                label: 'Waiter',
+                label: AppStrings.get('waiter', locale),
                 value: provider.waiter,
                 hasDropdown: true,
                 isMobile: false,
                 onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (_) => const WaiterSelectionDialog(),
-                  );
+                  showDialog(context: context, builder: (_) => const WaiterSelectionDialog());
                 },
               ),
               const SizedBox(width: 12),
-              // ── Right Side Actions ──
               Expanded(
                 child: Align(
                   alignment: Alignment.centerRight,
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     physics: const BouncingScrollPhysics(),
-                    child: _ActionButtons(isMobile: false, isTablet: isTablet),
+                    child: _ActionButtons(isMobile: false, isTablet: isTablet, locale: locale),
                   ),
                 ),
               ),
@@ -104,7 +94,7 @@ class POSInfoBar extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// INFO CARD (White rounded rectangle for Table, Waiter)
+// INFO CARD
 // ─────────────────────────────────────────────────────────────────
 class _InfoCard extends StatelessWidget {
   final IconData icon;
@@ -125,34 +115,21 @@ class _InfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const darkBrown = Color(0xFF5D4037);
-
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: isMobile ? 7 : 16,
-          vertical: isMobile ? 4 : 10,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: isMobile ? 7 : 16, vertical: isMobile ? 4 : 10),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.cardBg,
           borderRadius: BorderRadius.circular(8),
           boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.02),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
+            BoxShadow(color: Colors.black.withValues(alpha: context.isDark ? 0.3 : 0.02), blurRadius: 4, offset: const Offset(0, 2)),
           ],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              icon, 
-              size: isMobile ? 15 : 26, 
-              color: darkBrown,
-            ),
+            Icon(icon, size: isMobile ? 15 : 26, color: context.textPrimary),
             SizedBox(width: isMobile ? 5 : 12),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -160,27 +137,18 @@ class _InfoCard extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: TextStyle(
-                    fontSize: isMobile ? 8.5 : 11,
-                    color: Colors.grey.shade500,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontSize: isMobile ? 8.5 : 11, color: context.textSecondary, fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 1),
                 Text(
                   value,
-                  style: TextStyle(
-                    fontSize: isMobile ? 12 : 16,
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w800,
-                    height: 1.1,
-                  ),
+                  style: TextStyle(fontSize: isMobile ? 12 : 16, color: context.textPrimary, fontWeight: FontWeight.w800, height: 1.1),
                 ),
               ],
             ),
             if (hasDropdown) ...[
               SizedBox(width: isMobile ? 6 : 20),
-              Icon(Icons.keyboard_arrow_down, size: isMobile ? 13 : 18, color: darkBrown),
+              Icon(Icons.keyboard_arrow_down, size: isMobile ? 13 : 18, color: context.textPrimary),
             ],
           ],
         ),
@@ -194,91 +162,62 @@ class _InfoCard extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────
 class _GuestsCard extends StatelessWidget {
   final bool isMobile;
-  const _GuestsCard({this.isMobile = false});
+  final String locale;
+  const _GuestsCard({this.isMobile = false, required this.locale});
 
   @override
   Widget build(BuildContext context) {
-    const darkBrown = Color(0xFF5D4037);
-
     return Consumer<POSProvider>(
       builder: (context, provider, _) {
         return Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: isMobile ? 8 : 14,
-            vertical: isMobile ? 6 : 10,
-          ),
+          padding: EdgeInsets.symmetric(horizontal: isMobile ? 8 : 14, vertical: isMobile ? 6 : 10),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.cardBg,
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.02),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
-              ),
+              BoxShadow(color: Colors.black.withValues(alpha: context.isDark ? 0.3 : 0.02), blurRadius: 4, offset: const Offset(0, 2)),
             ],
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                Icons.people_outline, 
-                size: isMobile ? 18 : 24, 
-                color: darkBrown,
-              ),
+              Icon(Icons.people_outline, size: isMobile ? 18 : 24, color: context.textPrimary),
               SizedBox(width: isMobile ? 6 : 10),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Guests',
-                    style: TextStyle(
-                      fontSize: isMobile ? 9 : 11,
-                      color: Colors.grey.shade500,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    AppStrings.get('guests', locale),
+                    style: TextStyle(fontSize: isMobile ? 9 : 11, color: context.textSecondary, fontWeight: FontWeight.w600),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     '${provider.guests}',
-                    style: TextStyle(
-                      fontSize: isMobile ? 13 : 16,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w800,
-                      height: 1.1,
-                    ),
+                    style: TextStyle(fontSize: isMobile ? 13 : 16, color: context.textPrimary, fontWeight: FontWeight.w800, height: 1.1),
                   ),
                 ],
               ),
               SizedBox(width: isMobile ? 8 : 12),
-              // Minus Button
               GestureDetector(
                 onTap: provider.decrementGuests,
                 behavior: HitTestBehavior.opaque,
                 child: Container(
                   width: isMobile ? 22 : 26,
                   height: isMobile ? 22 : 26,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade200, width: 1.5),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Icon(Icons.remove, size: isMobile ? 12 : 16, color: darkBrown),
+                  decoration: BoxDecoration(border: Border.all(color: context.borderColor, width: 1.5), borderRadius: BorderRadius.circular(5)),
+                  child: Icon(Icons.remove, size: isMobile ? 12 : 16, color: context.textPrimary),
                 ),
               ),
               const SizedBox(width: 4),
-              // Plus Button
               GestureDetector(
                 onTap: provider.incrementGuests,
                 behavior: HitTestBehavior.opaque,
                 child: Container(
                   width: isMobile ? 22 : 26,
                   height: isMobile ? 22 : 26,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade200, width: 1.5),
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: Icon(Icons.add, size: isMobile ? 12 : 16, color: darkBrown),
+                  decoration: BoxDecoration(border: Border.all(color: context.borderColor, width: 1.5), borderRadius: BorderRadius.circular(5)),
+                  child: Icon(Icons.add, size: isMobile ? 12 : 16, color: context.textPrimary),
                 ),
               ),
             ],
@@ -290,34 +229,32 @@ class _GuestsCard extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// ACTION BUTTONS (Hold, Recall, Split, Transfer, Clear Order)
+// ACTION BUTTONS
 // ─────────────────────────────────────────────────────────────────
 class _ActionButtons extends StatelessWidget {
   final bool isMobile;
   final bool isTablet;
+  final String locale;
 
-  const _ActionButtons({this.isMobile = false, this.isTablet = false});
+  const _ActionButtons({this.isMobile = false, this.isTablet = false, required this.locale});
 
   @override
   Widget build(BuildContext context) {
     final buttons = [
-      {'label': 'Hold', 'icon': Icons.pause, 'color': const Color(0xFFFF7043)},
-      {'label': 'Recall', 'icon': Icons.restore, 'color': const Color(0xFF7E57C2)},
-      {'label': 'Split', 'icon': Icons.data_array, 'color': const Color(0xFF42A5F5)},
-      {'label': 'Transfer', 'icon': Icons.sync_alt, 'color': const Color(0xFF66BB6A)},
-      {'label': 'Clear Order', 'icon': Icons.delete_outline, 'color': const Color(0xFFEF5350)},
+      {'label': AppStrings.get('hold', locale), 'action': 'Hold', 'icon': Icons.pause, 'color': const Color(0xFFFF7043)},
+      {'label': AppStrings.get('recall', locale), 'action': 'Recall', 'icon': Icons.restore, 'color': const Color(0xFF7E57C2)},
+      {'label': AppStrings.get('split', locale), 'action': 'Split', 'icon': Icons.data_array, 'color': const Color(0xFF42A5F5)},
+      {'label': AppStrings.get('transfer', locale), 'action': 'Transfer', 'icon': Icons.sync_alt, 'color': const Color(0xFF66BB6A)},
+      {'label': AppStrings.get('clear_order', locale), 'action': 'Clear Order', 'icon': Icons.delete_outline, 'color': const Color(0xFFEF5350)},
     ];
 
-    final visibleButtons = isMobile
-        ? buttons.sublist(0, 2)
-        : isTablet
-            ? buttons.sublist(0, 3)
-            : buttons;
+    final visibleButtons = isMobile ? buttons.sublist(0, 2) : (isTablet ? buttons.sublist(0, 3) : buttons);
 
     return Row(
       children: visibleButtons.map((btn) {
         return _ActionButton(
           label: btn['label'] as String,
+          actionName: btn['action'] as String,
           icon: btn['icon'] as IconData,
           color: btn['color'] as Color,
           isMobile: isMobile,
@@ -330,6 +267,7 @@ class _ActionButtons extends StatelessWidget {
 
 class _ActionButton extends StatelessWidget {
   final String label;
+  final String actionName;
   final IconData icon;
   final Color color;
   final bool isMobile;
@@ -337,6 +275,7 @@ class _ActionButton extends StatelessWidget {
 
   const _ActionButton({
     required this.label,
+    required this.actionName,
     required this.icon,
     required this.color,
     required this.isMobile,
@@ -346,57 +285,41 @@ class _ActionButton extends StatelessWidget {
   void _handleTap(BuildContext context) {
     final provider = Provider.of<POSProvider>(context, listen: false);
 
-    switch (label) {
+    switch (actionName) {
       case 'Hold':
         if (provider.cartItems.isEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Cart is empty. Add items to hold order.'), backgroundColor: Colors.orange),
-          );
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cart is empty. Add items to hold order.'), backgroundColor: Colors.orange));
         } else {
           final held = provider.holdCurrentOrder();
           if (held) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Order saved to Held Orders!'), backgroundColor: Color(0xFFFF7043)),
-            );
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Order saved to Held Orders!'), backgroundColor: Color(0xFFFF7043)));
           }
         }
         break;
       case 'Recall':
-        showDialog(
-          context: context,
-          builder: (_) => const HeldOrdersDialog(),
-        );
+        showDialog(context: context, builder: (_) => const HeldOrdersDialog());
         break;
       case 'Split':
         if (provider.cartItems.isEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Cart is empty. Add items to split bill.'), backgroundColor: Colors.orange),
-          );
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cart is empty. Add items to split bill.'), backgroundColor: Colors.orange));
         } else {
-          showDialog(
-            context: context,
-            builder: (_) => const SplitBillDialog(),
-          );
+          showDialog(context: context, builder: (_) => const SplitBillDialog());
         }
         break;
       case 'Transfer':
-        showDialog(
-          context: context,
-          builder: (_) => const TransferOrderDialog(),
-        );
+        showDialog(context: context, builder: (_) => const TransferOrderDialog());
         break;
       case 'Clear Order':
         if (provider.cartItems.isEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Cart is already empty.'), backgroundColor: Colors.grey),
-          );
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Cart is already empty.'), backgroundColor: Colors.grey));
         } else {
           showDialog(
             context: context,
             builder: (ctx) => AlertDialog(
+              backgroundColor: ctx.cardBg,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              title: const Text('Clear Order?'),
-              content: const Text('Are you sure you want to remove all items from the current order?'),
+              title: Text('Clear Order?', style: TextStyle(color: ctx.textPrimary)),
+              content: Text('Are you sure you want to remove all items from the current order?', style: TextStyle(color: ctx.textSecondary)),
               actions: [
                 TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Cancel')),
                 ElevatedButton(
@@ -425,33 +348,19 @@ class _ActionButton extends StatelessWidget {
           onTap: () => _handleTap(context),
           borderRadius: BorderRadius.circular(8),
           child: Container(
-            padding: EdgeInsets.symmetric(
-              horizontal: isMobile ? 8 : (isTablet ? 12 : 16),
-              vertical: isMobile ? 6 : (isTablet ? 8 : 10),
-            ),
+            padding: EdgeInsets.symmetric(horizontal: isMobile ? 8 : (isTablet ? 12 : 16), vertical: isMobile ? 6 : (isTablet ? 8 : 10)),
             decoration: BoxDecoration(
-              color: color.withOpacity(0.04), // Very faint background
-              border: Border.all(color: color.withOpacity(0.2), width: 1.5), // Crisp border
+              color: color.withValues(alpha: context.isDark ? 0.1 : 0.04),
+              border: Border.all(color: color.withValues(alpha: context.isDark ? 0.4 : 0.2), width: 1.5),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  icon,
-                  size: isMobile ? 14 : (isTablet ? 16 : 18),
-                  color: color,
-                ),
+                Icon(icon, size: isMobile ? 14 : (isTablet ? 16 : 18), color: color),
                 if (!isMobile) ...[
                   const SizedBox(width: 8),
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontSize: isTablet ? 13 : 14,
-                      color: color,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  Text(label, style: TextStyle(fontSize: isTablet ? 13 : 14, color: color, fontWeight: FontWeight.w600)),
                 ],
               ],
             ),

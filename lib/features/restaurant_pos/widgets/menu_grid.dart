@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/providers/pos_provider.dart';
+import '../../../core/providers/app_provider.dart';
+import '../../../core/localization/app_strings.dart';
 import '../../../core/models/menu_item.dart';
+import '../../../core/theme/theme_extensions.dart';
 
 class MenuGrid extends StatelessWidget {
   final bool isMobile;
@@ -12,7 +15,7 @@ class MenuGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     if (isMobile) {
       return Container(
-        color: Colors.white,
+        color: context.cardBg,
         child: Column(
           children: [
             _MenuHeader(isMobile: isMobile),
@@ -21,11 +24,8 @@ class MenuGrid extends StatelessWidget {
                 builder: (context, provider, _) {
                   final items = provider.filteredMenuItems;
                   if (items.isEmpty) {
-                    return const Center(
-                      child: Text(
-                        'No items found',
-                        style: TextStyle(color: Colors.grey),
-                      ),
+                    return Center(
+                      child: Text('No items found', style: TextStyle(color: context.textHint)),
                     );
                   }
                   if (provider.viewMode == 'list') {
@@ -45,19 +45,14 @@ class MenuGrid extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(
-        left: 0,
-        right: 16,
-        top: 0,
-        bottom: 6,
-      ),
+      padding: const EdgeInsets.only(left: 0, right: 16, top: 0, bottom: 6),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.cardBg,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
+              color: Colors.black.withValues(alpha: context.isDark ? 0.4 : 0.03),
               blurRadius: 8,
               offset: const Offset(0, 3),
             ),
@@ -67,33 +62,23 @@ class MenuGrid extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           child: Column(
             children: [
-              // Menu Header with category title + view toggle
               _MenuHeader(isMobile: isMobile),
-
-              // Grid Content
               Expanded(
                 child: Consumer<POSProvider>(
                   builder: (context, provider, _) {
                     final items = provider.filteredMenuItems;
                     if (items.isEmpty) {
-                      return const Center(
-                        child: Text(
-                          'No items found',
-                          style: TextStyle(color: Colors.grey),
-                        ),
+                      return Center(
+                        child: Text('No items found', style: TextStyle(color: context.textHint)),
                       );
                     }
-
                     if (provider.viewMode == 'list') {
                       return _MenuListView(items: items, isMobile: isMobile);
                     }
-
                     return _MenuGridView(items: items, isMobile: isMobile);
                   },
                 ),
               ),
-
-              // Pagination Dots (Static for UI matching)
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 16),
                 child: _PaginationDots(),
@@ -115,61 +100,43 @@ class _MenuHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (isMobile) {
-      return const SizedBox.shrink(); // Hide redundant header on mobile
-    }
+    if (isMobile) return const SizedBox.shrink();
 
-    final primaryOrange = const Color(0xFFFF6D00);
+    const primaryOrange = Color(0xFFFF6D00);
+    final locale = context.watch<AppProvider>().locale;
 
     return Consumer<POSProvider>(
       builder: (context, provider, _) {
-        final categoryName = AppData.categories
-            .firstWhere((c) => c.id == provider.selectedCategory)
-            .name;
+        final category = AppData.categories.firstWhere((c) => c.id == provider.selectedCategory);
+        final categoryName = category.localizedName(locale);
 
         return Container(
-          padding: EdgeInsets.only(
-            left: isMobile ? 12 : 24,
-            right: isMobile ? 12 : 24,
-            top: 16,
-          ),
+          padding: EdgeInsets.only(left: isMobile ? 12 : 24, right: isMobile ? 12 : 24, top: 16),
           decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border(
-              bottom: BorderSide(color: Colors.grey.shade100, width: 2),
-            ),
+            color: context.cardBg,
+            border: Border(bottom: BorderSide(color: context.dividerColor, width: 2)),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              // Category Title with Bottom Border
               Container(
                 padding: const EdgeInsets.only(bottom: 12),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: primaryOrange, width: 3),
-                  ),
+                decoration: const BoxDecoration(
+                  border: Border(bottom: BorderSide(color: primaryOrange, width: 3)),
                 ),
                 child: Text(
-                  categoryName == 'All' ? 'All Items' : categoryName,
-                  style: TextStyle(
-                    fontSize: isMobile ? 16 : 18,
-                    fontWeight: FontWeight.w700,
-                    color: primaryOrange,
-                  ),
+                  categoryName,
+                  style: TextStyle(fontSize: isMobile ? 16 : 18, fontWeight: FontWeight.w700, color: primaryOrange),
                 ),
               ),
-
               const Spacer(),
-
-              // View Toggle Button Group (Hide on mobile)
               if (!isMobile)
                 Container(
                   margin: const EdgeInsets.only(bottom: 12),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: context.inputBg,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey.shade200),
+                    border: Border.all(color: context.borderColor),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -203,16 +170,11 @@ class _ViewToggleBtn extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _ViewToggleBtn({
-    required this.icon,
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
+  const _ViewToggleBtn({required this.icon, required this.label, required this.isSelected, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    final primaryOrange = const Color(0xFFFF6D00);
+    const primaryOrange = Color(0xFFFF6D00);
 
     return GestureDetector(
       onTap: onTap,
@@ -226,18 +188,14 @@ class _ViewToggleBtn extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
-              size: 16,
-              color: isSelected ? Colors.white : Colors.grey.shade700,
-            ),
+            Icon(icon, size: 16, color: isSelected ? Colors.white : context.textSecondary),
             const SizedBox(width: 6),
             Text(
               label,
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                color: isSelected ? Colors.white : Colors.grey.shade700,
+                color: isSelected ? Colors.white : context.textSecondary,
               ),
             ),
           ],
@@ -253,28 +211,15 @@ class _ViewToggleBtn extends StatelessWidget {
 class _MenuGridView extends StatelessWidget {
   final List<MenuItem> items;
   final bool isMobile;
-
   const _MenuGridView({required this.items, this.isMobile = false});
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    int crossAxisCount;
-    if (screenWidth >= 1200) {
-      crossAxisCount = 4; // Matches the image
-    } else if (screenWidth >= 900) {
-      crossAxisCount = 3;
-    } else if (screenWidth >= 600) {
-      crossAxisCount = 2;
-    } else {
-      crossAxisCount = 2;
-    }
+    int crossAxisCount = screenWidth >= 1200 ? 4 : (screenWidth >= 900 ? 3 : 2);
 
     return GridView.builder(
-      padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 10 : 24,
-        vertical: isMobile ? 12 : 24,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: isMobile ? 10 : 24, vertical: isMobile ? 12 : 24),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,
         crossAxisSpacing: isMobile ? 10 : 20,
@@ -282,10 +227,7 @@ class _MenuGridView extends StatelessWidget {
         childAspectRatio: isMobile ? 0.78 : 0.80,
       ),
       itemCount: items.length,
-      itemBuilder: (context, index) => _MenuItemCard(
-        item: items[index],
-        isMobile: isMobile,
-      ),
+      itemBuilder: (context, index) => _MenuItemCard(item: items[index], isMobile: isMobile),
     );
   }
 }
@@ -296,12 +238,12 @@ class _MenuGridView extends StatelessWidget {
 class _MenuItemCard extends StatelessWidget {
   final MenuItem item;
   final bool isMobile;
-
   const _MenuItemCard({required this.item, this.isMobile = false});
 
   @override
   Widget build(BuildContext context) {
-    final primaryOrange = const Color(0xFFFF6D00);
+    const primaryOrange = Color(0xFFFF6D00);
+    final locale = context.watch<AppProvider>().locale;
 
     return Consumer<POSProvider>(
       builder: (context, provider, _) {
@@ -309,12 +251,12 @@ class _MenuItemCard extends StatelessWidget {
 
         return Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: context.cardBg,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: Colors.grey.shade100, width: 1.5),
+            border: Border.all(color: context.borderColor, width: 1.5),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.03),
+                color: Colors.black.withValues(alpha: context.isDark ? 0.3 : 0.03),
                 blurRadius: 8,
                 offset: const Offset(0, 3),
               ),
@@ -325,51 +267,30 @@ class _MenuItemCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Image Section (Full width, no padding, clipped to top corners)
                   Expanded(
                     child: ClipRRect(
                       borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
                       child: Container(
                         width: double.infinity,
-                        color: Colors.grey.shade50,
+                        color: context.inputBg,
                         child: CachedNetworkImage(
                           imageUrl: item.imageUrl,
                           fit: BoxFit.cover,
-                          placeholder: (context, url) => const Center(
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Color(0xFFFF6D00),
-                            ),
-                          ),
-                          errorWidget: (context, url, error) => Center(
-                            child: Icon(
-                              Icons.fastfood,
-                              color: Colors.grey.shade300,
-                              size: 36,
-                            ),
-                          ),
+                          placeholder: (context, url) => const Center(child: CircularProgressIndicator(strokeWidth: 2, color: primaryOrange)),
+                          errorWidget: (context, url, error) => Center(child: Icon(Icons.fastfood, color: context.dividerColor, size: 36)),
                         ),
                       ),
                     ),
                   ),
-
-                  // Info Section (Name, Price, Add Button)
                   Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isMobile ? 8 : 12,
-                      vertical: isMobile ? 6 : 8,
-                    ),
+                    padding: EdgeInsets.symmetric(horizontal: isMobile ? 8 : 12, vertical: isMobile ? 6 : 8),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          item.name,
-                          style: TextStyle(
-                            fontSize: isMobile ? 13 : 16,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black87,
-                          ),
+                          item.localizedName(locale),
+                          style: TextStyle(fontSize: isMobile ? 13 : 16, fontWeight: FontWeight.w700, color: context.textPrimary),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -377,81 +298,48 @@ class _MenuItemCard extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Flexible(
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  '\$${item.price.toStringAsFixed(2)}',
-                                  style: TextStyle(
-                                    fontSize: isMobile ? 12 : 15,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.grey.shade600,
-                                  ),
-                                ),
+                            Expanded(
+                              child: Text(
+                                '৳${item.price.toStringAsFixed(2)}',
+                                style: TextStyle(fontSize: isMobile ? 12 : 15, fontWeight: FontWeight.w700, color: context.textSecondary),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             const SizedBox(width: 4),
-                            // Quantity Controller (shows - qty + when in cart)
                             inCart
                                 ? Container(
                                     height: isMobile ? 26 : 34,
                                     decoration: BoxDecoration(
-                                      color: primaryOrange.withOpacity(0.08),
+                                      color: primaryOrange.withValues(alpha: 0.15),
                                       borderRadius: BorderRadius.circular(6),
                                     ),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        // Minus button
                                         GestureDetector(
                                           onTap: () => provider.decrementQuantity(item.id),
                                           behavior: HitTestBehavior.opaque,
                                           child: Container(
-                                            width: isMobile ? 22 : 30,
-                                            height: double.infinity,
-                                            alignment: Alignment.center,
-                                            decoration: BoxDecoration(
-                                              color: primaryOrange,
-                                              borderRadius: BorderRadius.circular(6),
-                                            ),
-                                            child: Icon(
-                                              Icons.remove,
-                                              color: Colors.white,
-                                              size: isMobile ? 12 : 16,
-                                            ),
+                                            width: isMobile ? 18 : 30, height: double.infinity, alignment: Alignment.center,
+                                            decoration: BoxDecoration(color: primaryOrange, borderRadius: BorderRadius.circular(6)),
+                                            child: Icon(Icons.remove, color: Colors.white, size: isMobile ? 10 : 16),
                                           ),
                                         ),
-                                        // Quantity number
                                         Container(
-                                          width: isMobile ? 18 : 30,
-                                          alignment: Alignment.center,
+                                          width: isMobile ? 16 : 30, alignment: Alignment.center,
                                           child: Text(
                                             '${provider.getQuantity(item.id)}',
-                                            style: TextStyle(
-                                              fontSize: isMobile ? 11 : 14,
-                                              fontWeight: FontWeight.w800,
-                                              color: primaryOrange,
-                                            ),
+                                            style: TextStyle(fontSize: isMobile ? 10 : 14, fontWeight: FontWeight.w800, color: primaryOrange),
                                           ),
                                         ),
-                                        // Plus button
                                         GestureDetector(
                                           onTap: () => provider.addToCart(item),
                                           behavior: HitTestBehavior.opaque,
                                           child: Container(
-                                            width: isMobile ? 22 : 30,
-                                            height: double.infinity,
-                                            alignment: Alignment.center,
-                                            decoration: BoxDecoration(
-                                              color: primaryOrange,
-                                              borderRadius: BorderRadius.circular(6),
-                                            ),
-                                            child: Icon(
-                                              Icons.add,
-                                              color: Colors.white,
-                                              size: isMobile ? 12 : 16,
-                                            ),
+                                            width: isMobile ? 18 : 30, height: double.infinity, alignment: Alignment.center,
+                                            decoration: BoxDecoration(color: primaryOrange, borderRadius: BorderRadius.circular(6)),
+                                            child: Icon(Icons.add, color: Colors.white, size: isMobile ? 10 : 16),
                                           ),
                                         ),
                                       ],
@@ -461,17 +349,9 @@ class _MenuItemCard extends StatelessWidget {
                                     onTap: () => provider.addToCart(item),
                                     behavior: HitTestBehavior.opaque,
                                     child: Container(
-                                      width: isMobile ? 26 : 34,
-                                      height: isMobile ? 26 : 34,
-                                      decoration: BoxDecoration(
-                                        color: primaryOrange,
-                                        borderRadius: BorderRadius.circular(6),
-                                      ),
-                                      child: Icon(
-                                        Icons.add,
-                                        color: Colors.white,
-                                        size: isMobile ? 16 : 22,
-                                      ),
+                                      width: isMobile ? 26 : 34, height: isMobile ? 26 : 34,
+                                      decoration: BoxDecoration(color: primaryOrange, borderRadius: BorderRadius.circular(6)),
+                                      child: Icon(Icons.add, color: Colors.white, size: isMobile ? 16 : 22),
                                     ),
                                   ),
                           ],
@@ -481,49 +361,24 @@ class _MenuItemCard extends StatelessWidget {
                   ),
                 ],
               ),
-
-              // Badges Section (Top Left and Top Right)
               Positioned(
-                top: 10,
-                left: 10,
-                right: 10,
+                top: 10, left: 10, right: 10,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Top Left (Popular / Star)
                     if (item.isPopular)
                       Container(
-                        width: 26,
-                        height: 26,
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2), // White border
-                        ),
-                        child: const Icon(
-                          Icons.star,
-                          color: Colors.white,
-                          size: 14,
-                        ),
+                        width: 26, height: 26,
+                        decoration: BoxDecoration(color: Colors.red, shape: BoxShape.circle, border: Border.all(color: Colors.white, width: 2)),
+                        child: const Icon(Icons.star, color: Colors.white, size: 14),
                       )
                     else
                       const SizedBox.shrink(),
-
-                    // Top Right (Veg / Leaf)
                     if (item.isVeg)
                       Container(
-                        width: 26,
-                        height: 26,
-                        decoration: BoxDecoration(
-                          color: Colors.green.shade600,
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 2), // White border
-                        ),
-                        child: const Icon(
-                          Icons.eco,
-                          color: Colors.white,
-                          size: 14,
-                        ),
+                        width: 26, height: 26,
+                        decoration: BoxDecoration(color: Colors.green.shade600, shape: BoxShape.circle, border: Border.all(color: Colors.white, width: 2)),
+                        child: const Icon(Icons.eco, color: Colors.white, size: 14),
                       )
                     else
                       const SizedBox.shrink(),
@@ -539,21 +394,20 @@ class _MenuItemCard extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// LIST VIEW (Simplified for when user toggles to list)
+// LIST VIEW
 // ─────────────────────────────────────────────────────────────────
 class _MenuListView extends StatelessWidget {
   final List<MenuItem> items;
   final bool isMobile;
-
   const _MenuListView({required this.items, this.isMobile = false});
 
   @override
   Widget build(BuildContext context) {
+    const primaryOrange = Color(0xFFFF6D00);
+    final locale = context.watch<AppProvider>().locale;
+
     return ListView.builder(
-      padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 12 : 24,
-        vertical: 16,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: isMobile ? 12 : 24, vertical: 16),
       itemCount: items.length,
       itemBuilder: (context, index) {
         final item = items[index];
@@ -564,9 +418,9 @@ class _MenuListView extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 12),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: context.inputBg,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: Colors.grey.shade100, width: 1.5),
+                border: Border.all(color: context.borderColor, width: 1.5),
               ),
               child: Row(
                 children: [
@@ -574,9 +428,7 @@ class _MenuListView extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                     child: CachedNetworkImage(
                       imageUrl: item.imageUrl,
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.cover,
+                      width: 80, height: 80, fit: BoxFit.cover,
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -584,86 +436,39 @@ class _MenuListView extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          item.name,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black87,
-                          ),
-                        ),
+                        Text(item.localizedName(locale), style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: context.textPrimary)),
                         const SizedBox(height: 8),
-                        Text(
-                          '\$${item.price.toStringAsFixed(2)}',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
+                        Text('৳${item.price.toStringAsFixed(2)}', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: context.textSecondary)),
                       ],
                     ),
                   ),
-                  // Quantity Controller (same as grid card)
                   inCart
                       ? Container(
                           height: 36,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFF6D00).withOpacity(0.08),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
+                          decoration: BoxDecoration(color: primaryOrange.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(8)),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              // Minus button
                               GestureDetector(
                                 onTap: () => provider.decrementQuantity(item.id),
                                 behavior: HitTestBehavior.opaque,
                                 child: Container(
-                                  width: 36,
-                                  height: double.infinity,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFFF6D00),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: const Icon(
-                                    Icons.remove,
-                                    color: Colors.white,
-                                    size: 16,
-                                  ),
+                                  width: 36, height: double.infinity, alignment: Alignment.center,
+                                  decoration: BoxDecoration(color: primaryOrange, borderRadius: BorderRadius.circular(8)),
+                                  child: const Icon(Icons.remove, color: Colors.white, size: 16),
                                 ),
                               ),
-                              // Quantity number
                               Container(
-                                width: 36,
-                                alignment: Alignment.center,
-                                child: Text(
-                                  '${provider.getQuantity(item.id)}',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w800,
-                                    color: Color(0xFFFF6D00),
-                                  ),
-                                ),
+                                width: 36, alignment: Alignment.center,
+                                child: Text('${provider.getQuantity(item.id)}', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: primaryOrange)),
                               ),
-                              // Plus button
                               GestureDetector(
                                 onTap: () => provider.addToCart(item),
                                 behavior: HitTestBehavior.opaque,
                                 child: Container(
-                                  width: 36,
-                                  height: double.infinity,
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFFF6D00),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: const Icon(
-                                    Icons.add,
-                                    color: Colors.white,
-                                    size: 16,
-                                  ),
+                                  width: 36, height: double.infinity, alignment: Alignment.center,
+                                  decoration: BoxDecoration(color: primaryOrange, borderRadius: BorderRadius.circular(8)),
+                                  child: const Icon(Icons.add, color: Colors.white, size: 16),
                                 ),
                               ),
                             ],
@@ -673,17 +478,9 @@ class _MenuListView extends StatelessWidget {
                           onTap: () => provider.addToCart(item),
                           behavior: HitTestBehavior.opaque,
                           child: Container(
-                            width: 36,
-                            height: 36,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFF6D00),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Icon(
-                              Icons.add,
-                              color: Colors.white,
-                              size: 20,
-                            ),
+                            width: 36, height: 36,
+                            decoration: BoxDecoration(color: primaryOrange, borderRadius: BorderRadius.circular(8)),
+                            child: const Icon(Icons.add, color: Colors.white, size: 20),
                           ),
                         ),
                 ],
@@ -696,35 +493,25 @@ class _MenuListView extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────
-// PAGINATION DOTS (UI only, to match image)
-// ─────────────────────────────────────────────────────────────────
 class _PaginationDots extends StatelessWidget {
   const _PaginationDots();
 
   @override
   Widget build(BuildContext context) {
-    final primaryOrange = const Color(0xFFFF6D00);
+    const primaryOrange = Color(0xFFFF6D00);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _buildDot(primaryOrange),
         const SizedBox(width: 8),
-        _buildDot(Colors.grey.shade400),
+        _buildDot(context.textHint),
         const SizedBox(width: 8),
-        _buildDot(Colors.grey.shade400),
+        _buildDot(context.textHint),
       ],
     );
   }
 
   Widget _buildDot(Color color) {
-    return Container(
-      width: 8,
-      height: 8,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-      ),
-    );
+    return Container(width: 8, height: 8, decoration: BoxDecoration(color: color, shape: BoxShape.circle));
   }
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/theme/app_theme.dart';
 import '../../../core/providers/pos_provider.dart';
+import '../../../core/providers/app_provider.dart';
+import '../../../core/localization/app_strings.dart';
+import '../../../core/theme/theme_extensions.dart';
 import '../widgets/pos_header.dart';
 import '../widgets/pos_info_bar.dart';
 import '../widgets/category_sidebar.dart';
@@ -23,13 +25,13 @@ class _POSScreenState extends State<POSScreen> {
     final isTablet = screenWidth >= 768;
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: context.scaffoldBg,
       body: LayoutBuilder(
         builder: (context, constraints) {
           if (constraints.maxHeight < 200) {
-            return SingleChildScrollView(
+            return const SingleChildScrollView(
               child: Column(
-                children: const [
+                children: [
                   POSHeader(),
                   POSInfoBar(),
                 ],
@@ -39,17 +41,10 @@ class _POSScreenState extends State<POSScreen> {
 
           return Column(
             children: [
-              // Top Header Bar
               const POSHeader(),
-
-              // Info Bar (Table, Guests, Waiter, Actions)
               const POSInfoBar(),
-
-              // Main Content
               Expanded(
-                child: isTablet
-                    ? _buildTabletLayout(context)
-                    : _buildMobileLayout(context),
+                child: isTablet ? _buildTabletLayout(context) : _buildMobileLayout(context),
               ),
             ],
           );
@@ -59,10 +54,9 @@ class _POSScreenState extends State<POSScreen> {
   }
 
   Widget _buildTabletLayout(BuildContext context) {
-    return Row(
+    return const Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        // Left side (Categories + Grid) with its own Bottom Action Bar
         Expanded(
           child: Column(
             children: [
@@ -70,106 +64,80 @@ class _POSScreenState extends State<POSScreen> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const CategorySidebar(),
-                    const Expanded(
-                      child: MenuGrid(),
-                    ),
+                    CategorySidebar(),
+                    Expanded(child: MenuGrid()),
                   ],
                 ),
               ),
-              const BottomActionBar(),
+              BottomActionBar(),
             ],
           ),
         ),
-
-        // Right - Order Summary
-        const OrderSummaryPanel(),
+        OrderSummaryPanel(),
       ],
     );
   }
 
   Widget _buildMobileLayout(BuildContext context) {
+    final locale = context.watch<AppProvider>().locale;
     return Consumer<POSProvider>(
       builder: (context, provider, _) {
         return Stack(
           children: [
             Column(
               children: [
-                // Order Type Selector (Dine In | Take Away | Delivery)
-                const Padding(
-                  padding: EdgeInsets.fromLTRB(12, 6, 12, 4),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(12, 6, 12, 4),
                   child: FittedBox(
                     fit: BoxFit.scaleDown,
-                    child: OrderTypeSegmentedControl(isMobile: true),
+                    child: OrderTypeSegmentedControl(isMobile: true, locale: locale),
                   ),
                 ),
-
-                // Mobile Search Bar (Only shown when Search Icon in header is clicked)
                 if (provider.isMobileSearchOpen)
                   Padding(
                     padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
                     child: Material(
-                      color: Colors.white,
+                      color: context.cardBg,
                       elevation: 0,
                       borderRadius: BorderRadius.circular(14),
                       child: Container(
                         height: 44,
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: context.cardBg,
                           borderRadius: BorderRadius.circular(14),
                           boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 16,
-                              spreadRadius: 0,
-                              offset: const Offset(0, 4),
-                            ),
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.03),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
+                            BoxShadow(color: Colors.black.withValues(alpha: context.isDark ? 0.3 : 0.05), blurRadius: 16, offset: const Offset(0, 4)),
+                            BoxShadow(color: Colors.black.withValues(alpha: context.isDark ? 0.2 : 0.03), blurRadius: 4, offset: const Offset(0, 2)),
                           ],
                         ),
                         child: Row(
                           children: [
                             const SizedBox(width: 8),
-                            // Orange circle with white search icon
                             Container(
-                              width: 28,
-                              height: 28,
+                              width: 28, height: 28,
                               decoration: const BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [Color(0xFFFF6D00), Color(0xFFFF9E45)],
-                                  begin: Alignment.topLeft,
-                                  end: Alignment.bottomRight,
+                                  begin: Alignment.topLeft, end: Alignment.bottomRight,
                                 ),
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(
-                                Icons.search_rounded,
-                                color: Colors.white,
-                                size: 16,
-                              ),
+                              child: const Icon(Icons.search_rounded, color: Colors.white, size: 16),
                             ),
                             const SizedBox(width: 10),
                             Expanded(
                               child: TextField(
                                 autofocus: true,
                                 onChanged: provider.setSearchQuery,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 13,
-                                  color: Color(0xFF1A1A2E),
+                                  color: context.textPrimary,
                                   fontWeight: FontWeight.w500,
                                   letterSpacing: 0.1,
                                 ),
                                 decoration: InputDecoration(
-                                  hintText: 'Find your favourite dish...',
-                                  hintStyle: TextStyle(
-                                    color: Colors.grey.shade400,
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w400,
-                                  ),
+                                  hintText: AppStrings.get('find_dish', locale),
+                                  hintStyle: TextStyle(color: context.textHint, fontSize: 13, fontWeight: FontWeight.w400),
                                   border: InputBorder.none,
                                   isDense: true,
                                   contentPadding: EdgeInsets.zero,
@@ -179,11 +147,7 @@ class _POSScreenState extends State<POSScreen> {
                             GestureDetector(
                               onTap: () => provider.setMobileSearchOpen(false),
                               behavior: HitTestBehavior.opaque,
-                              child: Icon(
-                                Icons.close_rounded,
-                                color: Colors.grey.shade500,
-                                size: 18,
-                              ),
+                              child: Icon(Icons.close_rounded, color: context.textSecondary, size: 18),
                             ),
                             const SizedBox(width: 10),
                           ],
@@ -191,31 +155,19 @@ class _POSScreenState extends State<POSScreen> {
                       ),
                     ),
                   ),
-
-                // Top - Categories (Horizontal scroll)
                 const MobileCategoryBar(),
-
-                // Menu Grid
-                const Expanded(
-                  child: MenuGrid(isMobile: true),
-                ),
+                const Expanded(child: MenuGrid(isMobile: true)),
               ],
             ),
-
-            // Cart FAB for mobile
             Positioned(
-              bottom: 16,
-              right: 16,
+              bottom: 16, right: 16,
               child: FloatingActionButton.extended(
                 onPressed: () => _showMobileOrderSummary(context),
-                backgroundColor: AppColors.primary,
+                backgroundColor: const Color(0xFFFF6D00),
                 icon: const Icon(Icons.shopping_cart, color: Colors.white),
                 label: Text(
-                  '${provider.totalItemCount} items • \$${provider.totalPayable.toStringAsFixed(2)}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  '${provider.totalItemCount} ${AppStrings.get('items', locale).toLowerCase()} • ৳${provider.totalPayable.toStringAsFixed(2)}',
+                  style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
                 ),
               ),
             ),
@@ -229,46 +181,34 @@ class _POSScreenState extends State<POSScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      isDismissible: true,          // Tap outside to close
-      enableDrag: true,             // Drag down to close
+      isDismissible: true,
+      enableDrag: true,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withOpacity(0.5), // Dark overlay
+      barrierColor: Colors.black.withValues(alpha: 0.5),
       builder: (ctx) => GestureDetector(
-        // Tap on transparent area ABOVE the sheet → close
         onTap: () => Navigator.of(ctx).pop(),
         behavior: HitTestBehavior.opaque,
         child: DraggableScrollableSheet(
-          initialChildSize: 0.85,
-          maxChildSize: 0.95,
-          minChildSize: 0.3,
-          snap: true,
-          snapSizes: const [0.3, 0.85, 0.95],
+          initialChildSize: 0.85, maxChildSize: 0.95, minChildSize: 0.3,
+          snap: true, snapSizes: const [0.3, 0.85, 0.95],
           builder: (_, scrollController) => GestureDetector(
-            // Prevent taps on the sheet itself from bubbling up to the barrier
             onTap: () {},
             behavior: HitTestBehavior.opaque,
             child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              decoration: BoxDecoration(
+                color: context.cardBg,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
               ),
               child: Column(
                 children: [
-                  // Drag Handle
                   Padding(
                     padding: const EdgeInsets.only(top: 12, bottom: 4),
                     child: Container(
-                      width: 40,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
+                      width: 40, height: 4,
+                      decoration: BoxDecoration(color: context.dividerColor, borderRadius: BorderRadius.circular(2)),
                     ),
                   ),
-                  const Expanded(
-                    child: OrderSummaryPanel(isBottomSheet: true),
-                  ),
+                  const Expanded(child: OrderSummaryPanel(isBottomSheet: true)),
                 ],
               ),
             ),

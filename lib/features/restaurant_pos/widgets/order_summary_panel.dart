@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/providers/pos_provider.dart';
+import '../../../core/providers/app_provider.dart';
+import '../../../core/localization/app_strings.dart';
 import '../../../core/models/menu_item.dart';
+import '../../../core/theme/theme_extensions.dart';
 import 'dialogs/pos_dialogs.dart';
 import 'bottom_action_bar.dart';
 
@@ -18,14 +21,14 @@ class OrderSummaryPanel extends StatelessWidget {
     if (isBottomSheet) {
       return Container(
         width: double.infinity,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        decoration: BoxDecoration(
+          color: context.cardBg,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         ),
         child: Column(
           children: [
             _OrderSummaryHeader(),
-            Divider(height: 1, thickness: 1, color: Colors.grey.shade100),
+            Divider(height: 1, thickness: 1, color: context.dividerColor),
             Expanded(child: _OrderItemsList()),
             const BottomActionBar(),
             _OrderNoteField(),
@@ -37,19 +40,15 @@ class OrderSummaryPanel extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.only(
-        right: 16,
-        top: 0,
-        bottom: 6,
-      ),
+      padding: const EdgeInsets.only(right: 16, top: 0, bottom: 6),
       child: Container(
         width: width,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: context.cardBg,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.03),
+              color: Colors.black.withOpacity(context.isDark ? 0.4 : 0.03),
               blurRadius: 8,
               offset: const Offset(0, 3),
             ),
@@ -60,7 +59,7 @@ class OrderSummaryPanel extends StatelessWidget {
           child: Column(
             children: [
               _OrderSummaryHeader(),
-              Divider(height: 1, thickness: 1, color: Colors.grey.shade100),
+              Divider(height: 1, thickness: 1, color: context.dividerColor),
               Expanded(child: _OrderItemsList()),
               _OrderNoteField(),
               _PriceBreakdown(),
@@ -79,7 +78,8 @@ class OrderSummaryPanel extends StatelessWidget {
 class _OrderSummaryHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final primaryOrange = const Color(0xFFFF6D00);
+    const primaryOrange = Color(0xFFFF6D00);
+    final locale = context.watch<AppProvider>().locale;
 
     return Consumer<POSProvider>(
       builder: (context, provider, _) {
@@ -87,16 +87,15 @@ class _OrderSummaryHeader extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
           child: Row(
             children: [
-              const Text(
-                'Order Summary',
+              Text(
+                AppStrings.get('order_summary', locale),
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
-                  color: Colors.black87,
+                  color: context.textPrimary,
                 ),
               ),
               const SizedBox(width: 12),
-              // Items Count Badge
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
@@ -104,8 +103,8 @@ class _OrderSummaryHeader extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  '${provider.cartItems.length} Items',
-                  style: TextStyle(
+                  '${provider.cartItems.length} ${AppStrings.get('items', locale)}',
+                  style: const TextStyle(
                     fontSize: 12,
                     color: primaryOrange,
                     fontWeight: FontWeight.w700,
@@ -113,25 +112,25 @@ class _OrderSummaryHeader extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              // Clear All
               GestureDetector(
                 onTap: () {
                   if (provider.cartItems.isNotEmpty) {
                     showDialog(
                       context: context,
                       builder: (ctx) => AlertDialog(
+                        backgroundColor: ctx.cardBg,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                        title: const Text('Clear Cart?'),
-                        content: const Text('Are you sure you want to clear all items in the cart?'),
+                        title: Text(AppStrings.get('clear_cart', locale), style: TextStyle(color: ctx.textPrimary)),
+                        content: Text(AppStrings.get('clear_cart_msg', locale), style: TextStyle(color: ctx.textSecondary)),
                         actions: [
-                          TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text('Cancel')),
+                          TextButton(
+                            onPressed: () => Navigator.of(ctx).pop(),
+                            child: Text(AppStrings.get('cancel', locale)),
+                          ),
                           ElevatedButton(
-                            onPressed: () {
-                              provider.clearCart();
-                              Navigator.of(ctx).pop();
-                            },
+                            onPressed: () { provider.clearCart(); Navigator.of(ctx).pop(); },
                             style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
-                            child: const Text('Clear All'),
+                            child: Text(AppStrings.get('clear_all', locale)),
                           ),
                         ],
                       ),
@@ -144,12 +143,8 @@ class _OrderSummaryHeader extends StatelessWidget {
                     Icon(Icons.delete_outline, size: 16, color: Colors.red.shade500),
                     const SizedBox(width: 4),
                     Text(
-                      'Clear All',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.red.shade500,
-                        fontWeight: FontWeight.w700,
-                      ),
+                      AppStrings.get('clear_all', locale),
+                      style: TextStyle(fontSize: 12, color: Colors.red.shade500, fontWeight: FontWeight.w700),
                     ),
                   ],
                 ),
@@ -168,13 +163,14 @@ class _OrderSummaryHeader extends StatelessWidget {
 class _OrderItemsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final locale = context.watch<AppProvider>().locale;
     return Consumer<POSProvider>(
       builder: (context, provider, _) {
         if (provider.cartItems.isEmpty) {
-          return const Center(
+          return Center(
             child: Text(
-              'Cart is empty',
-              style: TextStyle(color: Colors.grey, fontSize: 14),
+              AppStrings.get('cart_empty', locale),
+              style: TextStyle(color: context.textSecondary, fontSize: 14),
             ),
           );
         }
@@ -184,13 +180,10 @@ class _OrderItemsList extends StatelessWidget {
           itemCount: provider.cartItems.length,
           separatorBuilder: (context, index) => Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Divider(color: Colors.grey.shade100, height: 24, thickness: 1),
+            child: Divider(color: context.dividerColor, height: 24, thickness: 1),
           ),
           itemBuilder: (context, index) {
-            return _OrderItemRow(
-              item: provider.cartItems[index],
-              index: index + 1,
-            );
+            return _OrderItemRow(item: provider.cartItems[index], index: index + 1);
           },
         );
       },
@@ -201,12 +194,12 @@ class _OrderItemsList extends StatelessWidget {
 class _OrderItemRow extends StatelessWidget {
   final CartItem item;
   final int index;
-
   const _OrderItemRow({required this.item, required this.index});
 
   @override
   Widget build(BuildContext context) {
-    final primaryOrange = const Color(0xFFFF6D00);
+    const primaryOrange = Color(0xFFFF6D00);
+    final locale = context.watch<AppProvider>().locale;
 
     return Consumer<POSProvider>(
       builder: (context, provider, _) {
@@ -218,10 +211,8 @@ class _OrderItemRow extends StatelessWidget {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Circular Index Badge
                   Container(
-                    width: 24,
-                    height: 24,
+                    width: 24, height: 24,
                     margin: const EdgeInsets.only(top: 2),
                     decoration: BoxDecoration(
                       color: primaryOrange.withOpacity(0.12),
@@ -230,27 +221,18 @@ class _OrderItemRow extends StatelessWidget {
                     child: Center(
                       child: Text(
                         '$index',
-                        style: TextStyle(
-                          color: primaryOrange,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w800,
-                        ),
+                        style: const TextStyle(color: primaryOrange, fontSize: 12, fontWeight: FontWeight.w800),
                       ),
                     ),
                   ),
                   const SizedBox(width: 12),
-                  // Item Name & Modifiers
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          item.menuItem.name,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black87,
-                          ),
+                          item.menuItem.localizedName(locale),
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: context.textPrimary),
                         ),
                         if (item.modifiers.isNotEmpty) ...[
                           const SizedBox(height: 6),
@@ -261,22 +243,14 @@ class _OrderItemRow extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Container(
-                                    width: 4,
-                                    height: 4,
+                                    width: 4, height: 4,
                                     margin: const EdgeInsets.only(right: 6, top: 1),
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.shade400,
-                                      shape: BoxShape.circle,
-                                    ),
+                                    decoration: BoxDecoration(color: Colors.grey.shade400, shape: BoxShape.circle),
                                   ),
                                   Expanded(
                                     child: Text(
                                       mod,
-                                      style: TextStyle(
-                                        fontSize: 11,
-                                        color: Colors.grey.shade700,
-                                        fontWeight: FontWeight.w500,
-                                      ),
+                                      style: TextStyle(fontSize: 11, color: context.textSecondary, fontWeight: FontWeight.w500),
                                     ),
                                   ),
                                 ],
@@ -287,31 +261,19 @@ class _OrderItemRow extends StatelessWidget {
                       ],
                     ),
                   ),
-                  // Price
                   const SizedBox(width: 8),
                   Text(
-                    '\$${item.menuItem.price.toStringAsFixed(2)}',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.black87,
-                    ),
+                    '৳${item.menuItem.price.toStringAsFixed(2)}',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: context.textPrimary),
                   ),
                   const SizedBox(width: 12),
-                  // Trash Icon
                   GestureDetector(
                     onTap: () => provider.removeFromCart(item.menuItem.id),
                     behavior: HitTestBehavior.opaque,
-                    child: Icon(
-                      Icons.delete_outline,
-                      size: 20,
-                      color: Colors.red.shade500,
-                    ),
+                    child: Icon(Icons.delete_outline, size: 20, color: Colors.red.shade500),
                   ),
                 ],
               ),
-
-              // Quantity Controls
               const SizedBox(height: 12),
               Row(
                 children: [
@@ -335,21 +297,15 @@ class _QuantityControl extends StatelessWidget {
   final int quantity;
   final VoidCallback onDecrement;
   final VoidCallback onIncrement;
-
-  const _QuantityControl({
-    required this.quantity,
-    required this.onDecrement,
-    required this.onIncrement,
-  });
+  const _QuantityControl({required this.quantity, required this.onDecrement, required this.onIncrement});
 
   @override
   Widget build(BuildContext context) {
     const darkBrown = Color(0xFF5D4037);
-
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.grey.shade200, width: 1.5),
+        color: context.inputBg,
+        border: Border.all(color: context.borderColor, width: 1.5),
         borderRadius: BorderRadius.circular(6),
       ),
       child: Row(
@@ -366,14 +322,7 @@ class _QuantityControl extends StatelessWidget {
           Container(
             width: 24,
             alignment: Alignment.center,
-            child: Text(
-              '$quantity',
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                color: Colors.black87,
-              ),
-            ),
+            child: Text('$quantity', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: context.textPrimary)),
           ),
           GestureDetector(
             onTap: onIncrement,
@@ -395,25 +344,23 @@ class _QuantityControl extends StatelessWidget {
 class _OrderNoteField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final locale = context.watch<AppProvider>().locale;
     return Consumer<POSProvider>(
       builder: (context, provider, _) {
         final noteText = provider.orderNote.isEmpty
-            ? 'Add Order Note...'
+            ? AppStrings.get('add_order_note', locale)
             : provider.orderNote;
 
         return GestureDetector(
           onTap: () {
-            showDialog(
-              context: context,
-              builder: (_) => const NoteDialog(isKitchenNote: false),
-            );
+            showDialog(context: context, builder: (_) => const NoteDialog(isKitchenNote: false));
           },
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: const Color(0xFFFF6D00).withOpacity(0.15), width: 1.5),
+              color: context.inputBg,
+              border: Border.all(color: const Color(0xFFFF6D00).withOpacity(0.2), width: 1.5),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(
@@ -423,14 +370,14 @@ class _OrderNoteField extends StatelessWidget {
                     noteText,
                     style: TextStyle(
                       fontSize: 13,
-                      color: provider.orderNote.isEmpty ? Colors.grey.shade500 : const Color(0xFFFF6D00),
+                      color: provider.orderNote.isEmpty ? context.textHint : const Color(0xFFFF6D00),
                       fontWeight: provider.orderNote.isEmpty ? FontWeight.w500 : FontWeight.w700,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                Icon(Icons.edit_note, size: 20, color: provider.orderNote.isEmpty ? Colors.grey.shade600 : const Color(0xFFFF6D00)),
+                Icon(Icons.edit_note, size: 20, color: provider.orderNote.isEmpty ? context.textHint : const Color(0xFFFF6D00)),
               ],
             ),
           ),
@@ -446,7 +393,8 @@ class _OrderNoteField extends StatelessWidget {
 class _PriceBreakdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final primaryOrange = const Color(0xFFFF6D00);
+    const primaryOrange = Color(0xFFFF6D00);
+    final locale = context.watch<AppProvider>().locale;
 
     return Consumer<POSProvider>(
       builder: (context, provider, _) {
@@ -455,48 +403,47 @@ class _PriceBreakdown extends StatelessWidget {
           child: Column(
             children: [
               _PriceRow(
-                label: 'Subtotal',
-                value: '\$${provider.subtotal.toStringAsFixed(2)}',
+                label: AppStrings.get('subtotal', locale),
+                value: '৳${provider.subtotal.toStringAsFixed(2)}',
+                labelColor: context.textSecondary,
+                valueColor: context.textPrimary,
               ),
               if (provider.discountValue > 0) ...[
                 const SizedBox(height: 8),
                 _PriceRow(
-                  label: 'Discount (${provider.appliedCoupon ?? ""})',
-                  value: '-\$${provider.discountValue.toStringAsFixed(2)}',
-                  valueColor: Colors.green.shade700,
+                  label: '${AppStrings.get('discount_label', locale)} (${provider.appliedCoupon ?? ""})',
+                  value: '-৳${provider.discountValue.toStringAsFixed(2)}',
+                  labelColor: context.textSecondary,
+                  valueColor: Colors.green.shade600,
                 ),
               ],
               const SizedBox(height: 8),
               _PriceRow(
-                label: 'Tax (8%)',
-                value: '\$${provider.tax.toStringAsFixed(2)}',
+                label: AppStrings.get('tax', locale),
+                value: '৳${provider.tax.toStringAsFixed(2)}',
+                labelColor: context.textSecondary,
+                valueColor: context.textPrimary,
               ),
               const SizedBox(height: 8),
               _PriceRow(
-                label: 'Service Charge (4%)',
-                value: '\$${provider.serviceCharge.toStringAsFixed(2)}',
+                label: AppStrings.get('service_charge', locale),
+                value: '৳${provider.serviceCharge.toStringAsFixed(2)}',
+                labelColor: context.textSecondary,
+                valueColor: context.textPrimary,
               ),
               const SizedBox(height: 12),
-              Divider(height: 1, thickness: 1, color: Colors.grey.shade100),
+              Divider(height: 1, thickness: 1, color: context.dividerColor),
               const SizedBox(height: 12),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Total Payable',
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w800,
-                      color: primaryOrange,
-                    ),
+                    AppStrings.get('total_payable', locale),
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: primaryOrange),
                   ),
                   Text(
-                    '\$${provider.totalPayable.toStringAsFixed(2)}',
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w900,
-                      color: primaryOrange,
-                    ),
+                    '৳${provider.totalPayable.toStringAsFixed(2)}',
+                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: primaryOrange),
                   ),
                 ],
               ),
@@ -511,31 +458,17 @@ class _PriceBreakdown extends StatelessWidget {
 class _PriceRow extends StatelessWidget {
   final String label;
   final String value;
+  final Color? labelColor;
   final Color? valueColor;
-
-  const _PriceRow({required this.label, required this.value, this.valueColor});
+  const _PriceRow({required this.label, required this.value, this.labelColor, this.valueColor});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 13,
-            color: Colors.black87,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 13,
-            color: valueColor ?? Colors.black87,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
+        Text(label, style: TextStyle(fontSize: 13, color: labelColor ?? context.textSecondary, fontWeight: FontWeight.w600)),
+        Text(value, style: TextStyle(fontSize: 13, color: valueColor ?? context.textPrimary, fontWeight: FontWeight.w700)),
       ],
     );
   }
@@ -547,8 +480,9 @@ class _PriceRow extends StatelessWidget {
 class _PlaceOrderButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final primaryOrange = const Color(0xFFFF6D00);
-    final darkOrange = const Color(0xFFE65100);
+    const primaryOrange = Color(0xFFFF6D00);
+    const darkOrange = Color(0xFFE65100);
+    final locale = context.watch<AppProvider>().locale;
 
     return Consumer<POSProvider>(
       builder: (context, provider, _) {
@@ -558,15 +492,12 @@ class _PlaceOrderButton extends StatelessWidget {
             onTap: provider.cartItems.isEmpty
                 ? null
                 : () {
-                    showDialog(
-                      context: context,
-                      builder: (_) => const CheckoutPaymentDialog(),
-                    );
+                    showDialog(context: context, builder: (_) => const CheckoutPaymentDialog());
                   },
             child: Container(
               height: 56,
               decoration: BoxDecoration(
-                color: provider.cartItems.isEmpty ? Colors.grey.shade300 : primaryOrange,
+                color: provider.cartItems.isEmpty ? (context.isDark ? Colors.grey.shade800 : Colors.grey.shade300) : primaryOrange,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
@@ -578,9 +509,11 @@ class _PlaceOrderButton extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              'Place an Order',
+                              AppStrings.get('place_order', locale),
                               style: TextStyle(
-                                color: provider.cartItems.isEmpty ? Colors.grey.shade500 : Colors.white,
+                                color: provider.cartItems.isEmpty
+                                    ? (context.isDark ? Colors.grey.shade600 : Colors.grey.shade500)
+                                    : Colors.white,
                                 fontSize: 16,
                                 fontWeight: FontWeight.w800,
                               ),
@@ -588,7 +521,9 @@ class _PlaceOrderButton extends StatelessWidget {
                           ),
                           Icon(
                             Icons.arrow_forward,
-                            color: provider.cartItems.isEmpty ? Colors.grey.shade500 : Colors.white,
+                            color: provider.cartItems.isEmpty
+                                ? (context.isDark ? Colors.grey.shade600 : Colors.grey.shade500)
+                                : Colors.white,
                             size: 20,
                           ),
                         ],
@@ -599,18 +534,14 @@ class _PlaceOrderButton extends StatelessWidget {
                     Container(
                       height: double.infinity,
                       padding: const EdgeInsets.symmetric(horizontal: 24),
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: darkOrange,
-                        borderRadius: const BorderRadius.horizontal(right: Radius.circular(12)),
+                        borderRadius: BorderRadius.horizontal(right: Radius.circular(12)),
                       ),
                       child: Center(
                         child: Text(
-                          '\$${provider.totalPayable.toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w900,
-                          ),
+                          '৳${provider.totalPayable.toStringAsFixed(2)}',
+                          style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900),
                         ),
                       ),
                     ),

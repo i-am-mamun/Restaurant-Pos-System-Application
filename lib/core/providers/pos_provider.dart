@@ -34,12 +34,12 @@ class POSProvider extends ChangeNotifier {
     ),
     const CouponModel(
       code: 'FEAST20',
-      description: 'Get 20% OFF on orders over \$25',
+      description: 'Get 20% OFF on orders over ৳25',
       discountPercentage: 20.0,
     ),
     const CouponModel(
       code: 'WELCOME5',
-      description: '\$5.00 Flat Discount',
+      description: '৳5.00 Flat Discount',
       fixedDiscountAmount: 5.0,
     ),
   ];
@@ -301,7 +301,7 @@ class POSProvider extends ChangeNotifier {
     } else if (amount != null) {
       _discountAmount = amount;
       _discountPercent = 0.0;
-      _appliedCoupon = 'Custom \$${amount.toStringAsFixed(2)}';
+      _appliedCoupon = 'Custom ৳${amount.toStringAsFixed(2)}';
     }
     notifyListeners();
   }
