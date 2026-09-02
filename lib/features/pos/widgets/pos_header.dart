@@ -10,7 +10,7 @@ class POSHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 600;
+    final isMobile = screenWidth < 768;
 
     return SizedBox(
       height: isMobile ? 64 : 74,
@@ -26,27 +26,32 @@ class POSHeader extends StatelessWidget {
               // ── LOGO ──
               _LogoWidget(isMobile: isMobile),
 
-              SizedBox(width: isMobile ? 6 : 36),
+              SizedBox(width: isMobile ? 6 : 24),
 
-              // ── ORDER TYPE BUTTONS & RIGHT ICONS ──
-              if (!isMobile) ...[
-                const OrderTypeSegmentedControl(),
-                const Spacer(),
-                const _SearchBar(),
-                const SizedBox(width: 24),
-                const _RightIcons(isMobile: false),
-              ] else ...[
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerRight,
-                      child: _RightIcons(isMobile: true),
+              // ── MIDDLE SECTION & RIGHT ICONS ──
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    physics: const BouncingScrollPhysics(),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (!isMobile) ...[
+                          const OrderTypeSegmentedControl(),
+                          const SizedBox(width: 16),
+                          const _SearchBar(),
+                          const SizedBox(width: 16),
+                          const _RightIcons(isMobile: false),
+                        ] else ...[
+                          _RightIcons(isMobile: true),
+                        ],
+                      ],
                     ),
                   ),
                 ),
-              ],
+              ),
             ],
           ),
         ),

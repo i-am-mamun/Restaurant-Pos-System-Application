@@ -279,7 +279,7 @@ class _MenuGridView extends StatelessWidget {
         crossAxisCount: crossAxisCount,
         crossAxisSpacing: isMobile ? 10 : 20,
         mainAxisSpacing: isMobile ? 10 : 20,
-        childAspectRatio: isMobile ? 0.85 : 0.82,
+        childAspectRatio: isMobile ? 0.78 : 0.80,
       ),
       itemCount: items.length,
       itemBuilder: (context, index) => _MenuItemCard(
@@ -356,8 +356,8 @@ class _MenuItemCard extends StatelessWidget {
                   // Info Section (Name, Price, Add Button)
                   Padding(
                     padding: EdgeInsets.symmetric(
-                      horizontal: isMobile ? 10 : 16,
-                      vertical: isMobile ? 8 : 12,
+                      horizontal: isMobile ? 8 : 12,
+                      vertical: isMobile ? 6 : 8,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

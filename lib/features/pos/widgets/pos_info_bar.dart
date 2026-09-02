@@ -9,7 +9,7 @@ class POSInfoBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isMobile = screenWidth < 600;
+    final isMobile = screenWidth < 768;
     final isTablet = screenWidth >= 768 && screenWidth < 1100;
 
     return Consumer<POSProvider>(
