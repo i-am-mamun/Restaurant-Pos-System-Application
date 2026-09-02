@@ -60,10 +60,19 @@ class POSInfoBar extends StatelessWidget {
                 ),
               ],
 
-              const Spacer(),
+              const SizedBox(width: 12),
 
-              // ── Right Side Actions ──
-              _ActionButtons(isMobile: isMobile, isTablet: isTablet),
+              // ── Right Side Actions (Scrollable horizontally if screen is narrow) ──
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    physics: const BouncingScrollPhysics(),
+                    child: _ActionButtons(isMobile: isMobile, isTablet: isTablet),
+                  ),
+                ),
+              ),
             ],
           ),
         );
@@ -100,8 +109,8 @@ class _InfoCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: EdgeInsets.symmetric(
-          horizontal: isMobile ? 12 : 16,
-          vertical: isMobile ? 8 : 10,
+          horizontal: isMobile ? 8 : 16,
+          vertical: isMobile ? 6 : 10,
         ),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -119,10 +128,10 @@ class _InfoCard extends StatelessWidget {
           children: [
             Icon(
               icon, 
-              size: isMobile ? 22 : 26, 
+              size: isMobile ? 18 : 26, 
               color: darkBrown,
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: isMobile ? 6 : 12),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -130,7 +139,7 @@ class _InfoCard extends StatelessWidget {
                 Text(
                   label,
                   style: TextStyle(
-                    fontSize: isMobile ? 10 : 11,
+                    fontSize: isMobile ? 9 : 11,
                     color: Colors.grey.shade500,
                     fontWeight: FontWeight.w600,
                   ),
@@ -139,7 +148,7 @@ class _InfoCard extends StatelessWidget {
                 Text(
                   value,
                   style: TextStyle(
-                    fontSize: isMobile ? 14 : 16,
+                    fontSize: isMobile ? 13 : 16,
                     color: Colors.black87,
                     fontWeight: FontWeight.w800,
                     height: 1.1,
@@ -148,8 +157,8 @@ class _InfoCard extends StatelessWidget {
               ],
             ),
             if (hasDropdown) ...[
-              const SizedBox(width: 20),
-              const Icon(Icons.keyboard_arrow_down, size: 18, color: darkBrown),
+              SizedBox(width: isMobile ? 10 : 20),
+              Icon(Icons.keyboard_arrow_down, size: isMobile ? 14 : 18, color: darkBrown),
             ],
           ],
         ),
@@ -173,8 +182,8 @@ class _GuestsCard extends StatelessWidget {
       builder: (context, provider, _) {
         return Container(
           padding: EdgeInsets.symmetric(
-            horizontal: isMobile ? 10 : 14,
-            vertical: isMobile ? 8 : 10,
+            horizontal: isMobile ? 8 : 14,
+            vertical: isMobile ? 6 : 10,
           ),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -192,10 +201,10 @@ class _GuestsCard extends StatelessWidget {
             children: [
               Icon(
                 Icons.people_outline, 
-                size: isMobile ? 20 : 24, 
+                size: isMobile ? 18 : 24, 
                 color: darkBrown,
               ),
-              const SizedBox(width: 10),
+              SizedBox(width: isMobile ? 6 : 10),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,7 +212,7 @@ class _GuestsCard extends StatelessWidget {
                   Text(
                     'Guests',
                     style: TextStyle(
-                      fontSize: isMobile ? 10 : 11,
+                      fontSize: isMobile ? 9 : 11,
                       color: Colors.grey.shade500,
                       fontWeight: FontWeight.w600,
                     ),
@@ -212,7 +221,7 @@ class _GuestsCard extends StatelessWidget {
                   Text(
                     '${provider.guests}',
                     style: TextStyle(
-                      fontSize: isMobile ? 14 : 16,
+                      fontSize: isMobile ? 13 : 16,
                       color: Colors.black87,
                       fontWeight: FontWeight.w800,
                       height: 1.1,
@@ -220,34 +229,34 @@ class _GuestsCard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: isMobile ? 8 : 12),
               // Minus Button
               GestureDetector(
                 onTap: provider.decrementGuests,
                 behavior: HitTestBehavior.opaque,
                 child: Container(
-                  width: 26,
-                  height: 26,
+                  width: isMobile ? 22 : 26,
+                  height: isMobile ? 22 : 26,
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey.shade200, width: 1.5),
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: BorderRadius.circular(5),
                   ),
-                  child: const Icon(Icons.remove, size: 16, color: darkBrown),
+                  child: Icon(Icons.remove, size: isMobile ? 12 : 16, color: darkBrown),
                 ),
               ),
-              const SizedBox(width: 6),
+              const SizedBox(width: 4),
               // Plus Button
               GestureDetector(
                 onTap: provider.incrementGuests,
                 behavior: HitTestBehavior.opaque,
                 child: Container(
-                  width: 26,
-                  height: 26,
+                  width: isMobile ? 22 : 26,
+                  height: isMobile ? 22 : 26,
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.grey.shade200, width: 1.5),
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: BorderRadius.circular(5),
                   ),
-                  child: const Icon(Icons.add, size: 16, color: darkBrown),
+                  child: Icon(Icons.add, size: isMobile ? 12 : 16, color: darkBrown),
                 ),
               ),
             ],

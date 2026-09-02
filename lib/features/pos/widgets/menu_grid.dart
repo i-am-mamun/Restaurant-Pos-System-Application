@@ -272,14 +272,14 @@ class _MenuGridView extends StatelessWidget {
 
     return GridView.builder(
       padding: EdgeInsets.symmetric(
-        horizontal: isMobile ? 12 : 24,
-        vertical: 24,
+        horizontal: isMobile ? 10 : 24,
+        vertical: isMobile ? 12 : 24,
       ),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,
-        crossAxisSpacing: isMobile ? 12 : 20,
-        mainAxisSpacing: isMobile ? 12 : 20,
-        childAspectRatio: isMobile ? 0.8 : 0.82,
+        crossAxisSpacing: isMobile ? 10 : 20,
+        mainAxisSpacing: isMobile ? 10 : 20,
+        childAspectRatio: isMobile ? 0.85 : 0.82,
       ),
       itemCount: items.length,
       itemBuilder: (context, index) => _MenuItemCard(
@@ -310,13 +310,13 @@ class _MenuItemCard extends StatelessWidget {
         return Container(
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(14),
             border: Border.all(color: Colors.grey.shade100, width: 1.5),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.03),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
+                blurRadius: 8,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
@@ -328,13 +328,13 @@ class _MenuItemCard extends StatelessWidget {
                   // Image Section (Full width, no padding, clipped to top corners)
                   Expanded(
                     child: ClipRRect(
-                      borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(14)),
                       child: Container(
                         width: double.infinity,
-                        color: Colors.grey.shade50, // very light background for image
+                        color: Colors.grey.shade50,
                         child: CachedNetworkImage(
                           imageUrl: item.imageUrl,
-                          fit: BoxFit.cover, // Ensures it fills the space
+                          fit: BoxFit.cover,
                           placeholder: (context, url) => const Center(
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
@@ -345,7 +345,7 @@ class _MenuItemCard extends StatelessWidget {
                             child: Icon(
                               Icons.fastfood,
                               color: Colors.grey.shade300,
-                              size: 40,
+                              size: 36,
                             ),
                           ),
                         ),
@@ -356,8 +356,8 @@ class _MenuItemCard extends StatelessWidget {
                   // Info Section (Name, Price, Add Button)
                   Padding(
                     padding: EdgeInsets.symmetric(
-                      horizontal: isMobile ? 12 : 16,
-                      vertical: isMobile ? 10 : 12,
+                      horizontal: isMobile ? 10 : 16,
+                      vertical: isMobile ? 8 : 12,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -366,21 +366,21 @@ class _MenuItemCard extends StatelessWidget {
                         Text(
                           item.name,
                           style: TextStyle(
-                            fontSize: isMobile ? 14 : 16,
+                            fontSize: isMobile ? 13 : 16,
                             fontWeight: FontWeight.w700,
                             color: Colors.black87,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 8), // Perfect small gap
+                        SizedBox(height: isMobile ? 4 : 8),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               '\$${item.price.toStringAsFixed(2)}',
                               style: TextStyle(
-                                fontSize: isMobile ? 14 : 15,
+                                fontSize: isMobile ? 13 : 15,
                                 fontWeight: FontWeight.w700,
                                 color: Colors.grey.shade600,
                               ),

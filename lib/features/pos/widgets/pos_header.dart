@@ -32,8 +32,8 @@ class POSHeader extends StatelessWidget {
                 const _OrderTypeSegmentedControl(),
                 const Spacer(),
                 // ── SEARCH BAR (White Pill) ──
-                const _SearchBar(),
-                const SizedBox(width: 24),
+                const Flexible(child: _SearchBar()),
+                const SizedBox(width: 16),
               ] else ...[
                 const Spacer(),
               ],
@@ -268,7 +268,7 @@ class _SearchBar extends StatelessWidget {
     return Consumer<POSProvider>(
       builder: (context, provider, _) {
         return Container(
-          width: barWidth,
+          constraints: BoxConstraints(maxWidth: barWidth),
           height: 44,
           decoration: BoxDecoration(
             color: Colors.white,

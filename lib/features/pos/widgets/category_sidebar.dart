@@ -290,13 +290,13 @@ class MobileCategoryBar extends StatelessWidget {
     final darkBrownText = const Color(0xFF5D4037);
 
     return Container(
-      height: 70, // Slightly taller for premium feel and shadows
+      height: 52,
       color: Colors.white,
       child: Consumer<POSProvider>(
         builder: (context, provider, _) {
           return ListView.builder(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             itemCount: AppData.categories.length,
             itemBuilder: (context, index) {
               final category = AppData.categories[index];
@@ -306,24 +306,24 @@ class MobileCategoryBar extends StatelessWidget {
                 onTap: () => provider.selectCategory(category.id),
                 behavior: HitTestBehavior.opaque,
                 child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
+                  duration: const Duration(milliseconds: 250),
                   curve: Curves.easeOutCubic,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  margin: const EdgeInsets.only(right: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  margin: const EdgeInsets.only(right: 8),
                   decoration: BoxDecoration(
                     color: isSelected ? primaryOrange : Colors.white,
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(20),
                     boxShadow: [
                       if (isSelected)
                         BoxShadow(
-                          color: primaryOrange.withOpacity(0.4),
-                          blurRadius: 12,
-                          offset: const Offset(0, 4),
+                          color: primaryOrange.withOpacity(0.35),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
                         )
                       else
                         BoxShadow(
                           color: Colors.black.withOpacity(0.04),
-                          blurRadius: 8,
+                          blurRadius: 6,
                           offset: const Offset(0, 2),
                         ),
                     ],
@@ -334,8 +334,8 @@ class MobileCategoryBar extends StatelessWidget {
                       style: TextStyle(
                         color: isSelected ? Colors.white : darkBrownText,
                         fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                        fontSize: 14,
-                        letterSpacing: 0.3,
+                        fontSize: 13,
+                        letterSpacing: 0.2,
                       ),
                     ),
                   ),

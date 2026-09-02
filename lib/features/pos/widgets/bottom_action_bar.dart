@@ -24,24 +24,56 @@ class BottomActionBar extends StatelessWidget {
         horizontal: isMobile ? 12 : 24,
         vertical: 8,
       ),
-      child: Row(
-        children: actions.asMap().entries.map((entry) {
-          final index = entry.key;
-          final action = entry.value;
-          final isLast = index == actions.length - 1;
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isNarrow = constraints.maxWidth < 720;
+          if (isNarrow) {
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              child: Row(
+                children: actions.asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final action = entry.value;
+                  final isLast = index == actions.length - 1;
 
-          return Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(right: isLast ? 0 : 12),
-              child: _BottomActionBtn(
-                icon: action['icon'] as IconData,
-                label: action['label'] as String,
-                isMobile: isMobile,
-                onTap: () => _handleAction(context, action['label'] as String),
+                  return Padding(
+                    padding: EdgeInsets.only(right: isLast ? 0 : 10),
+                    child: SizedBox(
+                      width: isMobile ? 60 : 120,
+                      child: _BottomActionBtn(
+                        icon: action['icon'] as IconData,
+                        label: action['label'] as String,
+                        isMobile: isMobile,
+                        onTap: () => _handleAction(context, action['label'] as String),
+                      ),
+                    ),
+                  );
+                }).toList(),
               ),
-            ),
+            );
+          }
+
+          return Row(
+            children: actions.asMap().entries.map((entry) {
+              final index = entry.key;
+              final action = entry.value;
+              final isLast = index == actions.length - 1;
+
+              return Expanded(
+                child: Padding(
+                  padding: EdgeInsets.only(right: isLast ? 0 : 12),
+                  child: _BottomActionBtn(
+                    icon: action['icon'] as IconData,
+                    label: action['label'] as String,
+                    isMobile: isMobile,
+                    onTap: () => _handleAction(context, action['label'] as String),
+                  ),
+                ),
+              );
+            }).toList(),
           );
-        }).toList(),
+        },
       ),
     );
   }

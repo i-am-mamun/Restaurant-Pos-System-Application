@@ -60,9 +60,20 @@ class OrderSummaryPanel extends StatelessWidget {
               _OrderSummaryHeader(),
               Divider(height: 1, thickness: 1, color: Colors.grey.shade100),
               Expanded(child: _OrderItemsList()),
-              _OrderNoteField(),
-              _PriceBreakdown(),
-              _PlaceOrderButton(),
+              Flexible(
+                fit: FlexFit.loose,
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _OrderNoteField(),
+                      _PriceBreakdown(),
+                      _PlaceOrderButton(),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
