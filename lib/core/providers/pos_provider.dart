@@ -71,11 +71,30 @@ class POSProvider extends ChangeNotifier {
     ];
   }
 
+  bool _isMobileSearchOpen = false;
+
   // Getters
   String get selectedCategory => _selectedCategory;
   String get selectedOrderType => _selectedOrderType;
   String get viewMode => _viewMode;
   String get searchQuery => _searchQuery;
+  bool get isMobileSearchOpen => _isMobileSearchOpen;
+  
+  void toggleMobileSearch() {
+    _isMobileSearchOpen = !_isMobileSearchOpen;
+    if (!_isMobileSearchOpen) {
+      _searchQuery = '';
+    }
+    notifyListeners();
+  }
+
+  void setMobileSearchOpen(bool open) {
+    _isMobileSearchOpen = open;
+    if (!open) {
+      _searchQuery = '';
+    }
+    notifyListeners();
+  }
   
   String get tableNumber => _tableNumber;
   int get guests => _guests;

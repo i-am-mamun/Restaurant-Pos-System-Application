@@ -29,7 +29,7 @@ class POSHeader extends StatelessWidget {
 
               // ── ORDER TYPE BUTTONS (Single White Pill) ──
               if (!isMobile) ...[
-                const _OrderTypeSegmentedControl(),
+                const OrderTypeSegmentedControl(),
                 const Spacer(),
                 // ── SEARCH BAR (White Pill) ──
                 const Flexible(child: _SearchBar()),
@@ -155,16 +155,26 @@ class _LogoWidget extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────
 // ORDER TYPE BUTTONS (Single white pill container)
 // ─────────────────────────────────────────────────────────────────
-class _OrderTypeSegmentedControl extends StatelessWidget {
-  const _OrderTypeSegmentedControl();
+class OrderTypeSegmentedControl extends StatelessWidget {
+  final bool isMobile;
+  const OrderTypeSegmentedControl({super.key, this.isMobile = false});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 44,
+      height: isMobile ? 36 : 44,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(22),
+        boxShadow: isMobile
+            ? [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ]
+            : null,
       ),
       child: Consumer<POSProvider>(
         builder: (context, provider, _) {
@@ -176,6 +186,7 @@ class _OrderTypeSegmentedControl extends StatelessWidget {
                 label: 'Dine In',
                 icon: Icons.dining,
                 isSelected: selected == 'dine_in',
+                isMobile: isMobile,
                 onTap: () => provider.selectOrderType('dine_in'),
               ),
               _VerticalDivider(),
@@ -183,6 +194,7 @@ class _OrderTypeSegmentedControl extends StatelessWidget {
                 label: 'Take Away',
                 icon: Icons.shopping_bag_outlined,
                 isSelected: selected == 'take_away',
+                isMobile: isMobile,
                 onTap: () => provider.selectOrderType('take_away'),
               ),
               _VerticalDivider(),
@@ -190,6 +202,7 @@ class _OrderTypeSegmentedControl extends StatelessWidget {
                 label: 'Delivery',
                 icon: Icons.delivery_dining,
                 isSelected: selected == 'delivery',
+                isMobile: isMobile,
                 onTap: () => provider.selectOrderType('delivery'),
               ),
             ],
@@ -204,12 +217,14 @@ class _SegmentButton extends StatelessWidget {
   final String label;
   final IconData icon;
   final bool isSelected;
+  final bool isMobile;
   final VoidCallback onTap;
 
   const _SegmentButton({
     required this.label,
     required this.icon,
     required this.isSelected,
+    this.isMobile = false,
     required this.onTap,
   });
 
@@ -222,18 +237,18 @@ class _SegmentButton extends StatelessWidget {
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: EdgeInsets.symmetric(horizontal: isMobile ? 10 : 16),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 18, color: color),
-            const SizedBox(width: 8),
+            Icon(icon, size: isMobile ? 15 : 18, color: color),
+            SizedBox(width: isMobile ? 5 : 8),
             Text(
               label,
               style: TextStyle(
                 color: color,
                 fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                fontSize: 14,
+                fontSize: isMobile ? 12 : 14,
               ),
             ),
           ],
@@ -317,22 +332,33 @@ class _RightIcons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final provider = Provider.of<POSProvider>(context);
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (!isMobile) ...[
+        if (isMobile) ...[
           IconButton(
-            icon: const Icon(Icons.qr_code_scanner, color: Colors.white),
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (_) => const BarcodeScannerDialog(),
-              );
-            },
+            icon: Icon(
+              provider.isMobileSearchOpen ? Icons.close : Icons.search,
+              color: Colors.white,
+            ),
+            onPressed: () => provider.toggleMobileSearch(),
             splashRadius: 24,
           ),
-          const SizedBox(width: 4),
+          const SizedBox(width: 2),
         ],
+        IconButton(
+          icon: const Icon(Icons.qr_code_scanner, color: Colors.white),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (_) => const BarcodeScannerDialog(),
+            );
+          },
+          splashRadius: 24,
+        ),
+        const SizedBox(width: 2),
         Stack(
           clipBehavior: Clip.none,
           alignment: Alignment.center,

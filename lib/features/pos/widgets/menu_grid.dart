@@ -377,21 +377,28 @@ class _MenuItemCard extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              '\$${item.price.toStringAsFixed(2)}',
-                              style: TextStyle(
-                                fontSize: isMobile ? 13 : 15,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.grey.shade600,
+                            Flexible(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  '\$${item.price.toStringAsFixed(2)}',
+                                  style: TextStyle(
+                                    fontSize: isMobile ? 12 : 15,
+                                    fontWeight: FontWeight.w700,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                ),
                               ),
                             ),
+                            const SizedBox(width: 4),
                             // Quantity Controller (shows - qty + when in cart)
                             inCart
                                 ? Container(
-                                    height: isMobile ? 30 : 34,
+                                    height: isMobile ? 26 : 34,
                                     decoration: BoxDecoration(
                                       color: primaryOrange.withOpacity(0.08),
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(6),
                                     ),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
@@ -401,28 +408,28 @@ class _MenuItemCard extends StatelessWidget {
                                           onTap: () => provider.decrementQuantity(item.id),
                                           behavior: HitTestBehavior.opaque,
                                           child: Container(
-                                            width: isMobile ? 26 : 30,
+                                            width: isMobile ? 22 : 30,
                                             height: double.infinity,
                                             alignment: Alignment.center,
                                             decoration: BoxDecoration(
                                               color: primaryOrange,
-                                              borderRadius: BorderRadius.circular(8),
+                                              borderRadius: BorderRadius.circular(6),
                                             ),
                                             child: Icon(
                                               Icons.remove,
                                               color: Colors.white,
-                                              size: isMobile ? 14 : 16,
+                                              size: isMobile ? 12 : 16,
                                             ),
                                           ),
                                         ),
                                         // Quantity number
                                         Container(
-                                          width: isMobile ? 26 : 30,
+                                          width: isMobile ? 18 : 30,
                                           alignment: Alignment.center,
                                           child: Text(
                                             '${provider.getQuantity(item.id)}',
                                             style: TextStyle(
-                                              fontSize: isMobile ? 13 : 14,
+                                              fontSize: isMobile ? 11 : 14,
                                               fontWeight: FontWeight.w800,
                                               color: primaryOrange,
                                             ),
@@ -433,17 +440,17 @@ class _MenuItemCard extends StatelessWidget {
                                           onTap: () => provider.addToCart(item),
                                           behavior: HitTestBehavior.opaque,
                                           child: Container(
-                                            width: isMobile ? 26 : 30,
+                                            width: isMobile ? 22 : 30,
                                             height: double.infinity,
                                             alignment: Alignment.center,
                                             decoration: BoxDecoration(
                                               color: primaryOrange,
-                                              borderRadius: BorderRadius.circular(8),
+                                              borderRadius: BorderRadius.circular(6),
                                             ),
                                             child: Icon(
                                               Icons.add,
                                               color: Colors.white,
-                                              size: isMobile ? 14 : 16,
+                                              size: isMobile ? 12 : 16,
                                             ),
                                           ),
                                         ),
@@ -454,16 +461,16 @@ class _MenuItemCard extends StatelessWidget {
                                     onTap: () => provider.addToCart(item),
                                     behavior: HitTestBehavior.opaque,
                                     child: Container(
-                                      width: isMobile ? 30 : 34,
-                                      height: isMobile ? 30 : 34,
+                                      width: isMobile ? 26 : 34,
+                                      height: isMobile ? 26 : 34,
                                       decoration: BoxDecoration(
                                         color: primaryOrange,
-                                        borderRadius: BorderRadius.circular(8),
+                                        borderRadius: BorderRadius.circular(6),
                                       ),
                                       child: Icon(
                                         Icons.add,
                                         color: Colors.white,
-                                        size: isMobile ? 18 : 22,
+                                        size: isMobile ? 16 : 22,
                                       ),
                                     ),
                                   ),

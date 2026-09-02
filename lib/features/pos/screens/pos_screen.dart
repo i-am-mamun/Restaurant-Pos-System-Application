@@ -80,94 +80,102 @@ class _POSScreenState extends State<POSScreen> {
           children: [
             Column(
               children: [
-                // Mobile Search Bar - Premium Design v2
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(12, 4, 12, 0),
-                  child: Material(
-                    color: Colors.white,
-                    elevation: 0,
-                    borderRadius: BorderRadius.circular(14),
-                    child: Container(
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(14),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
-                            blurRadius: 16,
-                            spreadRadius: 0,
-                            offset: const Offset(0, 4),
-                          ),
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.03),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 8),
-                          // Orange circle with white search icon
-                          Container(
-                            width: 28,
-                            height: 28,
-                            decoration: const BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [Color(0xFFFF6D00), Color(0xFFFF9E45)],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              shape: BoxShape.circle,
+                // Order Type Selector (Dine In | Take Away | Delivery)
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(12, 6, 12, 4),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: OrderTypeSegmentedControl(isMobile: true),
+                  ),
+                ),
+
+                // Mobile Search Bar (Only shown when Search Icon in header is clicked)
+                if (provider.isMobileSearchOpen)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(12, 4, 12, 4),
+                    child: Material(
+                      color: Colors.white,
+                      elevation: 0,
+                      borderRadius: BorderRadius.circular(14),
+                      child: Container(
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(14),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.05),
+                              blurRadius: 16,
+                              spreadRadius: 0,
+                              offset: const Offset(0, 4),
                             ),
-                            child: const Icon(
-                              Icons.search_rounded,
-                              color: Colors.white,
-                              size: 16,
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.03),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
                             ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: TextField(
-                              onChanged: provider.setSearchQuery,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                color: Color(0xFF1A1A2E),
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: 0.1,
-                              ),
-                              decoration: InputDecoration(
-                                hintText: 'Find your favourite dish...',
-                                hintStyle: TextStyle(
-                                  color: Colors.grey.shade400,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w400,
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 8),
+                            // Orange circle with white search icon
+                            Container(
+                              width: 28,
+                              height: 28,
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [Color(0xFFFF6D00), Color(0xFFFF9E45)],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
                                 ),
-                                border: InputBorder.none,
-                                isDense: true,
-                                contentPadding: EdgeInsets.zero,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.search_rounded,
+                                color: Colors.white,
+                                size: 16,
                               ),
                             ),
-                          ),
-                          // Subtle divider + mic icon
-                          Container(
-                            width: 1,
-                            height: 18,
-                            color: Colors.grey.shade200,
-                            margin: const EdgeInsets.symmetric(horizontal: 6),
-                          ),
-                          const Icon(
-                            Icons.mic_none_rounded,
-                            color: Color(0xFFFF6D00),
-                            size: 18,
-                          ),
-                          const SizedBox(width: 10),
-                        ],
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: TextField(
+                                autofocus: true,
+                                onChanged: provider.setSearchQuery,
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  color: Color(0xFF1A1A2E),
+                                  fontWeight: FontWeight.w500,
+                                  letterSpacing: 0.1,
+                                ),
+                                decoration: InputDecoration(
+                                  hintText: 'Find your favourite dish...',
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey.shade400,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                  border: InputBorder.none,
+                                  isDense: true,
+                                  contentPadding: EdgeInsets.zero,
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () => provider.setMobileSearchOpen(false),
+                              behavior: HitTestBehavior.opaque,
+                              child: Icon(
+                                Icons.close_rounded,
+                                color: Colors.grey.shade500,
+                                size: 18,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
 
                 // Top - Categories (Horizontal scroll)
                 const MobileCategoryBar(),

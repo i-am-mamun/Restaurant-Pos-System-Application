@@ -300,7 +300,7 @@ class HeldOrdersDialog extends StatelessWidget {
         ],
       ),
       content: SizedBox(
-        width: 480,
+        width: MediaQuery.of(context).size.width > 540 ? 480 : MediaQuery.of(context).size.width * 0.85,
         height: 360,
         child: provider.heldOrders.isEmpty
             ? Center(
@@ -325,7 +325,7 @@ class HeldOrdersDialog extends StatelessWidget {
 
                   return Container(
                     margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(14),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(14),
@@ -364,14 +364,20 @@ class HeldOrdersDialog extends StatelessWidget {
                             Icon(Icons.table_restaurant, size: 14, color: Colors.grey.shade600),
                             const SizedBox(width: 4),
                             Text(held.tableNumber, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-                            const SizedBox(width: 16),
+                            const SizedBox(width: 10),
                             Icon(Icons.person, size: 14, color: Colors.grey.shade600),
                             const SizedBox(width: 4),
-                            Text(held.waiter, style: const TextStyle(fontSize: 13)),
-                            const Spacer(),
+                            Expanded(
+                              child: Text(
+                                held.waiter,
+                                style: const TextStyle(fontSize: 13),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
                             Text(
                               '\$${held.total.toStringAsFixed(2)}',
-                              style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: Colors.black87),
+                              style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15, color: Colors.black87),
                             ),
                           ],
                         ),
@@ -384,34 +390,45 @@ class HeldOrdersDialog extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            OutlinedButton.icon(
-                              onPressed: () {
-                                provider.deleteHeldOrder(held.id);
-                              },
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: Colors.red,
-                                side: BorderSide(color: Colors.red.shade200),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            Expanded(
+                              child: OutlinedButton.icon(
+                                onPressed: () {
+                                  provider.deleteHeldOrder(held.id);
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: Colors.red,
+                                  side: BorderSide(color: Colors.red.shade200),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+                                ),
+                                icon: const Icon(Icons.delete_outline, size: 14),
+                                label: const FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text('Delete', style: TextStyle(fontSize: 12)),
+                                ),
                               ),
-                              icon: const Icon(Icons.delete_outline, size: 16),
-                              label: const Text('Delete'),
                             ),
                             const SizedBox(width: 8),
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                provider.recallOrder(held);
-                                Navigator.of(context).pop();
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: primaryOrange,
-                                foregroundColor: Colors.white,
-                                elevation: 0,
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () {
+                                  provider.recallOrder(held);
+                                  Navigator.of(context).pop();
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: primaryOrange,
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+                                ),
+                                icon: const Icon(Icons.restore, size: 14),
+                                label: const FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text('Recall Order', style: TextStyle(fontSize: 12)),
+                                ),
                               ),
-                              icon: const Icon(Icons.restore, size: 16),
-                              label: const Text('Recall Order'),
                             ),
                           ],
                         ),
