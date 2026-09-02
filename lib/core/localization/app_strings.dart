@@ -188,5 +188,23 @@ class AppStrings {
     'customer_display_test': {'en': 'Customer display test sent', 'bn': 'কাস্টমার ডিসপ্লে টেস্ট পাঠানো হয়েছে'},
     'settings_saved': {'en': 'Hardware settings saved', 'bn': 'হার্ডওয়্যার সেটিংস সংরক্ষিত হয়েছে'},
     'shift_sales_total': {'en': 'Daily Shift Sales Total', 'bn': 'দৈনিক শিফট বিক্রয় মোট'},
+
+    // ── Modifiers & Customization ────────────────────────
+    'customize_item': {'en': 'Customize Item', 'bn': 'আইটেম কাস্টমাইজ করুন'},
+    'select_size': {'en': 'Select Size', 'bn': 'সাইজ বেছে নিন'},
+    'extra_toppings': {'en': 'Extra Toppings', 'bn': 'অতিরিক্ত টপিংস'},
+    'special_instructions': {'en': 'Special Instructions', 'bn': 'বিশেষ নির্দেশাবলী'},
+    'add_instructions_hint': {'en': 'e.g. No onion, extra spicy...', 'bn': 'যেমন: পেঁয়াজ ছাড়া, বেশি ঝাল...'},
+    'regular': {'en': 'Regular', 'bn': 'সাধারণ'},
+    'large': {'en': 'Large', 'bn': 'বড়'},
+    'extra_cheese': {'en': 'Extra Cheese', 'bn': 'অতিরিক্ত চিজ'},
+    'extra_chicken': {'en': 'Extra Chicken', 'bn': 'অতিরিক্ত চিকেন'},
+    'extra_sauce': {'en': 'Extra Sauce', 'bn': 'অতিরিক্ত সস'},
+    'no_onion': {'en': 'No Onion', 'bn': 'পেঁয়াজ ছাড়া'},
+
+    // ── Payment Methods ──────────────────────────────────
+    'payment_cash': {'en': 'Cash', 'bn': 'নগদ'},
+    'payment_card': {'en': 'Card', 'bn': 'কার্ড'},
+    'payment_qr': {'en': 'QR Pay', 'bn': 'QR পে'},
   };
 }

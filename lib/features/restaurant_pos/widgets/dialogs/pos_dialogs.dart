@@ -18,7 +18,7 @@ class TableSelectionDialog extends StatelessWidget {
     {'name': 'T-02', 'capacity': 4, 'isOccupied': true},
     {'name': 'T-03', 'capacity': 4, 'isOccupied': false},
     {'name': 'T-04', 'capacity': 6, 'isOccupied': false},
-    {'name': 'T-05', 'capacity': 4, 'isOccupied': true}, // Current
+    {'name': 'T-05', 'capacity': 4, 'isOccupied': true},
     {'name': 'T-06', 'capacity': 2, 'isOccupied': false},
     {'name': 'T-07', 'capacity': 8, 'isOccupied': true},
     {'name': 'T-08', 'capacity': 4, 'isOccupied': false},
@@ -64,7 +64,6 @@ class TableSelectionDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Legend
             FittedBox(
               fit: BoxFit.scaleDown,
               child: Row(
@@ -235,39 +234,39 @@ class WaiterSelectionDialog extends StatelessWidget {
         ),
         child: SingleChildScrollView(
           child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: waiters.map<Widget>((w) {
-            final isSelected = provider.waiter == w['name'];
-            return Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              decoration: BoxDecoration(
-                color: isSelected ? primaryOrange.withOpacity(0.08) : Colors.grey.shade50,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: isSelected ? primaryOrange : Colors.grey.shade200,
-                  width: 1.5,
-                ),
-              ),
-              child: ListTile(
-                leading: Text(w['avatar']!, style: const TextStyle(fontSize: 24)),
-                title: Text(
-                  w['name']!,
-                  style: TextStyle(
-                    fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
-                    color: isSelected ? primaryOrange : Colors.black87,
+            mainAxisSize: MainAxisSize.min,
+            children: waiters.map<Widget>((w) {
+              final isSelected = provider.waiter == w['name'];
+              return Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                decoration: BoxDecoration(
+                  color: isSelected ? primaryOrange.withOpacity(0.08) : Colors.grey.shade50,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: isSelected ? primaryOrange : Colors.grey.shade200,
+                    width: 1.5,
                   ),
                 ),
-                subtitle: Text(w['role']!),
-                trailing: isSelected
-                    ? Icon(Icons.check_circle_rounded, color: primaryOrange)
-                    : null,
-                onTap: () {
-                  provider.selectWaiter(w['name']!);
-                  Navigator.of(context).pop();
-                },
-              ),
-            );
-          }).toList(),
+                child: ListTile(
+                  leading: Text(w['avatar']!, style: const TextStyle(fontSize: 24)),
+                  title: Text(
+                    w['name']!,
+                    style: TextStyle(
+                      fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                      color: isSelected ? primaryOrange : Colors.black87,
+                    ),
+                  ),
+                  subtitle: Text(w['role']!),
+                  trailing: isSelected
+                      ? Icon(Icons.check_circle_rounded, color: primaryOrange)
+                      : null,
+                  onTap: () {
+                    provider.selectWaiter(w['name']!);
+                    Navigator.of(context).pop();
+                  },
+                ),
+              );
+            }).toList(),
           ),
         ),
       ),
@@ -322,7 +321,7 @@ class HeldOrdersDialog extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
             ),
             child: Text(
-              '${provider.heldOrders.length} ${isBn ? 'হোল্ড' : 'Held'}',
+              '${NumberUtils.toLocalized(provider.heldOrders.length, locale)} ${isBn ? 'হোল্ড' : 'Held'}',
               style: TextStyle(color: primaryOrange, fontWeight: FontWeight.bold, fontSize: 12),
             ),
           ),
@@ -600,7 +599,7 @@ class _SplitBillDialogState extends State<SplitBillDialog> {
           onPressed: () {
             Navigator.of(context).pop();
             final msg = locale == 'bn' 
-              ? 'বিলটি $_splitCount জনের মধ্যে ভাগ করা হয়েছে (৳${perPerson.toStringAsFixed(2)} করে)'
+              ? 'বিলটি ${NumberUtils.toLocalized(_splitCount, locale)} জনের মধ্যে ভাগ করা হয়েছে (৳${NumberUtils.toLocalized(perPerson.toStringAsFixed(2), locale)} করে)'
               : 'Bill split into $_splitCount receipts (৳${perPerson.toStringAsFixed(2)} each)';
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -677,12 +676,12 @@ class TransferOrderDialog extends StatelessWidget {
                   .where((t) => t != provider.tableNumber)
                   .map<Widget>((t) {
                 return ChoiceChip(
-                  label: Text(t),
+                  label: Text(NumberUtils.toLocalized(t, locale)),
                   selected: false,
                   onSelected: (selected) {
                     provider.transferTable(t);
                     Navigator.of(context).pop();
-                    final msg = locale == 'bn' ? 'অর্ডারটি $t এ স্থানান্তর করা হয়েছে' : 'Order transferred to $t';
+                    final msg = locale == 'bn' ? 'অর্ডারটি ${NumberUtils.toLocalized(t, locale)} এ স্থানান্তর করা হয়েছে' : 'Order transferred to $t';
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text(msg), backgroundColor: primaryOrange),
                     );
@@ -1039,7 +1038,6 @@ class _DiscountDialogState extends State<DiscountDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Toggle % vs $
             SegmentedButton<bool>(
               segments: [
                 ButtonSegment(value: true, label: Text(locale == 'bn' ? 'শতাংশ (%)' : 'Percentage (%)')),
@@ -1066,18 +1064,18 @@ class _DiscountDialogState extends State<DiscountDialog> {
             Wrap(
               spacing: 8,
               children: _isPercentage
-                  ? [5, 10, 15, 20, 25].map((p) {
+                  ? [5, 10, 15, 20, 25].map<Widget>((p) {
                       return ActionChip(
-                        label: Text('$p%'),
+                        label: Text(NumberUtils.toLocalized('$p%', locale)),
                         onPressed: () {
                           provider.applyDiscount(percent: p.toDouble());
                           Navigator.of(context).pop();
                         },
                       );
                     }).toList()
-                  : [2, 5, 10, 15, 20].map((a) {
+                  : [2, 5, 10, 15, 20].map<Widget>((a) {
                       return ActionChip(
-                        label: Text('৳$a'),
+                        label: Text('৳${NumberUtils.toLocalized(a, locale)}'),
                         onPressed: () {
                           provider.applyDiscount(amount: a.toDouble());
                           Navigator.of(context).pop();
@@ -1334,8 +1332,6 @@ class _NoteDialogState extends State<NoteDialog> {
 // ─────────────────────────────────────────────────────────────────
 // BILL PRINT DIALOG
 // ─────────────────────────────────────────────────────────────────
-// BILL PRINT / RECEIPT DIALOG
-// ─────────────────────────────────────────────────────────────────
 class BillPrintDialog extends StatelessWidget {
   const BillPrintDialog({super.key});
 
@@ -1349,7 +1345,6 @@ class BillPrintDialog extends StatelessWidget {
     final dateStr = '${now.day.toString().padLeft(2, '0')}/${now.month.toString().padLeft(2, '0')}/${now.year}'
         '  ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
 
-    // Hardcoded colors for the receipt area to ensure perfect visibility regardless of theme
     const receiptBg = Colors.white;
     const receiptTextPrimary = Color(0xFF1A1A1A);
     const receiptTextSecondary = Color(0xFF666666);
@@ -1401,7 +1396,6 @@ class BillPrintDialog extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // ── Restaurant Header ─────────────────────────
                 Text(
                   isBn ? 'জেস্টবাইট রেস্তোরাঁ' : 'ZESTBITE RESTAURANT',
                   style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: receiptTextPrimary, letterSpacing: 0.5),
@@ -1416,39 +1410,28 @@ class BillPrintDialog extends StatelessWidget {
                   style: const TextStyle(fontSize: 12, color: receiptTextSecondary, fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 16),
-                Container(
-                  height: 1,
-                  width: double.infinity,
-                  color: receiptDivider,
-                ),
+                Container(height: 1, width: double.infinity, color: receiptDivider),
                 const SizedBox(height: 16),
-
-                // ── Order Metadata ────────────────────────────
                 Container(
                   padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: receiptLightBg,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                  decoration: BoxDecoration(color: receiptLightBg, borderRadius: BorderRadius.circular(8)),
                   child: Column(
                     children: [
-                      _receiptInfoRow(isBn ? 'টেবিল' : 'Table', provider.tableNumber, isBn ? 'সার্ভার' : 'Server', provider.waiter, receiptTextPrimary, receiptTextSecondary),
+                      _receiptInfoRow(isBn ? 'টেবিল' : 'Table', NumberUtils.toLocalized(provider.tableNumber, locale), isBn ? 'সার্ভার' : 'Server', provider.waiter, receiptTextPrimary, receiptTextSecondary),
                       const SizedBox(height: 8),
-                      _receiptInfoRow(isBn ? 'ধরন' : 'Type', isBn ? _translateOrderType(provider.selectedOrderType) : provider.selectedOrderType.toUpperCase().replaceAll('_', ' '), isBn ? 'অতিথি' : 'Guests', '${provider.guests}', receiptTextPrimary, receiptTextSecondary),
+                      _receiptInfoRow(isBn ? 'ধরন' : 'Type', isBn ? _translateOrderType(provider.selectedOrderType) : provider.selectedOrderType.toUpperCase().replaceAll('_', ' '), isBn ? 'অতিথি' : 'Guests', NumberUtils.toLocalized(provider.guests, locale), receiptTextPrimary, receiptTextSecondary),
                       const SizedBox(height: 8),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(isBn ? 'তারিখ ও সময়' : 'Date & Time', style: const TextStyle(fontSize: 11, color: receiptTextSecondary, fontWeight: FontWeight.w600)),
-                          Text(dateStr, style: const TextStyle(fontSize: 11, color: receiptTextPrimary, fontWeight: FontWeight.w700)),
+                          Text(NumberUtils.toLocalized(dateStr, locale), style: const TextStyle(fontSize: 11, color: receiptTextPrimary, fontWeight: FontWeight.w700)),
                         ],
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 20),
-
-                // ── Items Table Header ────────────────────────
                 Row(
                   children: [
                     Expanded(child: Text(isBn ? 'আইটেম' : 'Item', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: receiptTextPrimary))),
@@ -1460,8 +1443,6 @@ class BillPrintDialog extends StatelessWidget {
                 const SizedBox(height: 8),
                 Container(height: 1, width: double.infinity, color: receiptDivider),
                 const SizedBox(height: 12),
-
-                // ── Items List ────────────────────────────────
                 ...provider.cartItems.map<Widget>((item) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 6),
@@ -1474,7 +1455,7 @@ class BillPrintDialog extends StatelessWidget {
                             style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: receiptTextPrimary),
                           ),
                         ),
-                        Text('x${item.quantity}', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: receiptTextSecondary)),
+                        Text('x${NumberUtils.toLocalized(item.quantity, locale)}', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: receiptTextSecondary)),
                         const SizedBox(width: 16),
                         SizedBox(
                           width: 70,
@@ -1489,50 +1470,27 @@ class BillPrintDialog extends StatelessWidget {
                 const SizedBox(height: 12),
                 Container(height: 1, width: double.infinity, color: receiptDivider),
                 const SizedBox(height: 16),
-
-                // ── Totals ────────────────────────────────────
                 _receiptPriceRow(isBn ? 'সাবটোটাল' : 'Subtotal', '৳${NumberUtils.toLocalized(provider.subtotal.toStringAsFixed(2), locale)}', receiptTextSecondary, receiptTextPrimary),
                 if (provider.discountValue > 0)
                   _receiptPriceRow(isBn ? 'ছাড়' : 'Discount', '-৳${NumberUtils.toLocalized(provider.discountValue.toStringAsFixed(2), locale)}', receiptTextSecondary, Colors.green.shade700),
                 _receiptPriceRow(isBn ? 'ট্যাক্স (৮%)' : 'Tax (8%)', '৳${NumberUtils.toLocalized(provider.tax.toStringAsFixed(2), locale)}', receiptTextSecondary, receiptTextPrimary),
                 _receiptPriceRow(isBn ? 'সার্ভিস চার্জ (৪%)' : 'Service (4%)', '৳${NumberUtils.toLocalized(provider.serviceCharge.toStringAsFixed(2), locale)}', receiptTextSecondary, receiptTextPrimary),
                 const SizedBox(height: 12),
-                
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: receiptDivider, width: 1.5),
-                  ),
+                  decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(12), border: Border.all(color: receiptDivider, width: 1.5)),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        isBn ? 'মোট পরিশোধযোগ্য' : 'TOTAL PAYABLE',
-                        style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: receiptTextPrimary),
-                      ),
-                      Text(
-                        '৳${NumberUtils.toLocalized(provider.totalPayable.toStringAsFixed(2), locale)}',
-                        style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: primaryOrange),
-                      ),
+                      Text(isBn ? 'মোট পরিশোধযোগ্য' : 'TOTAL PAYABLE', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: receiptTextPrimary)),
+                      Text('৳${NumberUtils.toLocalized(provider.totalPayable.toStringAsFixed(2), locale)}', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: primaryOrange)),
                     ],
                   ),
                 ),
                 const SizedBox(height: 24),
-
-                // ── Footer ────────────────────────────────────
-                Text(
-                  isBn ? 'আমাদের সাথে খাওয়ার জন্য ধন্যবাদ!' : 'Thank you for dining with us!',
-                  style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 13, color: receiptTextSecondary),
-                  textAlign: TextAlign.center,
-                ),
+                Text(isBn ? 'আমাদের সাথে খাওয়ার জন্য ধন্যবাদ!' : 'Thank you for dining with us!', style: const TextStyle(fontStyle: FontStyle.italic, fontSize: 13, color: receiptTextSecondary), textAlign: TextAlign.center),
                 const SizedBox(height: 6),
-                Text(
-                  isBn ? 'অনুগ্রহ করে আবার আসুন 🙏' : 'Please visit us again 🙏',
-                  style: const TextStyle(fontSize: 12, color: receiptTextSecondary, fontWeight: FontWeight.w600),
-                  textAlign: TextAlign.center,
-                ),
+                Text(isBn ? 'অনুগ্রহ করে আবার আসুন 🙏' : 'Please visit us again 🙏', style: const TextStyle(fontSize: 12, color: receiptTextSecondary, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
                 const SizedBox(height: 8),
               ],
             ),
@@ -1540,29 +1498,14 @@ class BillPrintDialog extends StatelessWidget {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(isBn ? 'বন্ধ করুন' : 'Close', style: TextStyle(color: context.textSecondary, fontWeight: FontWeight.w600)),
-        ),
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(isBn ? 'বন্ধ করুন' : 'Close', style: TextStyle(color: context.textSecondary, fontWeight: FontWeight.w600))),
         const SizedBox(width: 8),
         ElevatedButton.icon(
           onPressed: () {
             Navigator.of(context).pop();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(isBn ? 'থার্মাল প্রিন্টারে রসিদ পাঠানো হচ্ছে...' : 'Sending receipt to thermal printer...'),
-                backgroundColor: primaryOrange,
-                behavior: SnackBarBehavior.floating,
-              ),
-            );
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(isBn ? 'থার্মাল প্রিন্টারে রসিদ পাঠানো হচ্ছে...' : 'Sending receipt to thermal printer...'), backgroundColor: primaryOrange, behavior: SnackBarBehavior.floating));
           },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: primaryOrange,
-            foregroundColor: Colors.white,
-            elevation: 0,
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
+          style: ElevatedButton.styleFrom(backgroundColor: primaryOrange, foregroundColor: Colors.white, elevation: 0, padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
           icon: const Icon(Icons.print_rounded, size: 20),
           label: Text(isBn ? 'প্রিন্ট করুন' : 'Print Now', style: const TextStyle(fontWeight: FontWeight.w800)),
         ),
@@ -1573,35 +1516,14 @@ class BillPrintDialog extends StatelessWidget {
   Widget _receiptInfoRow(String l1, String v1, String l2, String v2, Color primary, Color secondary) {
     return Row(
       children: [
-        Expanded(
-          child: Row(
-            children: [
-              Text('$l1: ', style: TextStyle(fontSize: 11, color: secondary, fontWeight: FontWeight.w600)),
-              Text(v1, style: TextStyle(fontSize: 11, color: primary, fontWeight: FontWeight.w700)),
-            ],
-          ),
-        ),
-        Row(
-          children: [
-            Text('$l2: ', style: TextStyle(fontSize: 11, color: secondary, fontWeight: FontWeight.w600)),
-            Text(v2, style: TextStyle(fontSize: 11, color: primary, fontWeight: FontWeight.w700)),
-          ],
-        ),
+        Expanded(child: Row(children: [Text('$l1: ', style: TextStyle(fontSize: 11, color: secondary, fontWeight: FontWeight.w600)), Text(v1, style: TextStyle(fontSize: 11, color: primary, fontWeight: FontWeight.w700))])),
+        Row(children: [Text('$l2: ', style: TextStyle(fontSize: 11, color: secondary, fontWeight: FontWeight.w600)), Text(v2, style: TextStyle(fontSize: 11, color: primary, fontWeight: FontWeight.w700))]),
       ],
     );
   }
 
   Widget _receiptPriceRow(String label, String val, Color labelColor, Color valueColor) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: TextStyle(fontSize: 13, color: labelColor, fontWeight: FontWeight.w500)),
-          Text(val, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: valueColor)),
-        ],
-      ),
-    );
+    return Padding(padding: const EdgeInsets.symmetric(vertical: 4), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(label, style: TextStyle(fontSize: 13, color: labelColor, fontWeight: FontWeight.w500)), Text(val, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: valueColor))]));
   }
 
   String _translateOrderType(String type) {
@@ -1613,8 +1535,6 @@ class BillPrintDialog extends StatelessWidget {
     }
   }
 }
-
-
 
 // ─────────────────────────────────────────────────────────────────
 // CHECKOUT PAYMENT DIALOG
@@ -1646,78 +1566,45 @@ class _CheckoutPaymentDialogState extends State<CheckoutPaymentDialog> {
       contentPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       title: Row(
         children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: primaryOrange.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
-            child: const Icon(Icons.payments_rounded, color: primaryOrange),
-          ),
+          Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: primaryOrange.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: const Icon(Icons.payments_rounded, color: primaryOrange)),
           const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              isBn ? 'চেকআউট ও পেমেন্ট' : 'Checkout & Payment',
-              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: context.textPrimary),
-            ),
-          ),
+          Expanded(child: Text(isBn ? 'চেকআউট ও পেমেন্ট' : 'Checkout & Payment', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18, color: context.textPrimary))),
         ],
       ),
       content: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.65,
-          maxWidth: 420,
-        ),
+        constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.65, maxWidth: 420),
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Total Amount Box ──
               Container(
                 padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: primaryOrange.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: primaryOrange.withOpacity(0.25)),
-                ),
+                decoration: BoxDecoration(color: primaryOrange.withOpacity(0.08), borderRadius: BorderRadius.circular(14), border: Border.all(color: primaryOrange.withOpacity(0.25))),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Flexible(
-                      child: Text(
-                        isBn ? 'মোট পরিমাণ:' : 'Total Amount Due:',
-                        style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: context.textPrimary),
-                      ),
-                    ),
+                    Flexible(child: Text(isBn ? 'মোট পরিমাণ:' : 'Total Amount Due:', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: context.textPrimary))),
                     const SizedBox(width: 8),
-                    Text('৳${NumberUtils.toLocalized(total.toStringAsFixed(2), locale)}',
-                      style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: primaryOrange)),
+                    Text('৳${NumberUtils.toLocalized(total.toStringAsFixed(2), locale)}', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: primaryOrange)),
                   ],
                 ),
               ),
               const SizedBox(height: 16),
-
-              // ── Payment Method ──
-              Text(
-                isBn ? 'পেমেন্ট পদ্ধতি বেছে নিন:' : 'Select Payment Method:',
-                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: context.textPrimary),
-              ),
+              Text(isBn ? 'পেমেন্ট পদ্ধতি বেছে নিন:' : 'Select Payment Method:', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: context.textPrimary)),
               const SizedBox(height: 8),
               Row(
                 children: [
-                  _methodTile(context, isBn ? 'নগদ' : 'Cash', 'Cash', Icons.money, isBn),
+                  _methodTile(context, AppStrings.get('payment_cash', locale), 'Cash', Icons.money, isBn),
                   const SizedBox(width: 8),
-                  _methodTile(context, isBn ? 'কার্ড' : 'Card', 'Card', Icons.credit_card, isBn),
+                  _methodTile(context, AppStrings.get('payment_card', locale), 'Card', Icons.credit_card, isBn),
                   const SizedBox(width: 8),
-                  _methodTile(context, isBn ? 'QR পে' : 'QR Pay', 'QR Pay', Icons.qr_code, isBn),
+                  _methodTile(context, AppStrings.get('payment_qr', locale), 'QR Pay', Icons.qr_code, isBn),
                 ],
               ),
               const SizedBox(height: 16),
-
-              // ── Cash Tendered ──
               if (_selectedMethod == 'Cash') ...[
-                Text(
-                  isBn ? 'প্রদত্ত নগদ:' : 'Cash Tendered:',
-                  style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: context.textPrimary),
-                ),
+                Text(isBn ? 'প্রদত্ত নগদ:' : 'Cash Tendered:', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: context.textPrimary)),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 8,
@@ -1728,17 +1615,8 @@ class _CheckoutPaymentDialogState extends State<CheckoutPaymentDialog> {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         margin: const EdgeInsets.only(bottom: 8),
-                        decoration: BoxDecoration(
-                          color: selected ? primaryOrange : context.inputBg,
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: selected ? primaryOrange : context.borderColor),
-                        ),
-                        child: Text('৳${NumberUtils.toLocalized(amt, locale)}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            color: selected ? Colors.white : context.textPrimary,
-                          ),
-                        ),
+                        decoration: BoxDecoration(color: selected ? primaryOrange : context.inputBg, borderRadius: BorderRadius.circular(8), border: Border.all(color: selected ? primaryOrange : context.borderColor)),
+                        child: Text('৳${NumberUtils.toLocalized(amt, locale)}', style: TextStyle(fontWeight: FontWeight.w700, color: selected ? Colors.white : context.textPrimary)),
                       ),
                     );
                   }).toList(),
@@ -1746,30 +1624,12 @@ class _CheckoutPaymentDialogState extends State<CheckoutPaymentDialog> {
                 const SizedBox(height: 12),
                 Container(
                   padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: change > 0
-                        ? Colors.green.withOpacity(context.isDark ? 0.15 : 0.08)
-                        : context.inputBg,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: change > 0 ? Colors.green.withOpacity(0.4) : context.borderColor,
-                    ),
-                  ),
+                  decoration: BoxDecoration(color: change > 0 ? Colors.green.withOpacity(context.isDark ? 0.15 : 0.08) : context.inputBg, borderRadius: BorderRadius.circular(10), border: Border.all(color: change > 0 ? Colors.green.withOpacity(0.4) : context.borderColor)),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        isBn ? 'ফেরত দেওয়ার পরিমাণ:' : 'Change to Return:',
-                        style: TextStyle(color: context.textPrimary, fontWeight: FontWeight.w600),
-                      ),
-                      Text(
-                        '৳${NumberUtils.toLocalized(change.toStringAsFixed(2), locale)}',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w900,
-                          fontSize: 18,
-                          color: change > 0 ? Colors.green : context.textSecondary,
-                        ),
-                      ),
+                      Text(isBn ? 'ফেরত দেওয়ার পরিমাণ:' : 'Change to Return:', style: TextStyle(color: context.textPrimary, fontWeight: FontWeight.w600)),
+                      Text('৳${NumberUtils.toLocalized(change.toStringAsFixed(2), locale)}', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: change > 0 ? Colors.green : context.textSecondary)),
                     ],
                   ),
                 ),
@@ -1779,22 +1639,14 @@ class _CheckoutPaymentDialogState extends State<CheckoutPaymentDialog> {
         ),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(isBn ? 'বাতিল' : 'Cancel', style: const TextStyle(color: Colors.grey)),
-        ),
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(isBn ? 'বাতিল' : 'Cancel', style: const TextStyle(color: Colors.grey))),
         ElevatedButton(
           onPressed: () {
             final completedOrder = provider.placeOrder(paymentMethod: _selectedMethod);
             Navigator.of(context).pop();
             _showSuccessDialog(context, completedOrder, locale);
           },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: primaryOrange,
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          ),
+          style: ElevatedButton.styleFrom(backgroundColor: primaryOrange, foregroundColor: Colors.white, padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
           child: Text(isBn ? 'অর্ডার সম্পন্ন করুন' : 'Complete Order', style: const TextStyle(fontWeight: FontWeight.bold)),
         ),
       ],
@@ -1810,26 +1662,8 @@ class _CheckoutPaymentDialogState extends State<CheckoutPaymentDialog> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 14),
-          decoration: BoxDecoration(
-            color: isSel ? primaryOrange : context.inputBg,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: isSel ? primaryOrange : context.borderColor),
-            boxShadow: isSel ? [BoxShadow(color: primaryOrange.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 3))] : [],
-          ),
-          child: Column(
-            children: [
-              Icon(icon, color: isSel ? Colors.white : context.textSecondary, size: 24),
-              const SizedBox(height: 6),
-              Text(
-                displayLabel,
-                style: TextStyle(
-                  color: isSel ? Colors.white : context.textPrimary,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
+          decoration: BoxDecoration(color: isSel ? primaryOrange : context.inputBg, borderRadius: BorderRadius.circular(12), border: Border.all(color: isSel ? primaryOrange : context.borderColor), boxShadow: isSel ? [BoxShadow(color: primaryOrange.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 3))] : []),
+          child: Column(children: [Icon(icon, color: isSel ? Colors.white : context.textSecondary, size: 24), const SizedBox(height: 6), Text(displayLabel, style: TextStyle(color: isSel ? Colors.white : context.textPrimary, fontWeight: FontWeight.w700, fontSize: 12))]),
         ),
       ),
     );
@@ -1837,6 +1671,13 @@ class _CheckoutPaymentDialogState extends State<CheckoutPaymentDialog> {
 
   void _showSuccessDialog(BuildContext context, CompletedOrder order, String locale) {
     final isBn = locale == 'bn';
+    
+    // Translate payment method for display
+    String translatedMethod = order.paymentMethod;
+    if (order.paymentMethod == 'Cash') translatedMethod = AppStrings.get('payment_cash', locale);
+    if (order.paymentMethod == 'Card') translatedMethod = AppStrings.get('payment_card', locale);
+    if (order.paymentMethod == 'QR Pay') translatedMethod = AppStrings.get('payment_qr', locale);
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -1845,36 +1686,15 @@ class _CheckoutPaymentDialogState extends State<CheckoutPaymentDialog> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 72, height: 72,
-              decoration: BoxDecoration(color: Colors.green.withOpacity(0.12), shape: BoxShape.circle),
-              child: const Icon(Icons.check_circle_rounded, color: Colors.green, size: 48),
-            ),
+            Container(width: 72, height: 72, decoration: BoxDecoration(color: Colors.green.withOpacity(0.12), shape: BoxShape.circle), child: const Icon(Icons.check_circle_rounded, color: Colors.green, size: 48)),
             const SizedBox(height: 16),
-            Text(
-              isBn ? 'অর্ডার সফলভাবে সম্পন্ন!' : 'Order Placed Successfully!',
-              style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: ctx.textPrimary),
-              textAlign: TextAlign.center,
-            ),
+            Text(isBn ? 'অর্ডার সফলভাবে সম্পন্ন!' : 'Order Placed Successfully!', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: ctx.textPrimary), textAlign: TextAlign.center),
             const SizedBox(height: 6),
-            Text('${isBn ? 'অর্ডার ID' : 'Order ID'}: ${order.id}',
-              style: TextStyle(color: ctx.textSecondary, fontWeight: FontWeight.bold)),
+            Text('${isBn ? 'অর্ডার ID' : 'Order ID'}: ${order.id}', style: TextStyle(color: ctx.textSecondary, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
-            Text(
-              '${isBn ? 'পেমেন্ট' : 'Total Paid'}: ৳${NumberUtils.toLocalized(order.total.toStringAsFixed(2), locale)} ${isBn ? 'via' : 'via'} ${order.paymentMethod}',
-              style: TextStyle(fontWeight: FontWeight.w600, color: ctx.textPrimary),
-              textAlign: TextAlign.center,
-            ),
+            Text('${isBn ? 'পেমেন্ট' : 'Total Paid'}: ৳${NumberUtils.toLocalized(order.total.toStringAsFixed(2), locale)} ${isBn ? 'এর মাধ্যমে' : 'via'} $translatedMethod', style: TextStyle(fontWeight: FontWeight.w600, color: ctx.textPrimary), textAlign: TextAlign.center),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFF6D00),
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              ),
-              child: Text(isBn ? 'নতুন অর্ডার শুরু করুন' : 'Start New Order'),
-            ),
+            ElevatedButton(onPressed: () => Navigator.of(ctx).pop(), style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFF6D00), foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))), child: Text(isBn ? 'নতুন অর্ডার শুরু করুন' : 'Start New Order')),
           ],
         ),
       ),
@@ -1882,8 +1702,9 @@ class _CheckoutPaymentDialogState extends State<CheckoutPaymentDialog> {
   }
 }
 
+
 // ─────────────────────────────────────────────────────────────────
-// NOTIFICATIONS & SCANNER DIALOGS
+// NOTIFICATIONS DIALOG
 // ─────────────────────────────────────────────────────────────────
 class NotificationListDialog extends StatelessWidget {
   const NotificationListDialog({super.key});
@@ -1895,32 +1716,14 @@ class NotificationListDialog extends StatelessWidget {
     final primaryOrange = const Color(0xFFFF6D00);
     
     final notifications = [
-      {
-        'title': isBn ? 'রান্নাঘরের অর্ডার তৈরি' : 'Kitchen Order Ready', 
-        'subtitle': isBn ? 'টেবিল T-02 এর অর্ডার পরিবেশনের জন্য তৈরি' : 'Table T-02 order is ready to serve', 
-        'time': isBn ? '২ মিনিট আগে' : '2 mins ago'
-      },
-      {
-        'title': isBn ? 'বিল অনুরোধ' : 'Bill Requested', 
-        'subtitle': isBn ? 'টেবিল T-05 বিল প্রিন্টের অনুরোধ করেছে' : 'Table T-05 requested bill print', 
-        'time': isBn ? '৫ মিনিট আগে' : '5 mins ago'
-      },
-      {
-        'title': isBn ? 'নতুন ডেলিভারি অর্ডার' : 'New Delivery Order', 
-        'subtitle': isBn ? 'অর্ডার #ORD-9812 ডেলিভারির মাধ্যমে' : 'Order #ORD-9812 via Delivery', 
-        'time': isBn ? '১২ মিনিট আগে' : '12 mins ago'
-      },
+      {'title': isBn ? 'রান্নাঘরের অর্ডার তৈরি' : 'Kitchen Order Ready', 'subtitle': isBn ? 'টেবিল T-02 এর অর্ডার পরিবেশনের জন্য তৈরি' : 'Table T-02 order is ready to serve', 'time': isBn ? '২ মিনিট আগে' : '2 mins ago'},
+      {'title': isBn ? 'বিল অনুরোধ' : 'Bill Requested', 'subtitle': isBn ? 'টেবিল T-05 বিল প্রিন্টের অনুরোধ করেছে' : 'Table T-05 requested bill print', 'time': isBn ? '৫ মিনিট আগে' : '5 mins ago'},
+      {'title': isBn ? 'নতুন ডেলিভারি অর্ডার' : 'New Delivery Order', 'subtitle': isBn ? 'অর্ডার #ORD-9812 ডেলিভারির মাধ্যমে' : 'Order #ORD-9812 via Delivery', 'time': isBn ? '১২ মিনিট আগে' : '12 mins ago'},
     ];
 
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      title: Row(
-        children: [
-          Icon(Icons.notifications_rounded, color: primaryOrange),
-          const SizedBox(width: 12),
-          Expanded(child: Text(isBn ? 'বিজ্ঞপ্তি' : 'Notifications', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18))),
-        ],
-      ),
+      title: Row(children: [Icon(Icons.notifications_rounded, color: primaryOrange), const SizedBox(width: 12), Expanded(child: Text(isBn ? 'বিজ্ঞপ্তি' : 'Notifications', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)))]),
       content: SizedBox(
         width: 360,
         child: Column(
@@ -1928,10 +1731,7 @@ class NotificationListDialog extends StatelessWidget {
           children: notifications.map<Widget>((n) {
             return ListTile(
               contentPadding: EdgeInsets.zero,
-              leading: CircleAvatar(
-                backgroundColor: primaryOrange.withOpacity(0.1),
-                child: Icon(Icons.notifications_active, color: primaryOrange, size: 18),
-              ),
+              leading: CircleAvatar(backgroundColor: primaryOrange.withOpacity(0.1), child: Icon(Icons.notifications_active, color: primaryOrange, size: 18)),
               title: Text(n['title']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
               subtitle: Text(n['subtitle']!, style: const TextStyle(fontSize: 11)),
               trailing: Text(n['time']!, style: const TextStyle(fontSize: 10, color: Colors.grey)),
@@ -1939,13 +1739,14 @@ class NotificationListDialog extends StatelessWidget {
           }).toList(),
         ),
       ),
-      actions: [
-        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(AppStrings.get('close', locale))),
-      ],
+      actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(AppStrings.get('close', locale)))],
     );
   }
 }
 
+// ─────────────────────────────────────────────────────────────────
+// BARCODE SCANNER DIALOG
+// ─────────────────────────────────────────────────────────────────
 class BarcodeScannerDialog extends StatelessWidget {
   const BarcodeScannerDialog({super.key});
 
@@ -1964,22 +1765,144 @@ class BarcodeScannerDialog extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              width: 160,
-              height: 160,
-              decoration: BoxDecoration(
-                border: Border.all(color: primaryOrange, width: 3),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Icon(Icons.qr_code_scanner, size: 80, color: primaryOrange),
-            ),
+            Container(width: 160, height: 160, decoration: BoxDecoration(border: Border.all(color: primaryOrange, width: 3), borderRadius: BorderRadius.circular(16)), child: Icon(Icons.qr_code_scanner, size: 80, color: primaryOrange)),
             const SizedBox(height: 16),
             Text(isBn ? 'ক্যামেরাটি QR / বারকোডের দিকে ধরুন' : 'Point camera at QR / Barcode', style: const TextStyle(fontSize: 12, color: Colors.grey)),
           ],
         ),
       ),
+      actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(AppStrings.get('close', locale)))],
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────
+// ITEM CUSTOMIZATION DIALOG
+// ─────────────────────────────────────────────────────────────────
+class ItemCustomizationDialog extends StatefulWidget {
+  final MenuItem item;
+  const ItemCustomizationDialog({super.key, required this.item});
+
+  @override
+  State<ItemCustomizationDialog> createState() => _ItemCustomizationDialogState();
+}
+
+class _ItemCustomizationDialogState extends State<ItemCustomizationDialog> {
+  final Map<int, Set<int>> _selectedOptions = {};
+  final TextEditingController _noteController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.item.modifierGroups != null) {
+      for (int i = 0; i < widget.item.modifierGroups!.length; i++) {
+        if (!widget.item.modifierGroups![i].multiSelect) {
+          _selectedOptions[i] = {0};
+        } else {
+          _selectedOptions[i] = {};
+        }
+      }
+    }
+  }
+
+  double get _extraPrice {
+    double total = 0;
+    if (widget.item.modifierGroups == null) return 0;
+    _selectedOptions.forEach((groupIndex, optionIndices) {
+      for (var optIndex in optionIndices) {
+        total += widget.item.modifierGroups![groupIndex].options[optIndex].extraPrice;
+      }
+    });
+    return total;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final locale = context.watch<AppProvider>().locale;
+    const primaryOrange = Color(0xFFFF6D00);
+
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: Row(
+        children: [
+          Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: primaryOrange.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: const Icon(Icons.tune_rounded, color: primaryOrange)),
+          const SizedBox(width: 12),
+          Expanded(child: Text(AppStrings.get('customize_item', locale), style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18))),
+        ],
+      ),
+      content: SizedBox(
+        width: 400,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  ClipRRect(borderRadius: BorderRadius.circular(10), child: Image.network(widget.item.imageUrl, width: 60, height: 60, fit: BoxFit.cover)),
+                  const SizedBox(width: 12),
+                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [Text(widget.item.localizedName(locale), style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)), Text('৳${NumberUtils.toLocalized(widget.item.price.toStringAsFixed(2), locale)}', style: TextStyle(color: Colors.grey.shade600, fontWeight: FontWeight.w600))])),
+                ],
+              ),
+              const SizedBox(height: 20),
+              if (widget.item.modifierGroups != null)
+                ...widget.item.modifierGroups!.asMap().entries.map((entry) {
+                  final groupIndex = entry.key;
+                  final group = entry.value;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(AppStrings.get(group.titleKey, locale), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        children: group.options.asMap().entries.map((optEntry) {
+                          final optIndex = optEntry.key;
+                          final opt = optEntry.value;
+                          final isSelected = _selectedOptions[groupIndex]?.contains(optIndex) ?? false;
+                          return ChoiceChip(
+                            label: Text('${AppStrings.get(opt.nameKey, locale)}${opt.extraPrice > 0 ? " (+৳${NumberUtils.toLocalized(opt.extraPrice.toStringAsFixed(2), locale)})" : ""}', style: TextStyle(color: isSelected ? Colors.white : Colors.black87, fontSize: 12)),
+                            selected: isSelected,
+                            selectedColor: primaryOrange,
+                            onSelected: (selected) {
+                              setState(() {
+                                if (group.multiSelect) {
+                                  if (selected) { _selectedOptions[groupIndex]!.add(optIndex); } else { _selectedOptions[groupIndex]!.remove(optIndex); }
+                                } else { _selectedOptions[groupIndex] = {optIndex}; }
+                              });
+                            },
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  );
+                }),
+              Text(AppStrings.get('special_instructions', locale), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+              const SizedBox(height: 8),
+              TextField(controller: _noteController, decoration: InputDecoration(hintText: AppStrings.get('add_instructions_hint', locale), border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)), contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10)), maxLines: 2),
+            ],
+          ),
+        ),
+      ),
       actions: [
-        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(AppStrings.get('close', locale))),
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(AppStrings.get('cancel', locale))),
+        ElevatedButton(
+          onPressed: () {
+            final List<String> selectedModifiers = [];
+            _selectedOptions.forEach((gIdx, opts) {
+              for (var oIdx in opts) {
+                final group = widget.item.modifierGroups![gIdx];
+                final opt = group.options[oIdx];
+                selectedModifiers.add(AppStrings.get(opt.nameKey, locale));
+              }
+            });
+            Provider.of<POSProvider>(context, listen: false).addToCart(widget.item, selectedModifiers: selectedModifiers, extraPrice: _extraPrice, note: _noteController.text);
+            Navigator.of(context).pop();
+          },
+          style: ElevatedButton.styleFrom(backgroundColor: primaryOrange, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+          child: Text('${AppStrings.get('add_to_cart', locale)} (৳${NumberUtils.toLocalized((widget.item.price + _extraPrice).toStringAsFixed(2), locale)})'),
+        ),
       ],
     );
   }

@@ -7,6 +7,7 @@ import '../../../core/localization/app_strings.dart';
 import '../../../core/models/menu_item.dart';
 import '../../../core/theme/theme_extensions.dart';
 import '../../../core/utils/number_utils.dart';
+import 'dialogs/pos_dialogs.dart';
 
 class MenuGrid extends StatelessWidget {
   final bool isMobile;
@@ -319,7 +320,7 @@ class _MenuItemCard extends StatelessWidget {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         GestureDetector(
-                                          onTap: () => provider.decrementQuantity(item.id),
+                                          onTap: () => provider.decrementById(item.id),
                                           behavior: HitTestBehavior.opaque,
                                           child: Container(
                                             width: isMobile ? 18 : 30, height: double.infinity, alignment: Alignment.center,
@@ -335,7 +336,13 @@ class _MenuItemCard extends StatelessWidget {
                                           ),
                                         ),
                                         GestureDetector(
-                                          onTap: () => provider.addToCart(item),
+                                          onTap: () {
+                                            if (item.modifierGroups != null) {
+                                              showDialog(context: context, builder: (_) => ItemCustomizationDialog(item: item));
+                                            } else {
+                                              provider.addToCart(item);
+                                            }
+                                          },
                                           behavior: HitTestBehavior.opaque,
                                           child: Container(
                                             width: isMobile ? 18 : 30, height: double.infinity, alignment: Alignment.center,
@@ -347,7 +354,13 @@ class _MenuItemCard extends StatelessWidget {
                                     ),
                                   )
                                 : GestureDetector(
-                                    onTap: () => provider.addToCart(item),
+                                    onTap: () {
+                                      if (item.modifierGroups != null) {
+                                        showDialog(context: context, builder: (_) => ItemCustomizationDialog(item: item));
+                                      } else {
+                                        provider.addToCart(item);
+                                      }
+                                    },
                                     behavior: HitTestBehavior.opaque,
                                     child: Container(
                                       width: isMobile ? 26 : 34, height: isMobile ? 26 : 34,
@@ -362,6 +375,23 @@ class _MenuItemCard extends StatelessWidget {
                   ),
                 ],
               ),
+              // Add a transparent inkwell over the image to trigger customization too
+              Positioned.fill(
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      if (item.modifierGroups != null) {
+                        showDialog(context: context, builder: (_) => ItemCustomizationDialog(item: item));
+                      } else {
+                        provider.addToCart(item);
+                      }
+                    },
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                ),
+              ),
+
               Positioned(
                 top: 10, left: 10, right: 10,
                 child: Row(
@@ -451,7 +481,7 @@ class _MenuListView extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               GestureDetector(
-                                onTap: () => provider.decrementQuantity(item.id),
+                                onTap: () => provider.decrementById(item.id),
                                 behavior: HitTestBehavior.opaque,
                                 child: Container(
                                   width: 36, height: double.infinity, alignment: Alignment.center,
@@ -464,7 +494,13 @@ class _MenuListView extends StatelessWidget {
                                 child: Text(NumberUtils.toLocalized(provider.getQuantity(item.id), locale), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: primaryOrange)),
                               ),
                               GestureDetector(
-                                onTap: () => provider.addToCart(item),
+                                onTap: () {
+                                  if (item.modifierGroups != null) {
+                                    showDialog(context: context, builder: (_) => ItemCustomizationDialog(item: item));
+                                  } else {
+                                    provider.addToCart(item);
+                                  }
+                                },
                                 behavior: HitTestBehavior.opaque,
                                 child: Container(
                                   width: 36, height: double.infinity, alignment: Alignment.center,
@@ -476,7 +512,13 @@ class _MenuListView extends StatelessWidget {
                           ),
                         )
                       : GestureDetector(
-                          onTap: () => provider.addToCart(item),
+                          onTap: () {
+                            if (item.modifierGroups != null) {
+                              showDialog(context: context, builder: (_) => ItemCustomizationDialog(item: item));
+                            } else {
+                              provider.addToCart(item);
+                            }
+                          },
                           behavior: HitTestBehavior.opaque,
                           child: Container(
                             width: 36, height: 36,
@@ -493,6 +535,7 @@ class _MenuListView extends StatelessWidget {
     );
   }
 }
+
 
 class _PaginationDots extends StatelessWidget {
   const _PaginationDots();

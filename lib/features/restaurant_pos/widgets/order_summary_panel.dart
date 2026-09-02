@@ -269,7 +269,7 @@ class _OrderItemRow extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                   GestureDetector(
-                    onTap: () => provider.removeFromCart(item.menuItem.id),
+                    onTap: () => provider.removeFromCart(item),
                     behavior: HitTestBehavior.opaque,
                     child: Icon(Icons.delete_outline, size: 20, color: Colors.red.shade500),
                   ),
@@ -281,8 +281,8 @@ class _OrderItemRow extends StatelessWidget {
                   const SizedBox(width: 36),
                   _QuantityControl(
                     quantity: item.quantity,
-                    onDecrement: () => provider.decrementQuantity(item.menuItem.id),
-                    onIncrement: () => provider.incrementQuantity(item.menuItem.id),
+                    onDecrement: () => provider.decrementQuantity(item),
+                    onIncrement: () => provider.incrementQuantity(item),
                   ),
                 ],
               ),

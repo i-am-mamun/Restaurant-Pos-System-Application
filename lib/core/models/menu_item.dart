@@ -7,6 +7,7 @@ class MenuItem {
   final String imageUrl;
   final bool isPopular;
   final bool isVeg;
+  final List<ModifierGroup>? modifierGroups;
 
   const MenuItem({
     required this.id,
@@ -17,6 +18,7 @@ class MenuItem {
     required this.imageUrl,
     this.isPopular = false,
     this.isVeg = false,
+    this.modifierGroups,
   });
 
   /// Returns the locale-appropriate name.
@@ -24,21 +26,46 @@ class MenuItem {
       (locale == 'bn' && nameBn.isNotEmpty) ? nameBn : name;
 }
 
+class ModifierGroup {
+  final String titleKey; // Key for AppStrings
+  final bool multiSelect;
+  final List<ModifierOption> options;
+
+  const ModifierGroup({
+    required this.titleKey,
+    this.multiSelect = false,
+    required this.options,
+  });
+}
+
+class ModifierOption {
+  final String nameKey; // Key for AppStrings
+  final double extraPrice;
+
+  const ModifierOption({
+    required this.nameKey,
+    this.extraPrice = 0.0,
+  });
+}
+
 class CartItem {
   final MenuItem menuItem;
   int quantity;
-  List<String> modifiers;
+  List<String> modifiers; // Store display strings (localized)
   String note;
+  double extraPricePerUnit;
 
   CartItem({
     required this.menuItem,
     this.quantity = 1,
     this.modifiers = const [],
     this.note = '',
+    this.extraPricePerUnit = 0.0,
   });
 
-  double get totalPrice => menuItem.price * quantity;
+  double get totalPrice => (menuItem.price + extraPricePerUnit) * quantity;
 }
+
 
 class OrderType {
   final String id;
@@ -167,6 +194,24 @@ class AppData {
       category: 'burgers',
       imageUrl: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=300&fit=crop',
       isPopular: true,
+      modifierGroups: [
+        const ModifierGroup(
+          titleKey: 'select_size',
+          options: [
+            ModifierOption(nameKey: 'regular'),
+            ModifierOption(nameKey: 'large', extraPrice: 1.50),
+          ],
+        ),
+        const ModifierGroup(
+          titleKey: 'extra_toppings',
+          multiSelect: true,
+          options: [
+            ModifierOption(nameKey: 'extra_cheese', extraPrice: 0.50),
+            ModifierOption(nameKey: 'extra_chicken', extraPrice: 1.00),
+            ModifierOption(nameKey: 'extra_sauce', extraPrice: 0.25),
+          ],
+        ),
+      ],
     ),
     MenuItem(
       id: 2,
@@ -176,6 +221,23 @@ class AppData {
       category: 'pizza',
       imageUrl: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400&h=300&fit=crop',
       isPopular: true,
+      modifierGroups: [
+        const ModifierGroup(
+          titleKey: 'select_size',
+          options: [
+            ModifierOption(nameKey: 'regular'),
+            ModifierOption(nameKey: 'large', extraPrice: 3.00),
+          ],
+        ),
+        const ModifierGroup(
+          titleKey: 'extra_toppings',
+          multiSelect: true,
+          options: [
+            ModifierOption(nameKey: 'extra_cheese', extraPrice: 1.00),
+            ModifierOption(nameKey: 'extra_sauce', extraPrice: 0.50),
+          ],
+        ),
+      ],
     ),
     MenuItem(
       id: 3,
@@ -186,6 +248,7 @@ class AppData {
       imageUrl: 'https://images.unsplash.com/photo-1532550907401-a500c9a57435?w=400&h=300&fit=crop',
       isPopular: true,
     ),
+
     MenuItem(
       id: 4,
       name: 'Beef Steak',

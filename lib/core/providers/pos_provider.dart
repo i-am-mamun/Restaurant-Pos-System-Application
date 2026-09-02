@@ -46,30 +46,9 @@ class POSProvider extends ChangeNotifier {
 
   // Initial cart items matching demo design
   POSProvider() {
-    _cartItems = [
-      CartItem(
-        menuItem: AppData.menuItems.firstWhere((m) => m.id == 1),
-        quantity: 1,
-        modifiers: ['Size: Regular', 'Extra Cheese', 'Extra Chicken', 'No onion, extra sauce please'],
-      ),
-      CartItem(
-        menuItem: AppData.menuItems.firstWhere((m) => m.id == 2),
-        quantity: 1,
-      ),
-      CartItem(
-        menuItem: AppData.menuItems.firstWhere((m) => m.id == 5),
-        quantity: 1,
-      ),
-      CartItem(
-        menuItem: AppData.menuItems.firstWhere((m) => m.id == 11),
-        quantity: 2,
-      ),
-      CartItem(
-        menuItem: AppData.menuItems.firstWhere((m) => m.id == 10),
-        quantity: 1,
-      ),
-    ];
+    _cartItems = [];
   }
+
 
   bool _isMobileSearchOpen = false;
 
@@ -193,22 +172,56 @@ class POSProvider extends ChangeNotifier {
     }
   }
 
-  void addToCart(MenuItem item) {
-    final existingIndex = _cartItems.indexWhere((c) => c.menuItem.id == item.id);
+  void addToCart(MenuItem item, {List<String>? selectedModifiers, double extraPrice = 0.0, String note = ''}) {
+    // If it has modifiers, we look for an exact match or add new
+    final existingIndex = _cartItems.indexWhere((c) => 
+      c.menuItem.id == item.id && 
+      _listEquals(c.modifiers, selectedModifiers ?? []) &&
+      c.note == note
+    );
+
     if (existingIndex != -1) {
       _cartItems[existingIndex].quantity++;
     } else {
-      _cartItems.add(CartItem(menuItem: item));
+      _cartItems.add(CartItem(
+        menuItem: item,
+        modifiers: selectedModifiers ?? [],
+        extraPricePerUnit: extraPrice,
+        note: note,
+      ));
     }
     notifyListeners();
   }
 
-  void removeFromCart(int itemId) {
-    _cartItems.removeWhere((c) => c.menuItem.id == itemId);
+  bool _listEquals(List<String> a, List<String> b) {
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
+  }
+
+  void removeFromCart(CartItem item) {
+    _cartItems.remove(item);
     notifyListeners();
   }
 
-  void incrementQuantity(int itemId) {
+  void incrementQuantity(CartItem item) {
+    item.quantity++;
+    notifyListeners();
+  }
+
+  void decrementQuantity(CartItem item) {
+    if (item.quantity > 1) {
+      item.quantity--;
+    } else {
+      _cartItems.remove(item);
+    }
+    notifyListeners();
+  }
+
+  // ID-based methods for simple grid interactions (affects base item with no modifiers or first found)
+  void incrementById(int itemId) {
     final index = _cartItems.indexWhere((c) => c.menuItem.id == itemId);
     if (index != -1) {
       _cartItems[index].quantity++;
@@ -216,7 +229,7 @@ class POSProvider extends ChangeNotifier {
     }
   }
 
-  void decrementQuantity(int itemId) {
+  void decrementById(int itemId) {
     final index = _cartItems.indexWhere((c) => c.menuItem.id == itemId);
     if (index != -1) {
       if (_cartItems[index].quantity > 1) {
@@ -227,6 +240,9 @@ class POSProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+
+
 
   void clearCart() {
     _cartItems.clear();
