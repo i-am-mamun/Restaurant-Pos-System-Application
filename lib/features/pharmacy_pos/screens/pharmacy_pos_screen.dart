@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/theme_extensions.dart';
 import '../providers/pharmacy_provider.dart';
-
 import '../widgets/pharmacy_header.dart';
-import '../widgets/category_selector.dart';
+import '../widgets/category_sidebar.dart';
 import '../widgets/medicine_grid.dart';
-import '../widgets/dashboard_alerts.dart';
 import '../widgets/quick_actions_bar.dart';
 import '../widgets/pharmacy_cart_panel.dart';
 import '../widgets/pharmacy_footer.dart';
@@ -29,54 +27,48 @@ class _PharmacyPOSScreenState extends State<PharmacyPOSScreen> {
           children: [
             Expanded(
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  // Left Side: Products & Actions
+                  // ── MAIN CONTENT (Left + Center) ──
                   Expanded(
                     flex: 7,
                     child: Container(
-                      margin: const EdgeInsets.fromLTRB(8, 6, 4, 6),
+                      margin: const EdgeInsets.fromLTRB(12, 8, 6, 8),
                       decoration: BoxDecoration(
                         color: context.isDark ? context.cardBg : Colors.white,
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           if (!context.isDark)
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
-                              blurRadius: 20,
-                              offset: const Offset(0, 4),
-                            ),
+                            BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 15, offset: const Offset(0, 4)),
                         ],
                       ),
-                      child: const Column(
+                      child: Column(
                         children: [
-                          PharmacyHeader(),
+                          const PharmacyHeader(),
+                          const Divider(height: 1),
                           Expanded(
-                            child: Column(
+                            child: Row(
                               children: [
-                                SizedBox(height: 6),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 12.0),
-                                  child: CategorySelector(),
-                                ),
-                                SizedBox(height: 8),
+                                // Left Categories Sidebar
+                                const CategorySidebar(),
+                                
+                                // Center Medicine Grid Area
                                 Expanded(
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 12.0),
-                                    child: MedicineGrid(),
+                                  child: Column(
+                                    children: [
+                                      const SizedBox(height: 12),
+                                      const Expanded(
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(horizontal: 16.0),
+                                          child: MedicineGrid(),
+                                        ),
+                                      ),
+                                      const Padding(
+                                        padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
+                                        child: QuickActionsBar(),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                SizedBox(height: 8),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 12.0),
-                                  child: DashboardAlerts(),
-                                ),
-                                SizedBox(height: 8),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 12.0),
-                                  child: QuickActionsBar(),
-                                ),
-                                SizedBox(height: 8),
                               ],
                             ),
                           ),
@@ -85,11 +77,11 @@ class _PharmacyPOSScreenState extends State<PharmacyPOSScreen> {
                     ),
                   ),
                   
-                  // Right Side: Cart Panel
+                  // ── CART PANEL (Right) ──
                   Expanded(
                     flex: 3,
                     child: Container(
-                      margin: const EdgeInsets.fromLTRB(4, 6, 8, 6),
+                      margin: const EdgeInsets.fromLTRB(6, 8, 12, 8),
                       child: const PharmacyCartPanel(),
                     ),
                   ),
