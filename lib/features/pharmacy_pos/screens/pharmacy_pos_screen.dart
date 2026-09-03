@@ -6,6 +6,7 @@ import '../widgets/pharmacy_header.dart';
 import '../widgets/category_sidebar.dart';
 import '../widgets/medicine_grid.dart';
 import '../widgets/quick_actions_bar.dart';
+import '../widgets/generic_alternative_box.dart';
 import '../widgets/pharmacy_cart_panel.dart';
 import '../widgets/pharmacy_footer.dart';
 
@@ -61,6 +62,10 @@ class _PharmacyPOSScreenState extends State<PharmacyPOSScreen> {
                                           padding: EdgeInsets.symmetric(horizontal: 16.0),
                                           child: MedicineGrid(),
                                         ),
+                                      ),
+                                      const Padding(
+                                        padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
+                                        child: GenericAlternativeBox(),
                                       ),
                                       const Padding(
                                         padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
