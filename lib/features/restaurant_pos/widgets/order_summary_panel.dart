@@ -354,7 +354,7 @@ class _OrderNoteField extends StatelessWidget {
 
         return GestureDetector(
           onTap: () {
-            showDialog(context: context, builder: (_) => const NoteDialog(isKitchenNote: false));
+            showDialog(context: context, builder: (_) => NoteDialog(isKitchenNote: false));
           },
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),

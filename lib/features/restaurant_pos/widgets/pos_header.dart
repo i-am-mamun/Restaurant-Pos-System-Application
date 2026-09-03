@@ -379,7 +379,7 @@ class _RightIcons extends StatelessWidget {
           onPressed: () {
             showDialog(
               context: context,
-              builder: (_) => const BarcodeScannerDialog(),
+              builder: (_) => BarcodeScannerDialog(),
             );
           },
           splashRadius: 24,
@@ -433,7 +433,7 @@ class _RightIcons extends StatelessWidget {
             if (val == 'waiter') {
               showDialog(context: context, builder: (_) => const WaiterSelectionDialog());
             } else if (val == 'custom_item') {
-              showDialog(context: context, builder: (_) => const CustomItemDialog());
+              showDialog(context: context, builder: (_) => CustomItemDialog());
             } else if (val == 'split') {
               showDialog(context: context, builder: (_) => const SplitBillDialog());
             } else if (val == 'transfer') {

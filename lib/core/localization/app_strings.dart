@@ -207,5 +207,19 @@ class AppStrings {
     'payment_cash': {'en': 'Cash', 'bn': 'নগদ'},
     'payment_card': {'en': 'Card', 'bn': 'কার্ড'},
     'payment_qr': {'en': 'QR Pay', 'bn': 'QR পে'},
+
+    // ── Waiter Names ─────────────────────────────────────
+    'waiter_1': {'en': 'Rahim Uddin', 'bn': 'রহিম উদ্দিন'},
+    'waiter_2': {'en': 'Karim Ahmed', 'bn': 'করিম আহমেদ'},
+    'waiter_3': {'en': 'Sumaiya Akter', 'bn': 'সুমাইয়া আক্তার'},
+    'waiter_4': {'en': 'Abdur Rahman', 'bn': 'আব্দুর রহমান'},
+    'waiter_5': {'en': 'Fatima Begum', 'bn': 'ফাতেমা বেগম'},
+
+    // ── Roles ─────────────────────────────────────────────
+    'role_head': {'en': 'Head Server', 'bn': 'প্রধান পরিবেশক'},
+    'role_senior': {'en': 'Senior Waiter', 'bn': 'সিনিয়র ওয়েটার'},
+    'role_waiter': {'en': 'Waiter', 'bn': 'ওয়েটার'},
+    'role_waitress': {'en': 'Waitress', 'bn': 'ওয়েট্রেস'},
+    'role_junior': {'en': 'Junior Waiter', 'bn': 'জুনিয়র ওয়েটার'},
   };
 }

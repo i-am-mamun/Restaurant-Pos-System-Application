@@ -87,22 +87,22 @@ class BottomActionBar extends StatelessWidget {
     Widget dialog;
     switch (action) {
       case 'Coupon':
-        dialog = const CouponDialog();
+        dialog = CouponDialog();
         break;
       case 'Discount':
-        dialog = const DiscountDialog();
+        dialog = DiscountDialog();
         break;
       case 'Promo':
-        dialog = const PromoDialog();
+        dialog = PromoDialog();
         break;
       case 'Note':
-        dialog = const NoteDialog(isKitchenNote: false);
+        dialog = NoteDialog(isKitchenNote: false);
         break;
       case 'Kitchen Note':
-        dialog = const NoteDialog(isKitchenNote: true);
+        dialog = NoteDialog(isKitchenNote: true);
         break;
       case 'Bill Print':
-        dialog = const BillPrintDialog();
+        dialog = BillPrintDialog();
         break;
       default:
         return;

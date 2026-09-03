@@ -95,7 +95,7 @@ class CategorySidebar extends StatelessWidget {
               color: Colors.transparent,
               child: InkWell(
                 onTap: () {
-                  showDialog(context: context, builder: (_) => const CustomItemDialog());
+                  showDialog(context: context, builder: (_) => CustomItemDialog());
                 },
                 borderRadius: BorderRadius.circular(12),
                 child: Row(
