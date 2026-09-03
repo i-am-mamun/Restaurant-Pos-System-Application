@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../core/providers/app_provider.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../restaurant_pos/screens/pos_screen.dart';
+import '../../pharmacy_pos/screens/pharmacy_pos_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -186,10 +187,12 @@ class HomeScreen extends StatelessWidget {
                           description: AppStrings.get('pharmacy_pos_desc', locale),
                           icon: Icons.local_pharmacy_rounded,
                           color: const Color(0xFF1565C0),
-                          isActive: false,
+                          isActive: true,
                           isDark: isDark,
-                          comingSoonLabel: AppStrings.get('coming_soon', locale),
-                          onTap: () => _snack(context, '💊 ${AppStrings.get('pharmacy_pos', locale)} ${AppStrings.get('coming_soon_msg', locale)}'),
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const PharmacyPOSScreen()),
+                          ),
                         ),
                         _ModuleCard(
                           title: AppStrings.get('wholesaler_pos', locale),
