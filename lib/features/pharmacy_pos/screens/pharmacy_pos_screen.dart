@@ -35,10 +35,10 @@ class _PharmacyPOSScreenState extends State<PharmacyPOSScreen> {
                   Expanded(
                     flex: 7,
                     child: Container(
-                      margin: const EdgeInsets.fromLTRB(24, 16, 12, 16),
+                      margin: const EdgeInsets.fromLTRB(8, 6, 4, 6),
                       decoration: BoxDecoration(
                         color: context.isDark ? context.cardBg : Colors.white,
-                        borderRadius: BorderRadius.circular(24),
+                        borderRadius: BorderRadius.circular(16),
                         boxShadow: [
                           if (!context.isDark)
                             BoxShadow(
@@ -54,29 +54,29 @@ class _PharmacyPOSScreenState extends State<PharmacyPOSScreen> {
                           Expanded(
                             child: Column(
                               children: [
-                                SizedBox(height: 16),
+                                SizedBox(height: 6),
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 24.0),
+                                  padding: EdgeInsets.symmetric(horizontal: 12.0),
                                   child: CategorySelector(),
                                 ),
-                                SizedBox(height: 16),
+                                SizedBox(height: 8),
                                 Expanded(
                                   child: Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 24.0),
+                                    padding: EdgeInsets.symmetric(horizontal: 12.0),
                                     child: MedicineGrid(),
                                   ),
                                 ),
-                                SizedBox(height: 16),
+                                SizedBox(height: 8),
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 24.0),
+                                  padding: EdgeInsets.symmetric(horizontal: 12.0),
                                   child: DashboardAlerts(),
                                 ),
-                                SizedBox(height: 16),
+                                SizedBox(height: 8),
                                 Padding(
-                                  padding: EdgeInsets.symmetric(horizontal: 24.0),
+                                  padding: EdgeInsets.symmetric(horizontal: 12.0),
                                   child: QuickActionsBar(),
                                 ),
-                                SizedBox(height: 24),
+                                SizedBox(height: 8),
                               ],
                             ),
                           ),
@@ -89,7 +89,7 @@ class _PharmacyPOSScreenState extends State<PharmacyPOSScreen> {
                   Expanded(
                     flex: 3,
                     child: Container(
-                      margin: const EdgeInsets.fromLTRB(12, 16, 24, 16),
+                      margin: const EdgeInsets.fromLTRB(4, 6, 8, 6),
                       child: const PharmacyCartPanel(),
                     ),
                   ),

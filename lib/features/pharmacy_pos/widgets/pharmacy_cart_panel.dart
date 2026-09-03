@@ -11,7 +11,7 @@ class PharmacyCartPanel extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: context.isDark ? context.cardBg : Colors.white,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           if (!context.isDark)
             BoxShadow(
@@ -40,7 +40,7 @@ class PharmacyCartPanel extends StatelessWidget {
 
   Widget _buildCustomerHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
       child: Row(
         children: [
           Expanded(
@@ -139,7 +139,7 @@ class PharmacyCartPanel extends StatelessWidget {
 
   Widget _buildCartTableHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
       child: Row(
         children: [
           Expanded(flex: 3, child: Text('ITEM', style: _headerStyle(context))),
@@ -178,7 +178,7 @@ class PharmacyCartPanel extends StatelessWidget {
           itemBuilder: (context, index) {
             final item = provider.cart[index];
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+              padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -312,7 +312,7 @@ class PharmacyCartPanel extends StatelessWidget {
 
   Widget _buildCartFooterActions(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -353,7 +353,7 @@ class PharmacyCartPanel extends StatelessWidget {
 
   Widget _buildSummaryAndInputs(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(12.0),
       child: Column(
         children: [
           Row(
@@ -515,7 +515,7 @@ class PharmacyCartPanel extends StatelessWidget {
     ];
 
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(12.0),
       child: Wrap(
         spacing: 8,
         runSpacing: 8,
@@ -552,7 +552,7 @@ class PharmacyCartPanel extends StatelessWidget {
 
   Widget _buildCheckoutButtons(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
       child: Row(
         children: [
           Expanded(
