@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../../core/providers/app_provider.dart';
 import '../../../core/theme/theme_extensions.dart';
 
 class PharmacyHeader extends StatelessWidget {
@@ -6,11 +8,13 @@ class PharmacyHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const primaryTeal = Color(0xFF009688); // Teal color from image
+    const primaryTeal = Color(0xFF009688);
     final buttonBg = primaryTeal.withOpacity(0.1);
+    final appProvider = context.watch<AppProvider>();
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      height: 64, // Fixed height for alignment
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
           // ── LOGO ──
@@ -124,6 +128,21 @@ class PharmacyHeader extends StatelessWidget {
             label: 'Add Medicine',
             color: primaryTeal,
             bgColor: buttonBg,
+          ),
+          
+          const SizedBox(width: 12),
+          const VerticalDivider(width: 1, indent: 15, endIndent: 15),
+          const SizedBox(width: 12),
+
+          // ── THEME TOGGLE ──
+          IconButton(
+            onPressed: () => appProvider.toggleTheme(),
+            icon: Icon(
+              appProvider.isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+              color: Colors.grey.shade600,
+              size: 22,
+            ),
+            tooltip: appProvider.isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode',
           ),
         ],
       ),

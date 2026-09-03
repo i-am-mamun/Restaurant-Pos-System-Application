@@ -13,33 +13,32 @@ class MedicineGrid extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // ── Top Navigation/Filter Bar ──
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              _NavButton(label: 'All Medicines', icon: Icons.medication_rounded, isSelected: true),
-              const SizedBox(width: 8),
-              _NavButton(label: 'Popular'),
-              const SizedBox(width: 8),
-              _NavButton(label: 'Low Stock', icon: Icons.warning_amber_rounded, iconColor: Colors.orange),
-              const SizedBox(width: 8),
-              _NavButton(label: 'Expiring Soon', icon: Icons.calendar_today_rounded, iconColor: Colors.red),
-              const SizedBox(width: 8),
-              _NavButton(label: 'Prescription Required', icon: Icons.medical_services_rounded, iconColor: Colors.purple),
-              const SizedBox(width: 8),
-              _NavButton(label: 'Generic Available', icon: Icons.eco_rounded, iconColor: Colors.green),
-              const SizedBox(width: 16),
-              const Text('Sort by:', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey)),
-              const SizedBox(width: 4),
-              DropdownButton<String>(
-                value: 'Name A-Z',
-                underline: const SizedBox(),
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: context.textPrimary),
-                items: ['Name A-Z', 'Price High-Low'].map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
-                onChanged: (_) {},
+        Row(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _NavButton(label: 'All Medicines', icon: Icons.medication_rounded, isSelected: true),
+                    const SizedBox(width: 8),
+                    _NavButton(label: 'Popular'),
+                    const SizedBox(width: 8),
+                    _NavButton(label: 'Low Stock', icon: Icons.warning_amber_rounded, iconColor: Colors.orange),
+                    const SizedBox(width: 8),
+                    _NavButton(label: 'Expiring Soon', icon: Icons.calendar_today_rounded, iconColor: Colors.red),
+                    const SizedBox(width: 8),
+                    _NavButton(label: 'Prescription Required', icon: Icons.medical_services_rounded, iconColor: Colors.purple),
+                    const SizedBox(width: 8),
+                    _NavButton(label: 'Generic Available', icon: Icons.eco_rounded, iconColor: Colors.green),
+                  ],
+                ),
               ),
-            ],
-          ),
+            ),
+            const SizedBox(width: 16),
+            // ── Sort & Filter Section (From Image) ──
+            _buildSortAndFilter(context),
+          ],
         ),
         
         const SizedBox(height: 16),
@@ -53,7 +52,7 @@ class MedicineGrid extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: 20),
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: 220,
-                  mainAxisExtent: 210, // Increased from 170 to fully fix overflow
+                  mainAxisExtent: 210,
                   crossAxisSpacing: 12,
                   mainAxisSpacing: 12,
                 ),
@@ -64,6 +63,49 @@ class MedicineGrid extends StatelessWidget {
               );
             },
           ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSortAndFilter(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Text(
+          'Sort by:',
+          style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.grey),
+        ),
+        const SizedBox(width: 8),
+        // Sort Box
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: context.isDark ? context.inputBg : Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: context.isDark ? context.dividerColor : Colors.grey.shade200),
+          ),
+          child: Row(
+            children: [
+              Text(
+                'Name A-Z',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: context.textPrimary),
+              ),
+              const SizedBox(width: 6),
+              const Icon(Icons.keyboard_arrow_down_rounded, size: 16, color: Colors.grey),
+            ],
+          ),
+        ),
+        const SizedBox(width: 12),
+        // Filter Icon Box
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: context.isDark ? context.inputBg : Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: context.isDark ? context.dividerColor : Colors.grey.shade200),
+          ),
+          child: Icon(Icons.tune_rounded, size: 18, color: context.textPrimary),
         ),
       ],
     );
@@ -130,7 +172,7 @@ class _MedicineCard extends StatelessWidget {
         children: [
           // Image Area
           Expanded(
-            flex: 5, // Adjusted flex for better image visibility
+            flex: 5,
             child: Stack(
               children: [
                 Center(
@@ -146,44 +188,32 @@ class _MedicineCard extends StatelessWidget {
                       child: Image.network(
                         medicine.imagePath,
                         fit: BoxFit.contain,
-                        loadingBuilder: (context, child, progress) => progress == null 
-                          ? child 
-                          : const Center(child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))),
-                        errorBuilder: (_, __, ___) => Container(
-                          color: const Color(0xFFF8FAFC),
-                          child: const Center(child: Icon(Icons.medication_rounded, color: Color(0xFF009688), size: 36)),
-                        ),
+                        errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.medication, size: 36, color: Colors.grey)),
                       ),
                     ),
                   ),
                 ),
-                // Badges
                 Positioned(
-                  top: 12, left: 12, right: 12,
+                  top: 10, left: 10, right: 10,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       if (medicine.isRx) 
-                        _BadgeIcon(icon: Icons.medical_services, color: Colors.purple),
+                         Container(padding: const EdgeInsets.all(2), decoration: BoxDecoration(color: Colors.purple.shade50, borderRadius: BorderRadius.circular(4)), child: const Icon(Icons.medical_services, size: 10, color: Colors.purple)),
                       const Spacer(),
                       if (medicine.alternatives != null)
-                        _TextBadge(label: 'Alt: ${medicine.alternatives}', color: Colors.green),
-                      if (medicine.isLowStock)
-                        const Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 16),
-                      if (medicine.isExpiringSoon)
-                        _TextBadge(label: 'Exp: Soon', color: Colors.red),
+                        Container(padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2), decoration: BoxDecoration(color: Colors.green.shade50, borderRadius: BorderRadius.circular(4)), child: Text('Alt: ${medicine.alternatives}', style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.green))),
                     ],
                   ),
                 ),
               ],
             ),
           ),
-          
           // Details Area
           Expanded(
-            flex: 4, // More space for text and price
+            flex: 4,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -191,42 +221,18 @@ class _MedicineCard extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        medicine.name,
-                        style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: context.textPrimary, height: 1.1),
-                        maxLines: 1, overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        medicine.genericName,
-                        style: const TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.w500),
-                        maxLines: 1, overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Stock: ${medicine.stock}',
-                        style: TextStyle(fontSize: 10, color: context.textSecondary, fontWeight: FontWeight.bold),
-                      ),
+                      Text(medicine.name, style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13, color: context.textPrimary, height: 1.1), maxLines: 1, overflow: TextOverflow.ellipsis),
+                      Text(medicine.genericName, style: const TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.w500), maxLines: 1, overflow: TextOverflow.ellipsis),
+                      Text('Stock: ${medicine.stock}', style: const TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold)),
                     ],
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        '৳ ${medicine.price.toStringAsFixed(2)}',
-                        style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14, color: Color(0xFF009688)),
-                      ),
-                      Material(
-                        color: const Color(0xFF009688),
-                        shape: const CircleBorder(),
-                        child: InkWell(
-                          onTap: () => context.read<PharmacyProvider>().addToCart(medicine),
-                          customBorder: const CircleBorder(),
-                          child: const Padding(
-                            padding: EdgeInsets.all(5),
-                            child: Icon(Icons.add, size: 18, color: Colors.white),
-                          ),
-                        ),
+                      Text('৳ ${medicine.price.toStringAsFixed(2)}', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14, color: Color(0xFF009688))),
+                      GestureDetector(
+                        onTap: () => context.read<PharmacyProvider>().addToCart(medicine),
+                        child: Container(padding: const EdgeInsets.all(5), decoration: const BoxDecoration(color: Color(0xFF009688), shape: BoxShape.circle), child: const Icon(Icons.add, size: 18, color: Colors.white)),
                       ),
                     ],
                   ),
@@ -234,61 +240,6 @@ class _MedicineCard extends StatelessWidget {
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class _BadgeIcon extends StatelessWidget {
-  final IconData icon;
-  final Color color;
-  const _BadgeIcon({required this.icon, required this.color});
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(3),
-      decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(4)),
-      child: Icon(icon, size: 10, color: color),
-    );
-  }
-}
-
-class _TextBadge extends StatelessWidget {
-  final String label;
-  final Color color;
-  const _TextBadge({required this.label, required this.color});
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-      decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(4)),
-      child: Text(label, style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: color)),
-    );
-  }
-}
-
-
-
-class _Badge extends StatelessWidget {
-  final Color color;
-  final IconData? icon;
-  final Color? iconColor;
-  final String? label;
-  final Color? textColor;
-
-  const _Badge({required this.color, this.icon, this.iconColor, this.label, this.textColor});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-      decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4)),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (icon != null) Icon(icon, size: 10, color: iconColor),
-          if (label != null) Text(label!, style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: textColor)),
         ],
       ),
     );
