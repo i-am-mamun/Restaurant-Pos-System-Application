@@ -93,14 +93,21 @@ class POSProvider extends ChangeNotifier {
 
   List<MenuItem> get filteredMenuItems {
     List<MenuItem> items = AppData.menuItems;
-    if (_selectedCategory != 'all') {
+    
+    // ক্যাটাগরি ফিল্টার
+    if (_selectedCategory == 'popular') {
+      items = items.where((item) => item.isPopular).toList();
+    } else if (_selectedCategory != 'all') {
       items = items.where((item) => item.category == _selectedCategory).toList();
     }
+    
+    // সার্চ ফিল্টার (ইংরেজি ও বাংলা উভয় নামেই সার্চ হবে)
     if (_searchQuery.isNotEmpty) {
-      items = items
-          .where((item) =>
-              item.name.toLowerCase().contains(_searchQuery.toLowerCase()))
-          .toList();
+      final query = _searchQuery.toLowerCase();
+      items = items.where((item) =>
+          item.name.toLowerCase().contains(query) ||
+          item.nameBn.toLowerCase().contains(query)
+      ).toList();
     }
     return items;
   }

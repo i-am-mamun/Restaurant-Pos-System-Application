@@ -396,6 +396,22 @@ class AppData {
       imageUrl: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400&h=300&fit=crop',
       isVeg: true,
     ),
+    MenuItem(
+      id: 21,
+      name: 'Extra Patty',
+      nameBn: 'অতিরিক্ত প্যাটি',
+      price: 100.0,
+      category: 'addons',
+      imageUrl: 'https://images.unsplash.com/photo-1586190848861-99aa4a171e90?w=400&h=300&fit=crop',
+    ),
+    MenuItem(
+      id: 22,
+      name: 'Gulab Jamun',
+      nameBn: 'গোলাপ জামুন',
+      price: 120.0,
+      category: 'desserts',
+      imageUrl: 'https://images.unsplash.com/photo-1548943487-a2e4e43b4853?w=400&h=300&fit=crop',
+    ),
   ];
 
 }
