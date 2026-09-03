@@ -154,8 +154,9 @@ class WaiterSelectionDialog extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: waiters.map<Widget>((w) {
-              final waiterName = AppStrings.get(w['name']!, locale);
-              final isSelected = provider.waiter == waiterName;
+              final waiterKey = w['name']!;
+              final waiterName = AppStrings.get(waiterKey, locale);
+              final isSelected = provider.waiterKey == waiterKey;
               return Container(
                 margin: const EdgeInsets.only(bottom: 8),
                 decoration: BoxDecoration(color: isSelected ? primaryOrange.withOpacity(0.08) : Colors.grey.shade50, borderRadius: BorderRadius.circular(12), border: Border.all(color: isSelected ? primaryOrange : Colors.grey.shade200, width: 1.5)),
@@ -164,7 +165,7 @@ class WaiterSelectionDialog extends StatelessWidget {
                   title: Text(waiterName, style: TextStyle(fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600, color: isSelected ? primaryOrange : Colors.black87)),
                   subtitle: Text(AppStrings.get(w['role']!, locale)),
                   trailing: isSelected ? Icon(Icons.check_circle_rounded, color: primaryOrange) : null,
-                  onTap: () { provider.selectWaiter(waiterName); Navigator.of(context).pop(); },
+                  onTap: () { provider.selectWaiter(waiterKey); Navigator.of(context).pop(); },
                 ),
               );
             }).toList(),
@@ -223,7 +224,7 @@ class HeldOrdersDialog extends StatelessWidget {
                         Row(
                           children: [
                             Icon(Icons.table_restaurant, size: 14, color: Colors.grey.shade600), const SizedBox(width: 4), Text(held.tableNumber, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)), const SizedBox(width: 10), Icon(Icons.person, size: 14, color: Colors.grey.shade600), const SizedBox(width: 4),
-                            Expanded(child: Text(held.waiter, style: const TextStyle(fontSize: 13), maxLines: 1, overflow: TextOverflow.ellipsis)),
+                            Expanded(child: Text(AppStrings.get(held.waiter, locale), style: const TextStyle(fontSize: 13), maxLines: 1, overflow: TextOverflow.ellipsis)),
                             Text('৳${NumberUtils.toLocalized(held.total.toStringAsFixed(2), locale)}', style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15, color: Colors.black87)),
                           ],
                         ),
@@ -867,7 +868,7 @@ class NoteDialog extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// BILL PRINT DIALOG
+// BILL PRINT DIALOG (Thermal Receipt Preview)
 // ─────────────────────────────────────────────────────────────────
 class BillPrintDialog extends StatelessWidget {
   const BillPrintDialog({super.key});
@@ -876,13 +877,105 @@ class BillPrintDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<POSProvider>(context);
     final locale = context.watch<AppProvider>().locale;
+    final isBn = locale == 'bn';
+    const primaryOrange = Color(0xFFFF6D00);
+
     return AlertDialog(
-      title: Text(AppStrings.get('bill_print', locale)),
-      content: Text('Printing Bill for Table ${provider.tableNumber}...'),
-      actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(AppStrings.get('close', locale)))],
+      backgroundColor: context.cardBg,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: Row(
+        children: [
+          const Icon(Icons.print_rounded, color: primaryOrange),
+          const SizedBox(width: 10),
+          Text(AppStrings.get('bill_print', locale), style: const TextStyle(fontWeight: FontWeight.w800)),
+        ],
+      ),
+      content: SizedBox(
+        width: 350,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Receipt Preview Area
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: context.isDark ? Colors.grey.shade900 : Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: context.dividerColor),
+              ),
+              child: Column(
+                children: [
+                  Text(AppStrings.get('app_name', locale), style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+                  Text(isBn ? 'বনানী শাখা, ঢাকা' : 'Banani Branch, Dhaka', style: const TextStyle(fontSize: 10)),
+                  const Divider(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('${AppStrings.get('table', locale)}: ${NumberUtils.toLocalized(provider.tableNumber, locale)}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Text(NumberUtils.toLocalized(DateTime.now().toString().substring(11, 16), locale)),
+                    ],
+                  ),
+                  const Divider(height: 20),
+                  ...provider.cartItems.map((item) => Padding(
+                    padding: const EdgeInsets.only(bottom: 6),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(child: Text('${NumberUtils.toLocalized(item.quantity, locale)}x ${item.menuItem.localizedName(locale)}', style: const TextStyle(fontSize: 12))),
+                        Text('৳${NumberUtils.toLocalized(item.totalPrice.toStringAsFixed(2), locale)}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  )),
+                  const Divider(height: 20),
+                  _ReceiptRow(label: AppStrings.get('subtotal', locale), value: '৳${NumberUtils.toLocalized(provider.subtotal.toStringAsFixed(2), locale)}', locale: locale),
+                  _ReceiptRow(label: AppStrings.get('tax', locale), value: '৳${NumberUtils.toLocalized(provider.tax.toStringAsFixed(2), locale)}', locale: locale),
+                  _ReceiptRow(label: AppStrings.get('total_payable', locale), value: '৳${NumberUtils.toLocalized(provider.totalPayable.toStringAsFixed(2), locale)}', isBold: true, locale: locale),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(isBn ? 'প্রিন্টার সংযুক্ত এবং অনলাইন' : 'Printer Connected & Online', style: const TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(AppStrings.get('cancel', locale))),
+        ElevatedButton.icon(
+          onPressed: () {
+            Navigator.of(context).pop();
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(isBn ? 'রসিদ প্রিন্ট হচ্ছে...' : 'Printing receipt...'), backgroundColor: primaryOrange));
+          },
+          icon: const Icon(Icons.print, size: 18),
+          label: Text(isBn ? 'প্রিন্ট করুন' : 'Print Now'),
+          style: ElevatedButton.styleFrom(backgroundColor: primaryOrange, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+        ),
+      ],
     );
   }
 }
+
+class _ReceiptRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final bool isBold;
+  final String locale;
+  const _ReceiptRow({required this.label, required this.value, this.isBold = false, required this.locale});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: TextStyle(fontSize: isBold ? 14 : 12, fontWeight: isBold ? FontWeight.w900 : FontWeight.normal)),
+          Text(value, style: TextStyle(fontSize: isBold ? 16 : 12, fontWeight: isBold ? FontWeight.w900 : FontWeight.bold)),
+        ],
+      ),
+    );
+  }
+}
+
 
 // ─────────────────────────────────────────────────────────────────
 // CUSTOM ITEM DIALOG
@@ -950,7 +1043,30 @@ class _ItemCustomizationDialogState extends State<ItemCustomizationDialog> {
           ),
         ),
       ),
-      actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(AppStrings.get('cancel', locale))), ElevatedButton(onPressed: () { final List<String> selectedModifiers = []; _selectedOptions.forEach((gIdx, opts) { for (var oIdx in opts) { final group = widget.item.modifierGroups![gIdx]; final opt = group.options[oIdx]; selectedModifiers.add(AppStrings.get(opt.nameKey, locale)); } }); Provider.of<POSProvider>(context, listen: false).addToCart(widget.item, selectedModifiers: selectedModifiers, extraPrice: _extraPrice, note: _noteController.text); Navigator.of(context).pop(); }, style: ElevatedButton.styleFrom(backgroundColor: primaryOrange, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))), child: Text('${AppStrings.get('add_to_cart', locale)} (৳${NumberUtils.toLocalized((widget.item.price + _extraPrice).toStringAsFixed(2), locale)})'))],
+      actions: [
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(AppStrings.get('cancel', locale))),
+        ElevatedButton(
+          onPressed: () {
+            final List<String> selectedModifiers = [];
+            _selectedOptions.forEach((gIdx, opts) {
+              for (var oIdx in opts) {
+                final group = widget.item.modifierGroups![gIdx];
+                final opt = group.options[oIdx];
+                selectedModifiers.add(opt.nameKey);
+              }
+            });
+            Provider.of<POSProvider>(context, listen: false).addToCart(
+              widget.item,
+              selectedModifiers: selectedModifiers,
+              extraPrice: _extraPrice,
+              note: _noteController.text,
+            );
+            Navigator.of(context).pop();
+          },
+          style: ElevatedButton.styleFrom(backgroundColor: primaryOrange, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+          child: Text('${AppStrings.get('add_to_cart', locale)} (৳${NumberUtils.toLocalized((widget.item.price + _extraPrice).toStringAsFixed(2), locale)})'),
+        ),
+      ],
     );
   }
 }

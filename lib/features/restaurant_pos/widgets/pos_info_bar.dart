@@ -68,7 +68,7 @@ class POSInfoBar extends StatelessWidget {
               _InfoCard(
                 icon: Icons.person_outline,
                 label: AppStrings.get('waiter', locale),
-                value: provider.waiter,
+                value: AppStrings.get(provider.waiterKey, locale),
                 hasDropdown: true,
                 isMobile: false,
                 onTap: () {

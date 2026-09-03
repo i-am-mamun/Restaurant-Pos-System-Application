@@ -499,7 +499,7 @@ class _RightIcons extends StatelessWidget {
                           const Icon(Icons.person_outline, size: 18, color: Color(0xFFFF6D00)),
                           const SizedBox(width: 8),
                           Text(
-                            '${AppStrings.get('waiter_menu', locale)}: ${pos.waiter}',
+                            '${AppStrings.get('waiter_menu', locale)}: ${AppStrings.get(pos.waiterKey, locale)}',
                             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: context.textPrimary),
                           ),
                         ],

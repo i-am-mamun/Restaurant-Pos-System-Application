@@ -9,7 +9,7 @@ class POSProvider extends ChangeNotifier {
   
   String _tableNumber = 'T-05';
   int _guests = 4;
-  String _waiter = 'John Doe';
+  String _waiterKey = 'waiter_1';
   
   List<CartItem> _cartItems = [];
   bool _isOrderSummaryVisible = true;
@@ -77,7 +77,7 @@ class POSProvider extends ChangeNotifier {
   
   String get tableNumber => _tableNumber;
   int get guests => _guests;
-  String get waiter => _waiter;
+  String get waiterKey => _waiterKey;
   
   List<CartItem> get cartItems => _cartItems;
   bool get isOrderSummaryVisible => _isOrderSummaryVisible;
@@ -148,8 +148,8 @@ class POSProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void selectWaiter(String waiterName) {
-    _waiter = waiterName;
+  void selectWaiter(String waiterKey) {
+    _waiterKey = waiterKey;
     notifyListeners();
   }
 
@@ -336,7 +336,7 @@ class POSProvider extends ChangeNotifier {
     final heldOrder = HeldOrder(
       id: id,
       tableNumber: _tableNumber,
-      waiter: _waiter,
+      waiter: _waiterKey,
       guests: _guests,
       orderType: _selectedOrderType,
       items: List.from(_cartItems),
@@ -358,7 +358,7 @@ class POSProvider extends ChangeNotifier {
   void recallOrder(HeldOrder order) {
     _cartItems = List.from(order.items);
     _tableNumber = order.tableNumber;
-    _waiter = order.waiter;
+    _waiterKey = order.waiter;
     _guests = order.guests;
     _selectedOrderType = order.orderType;
     _orderNote = order.note;
@@ -383,7 +383,7 @@ class POSProvider extends ChangeNotifier {
       id: orderId,
       orderType: _selectedOrderType,
       tableNumber: _tableNumber,
-      waiter: _waiter,
+      waiter: _waiterKey,
       items: List.from(_cartItems),
       subtotal: subtotal,
       discount: discountValue,

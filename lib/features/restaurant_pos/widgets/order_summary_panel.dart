@@ -250,7 +250,7 @@ class _OrderItemRow extends StatelessWidget {
                                   ),
                                   Expanded(
                                     child: Text(
-                                      mod,
+                                      AppStrings.get(mod, locale),
                                       style: TextStyle(fontSize: 11, color: context.textSecondary, fontWeight: FontWeight.w500),
                                     ),
                                   ),
