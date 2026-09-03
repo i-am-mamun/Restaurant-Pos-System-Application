@@ -798,21 +798,44 @@ class DiscountDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<POSProvider>(context);
     final locale = context.watch<AppProvider>().locale;
-    final primaryOrange = const Color(0xFFFF6D00);
+    const primaryOrange = Color(0xFFFF6D00);
 
     return AlertDialog(
+      backgroundColor: context.cardBg,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      title: Text(AppStrings.get('discount', locale)),
+      title: Row(
+        children: [
+          const Icon(Icons.percent_rounded, color: primaryOrange),
+          const SizedBox(width: 10),
+          Text(AppStrings.get('discount', locale), style: const TextStyle(fontWeight: FontWeight.w800)),
+        ],
+      ),
       content: Wrap(
-        spacing: 8,
-        children: [5, 10, 15, 20].map((p) => ActionChip(
-          label: Text('$p%'),
-          onPressed: () {
+        spacing: 12,
+        runSpacing: 12,
+        children: [5, 10, 15, 20, 25, 50].map((p) => InkWell(
+          onTap: () {
             provider.applyDiscount(percent: p.toDouble());
             Navigator.of(context).pop();
           },
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            width: 70,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            decoration: BoxDecoration(
+              color: primaryOrange.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: primaryOrange.withOpacity(0.3)),
+            ),
+            child: Text(
+              '${NumberUtils.toLocalized(p, locale)}%',
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontWeight: FontWeight.w900, color: primaryOrange, fontSize: 16),
+            ),
+          ),
         )).toList(),
       ),
+      actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(AppStrings.get('cancel', locale)))],
     );
   }
 }
@@ -826,9 +849,19 @@ class PromoDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = context.watch<AppProvider>().locale;
+    final isBn = locale == 'bn';
     return AlertDialog(
-      title: Text(AppStrings.get('promo', locale)),
-      content: Text(locale == 'bn' ? 'কোনো প্রোমো উপলব্ধ নেই' : 'No promos available'),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: Text(AppStrings.get('promo', locale), style: const TextStyle(fontWeight: FontWeight.bold)),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.auto_awesome, size: 48, color: Colors.orange.shade300),
+          const SizedBox(height: 16),
+          Text(isBn ? 'এই মুহূর্তে কোনো সক্রিয় প্রোমো নেই।' : 'No active promos available right now.', textAlign: TextAlign.center),
+        ],
+      ),
+      actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(AppStrings.get('close', locale)))],
     );
   }
 }
@@ -844,22 +877,31 @@ class NoteDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<POSProvider>(context);
     final locale = context.watch<AppProvider>().locale;
+    final isBn = locale == 'bn';
     final controller = TextEditingController(text: isKitchenNote ? provider.kitchenNote : provider.orderNote);
 
     return AlertDialog(
-      title: Text(isKitchenNote ? AppStrings.get('kitchen_note', locale) : AppStrings.get('note', locale)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: Text(isKitchenNote ? AppStrings.get('kitchen_note', locale) : AppStrings.get('note', locale), style: const TextStyle(fontWeight: FontWeight.bold)),
       content: TextField(
         controller: controller,
-        maxLines: 3,
-        decoration: InputDecoration(border: OutlineInputBorder(borderRadius: BorderRadius.circular(12))),
+        maxLines: 4,
+        decoration: InputDecoration(
+          hintText: isBn ? 'এখানে নোট লিখুন...' : 'Write note here...',
+          filled: true,
+          fillColor: context.inputBg,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: context.borderColor)),
+        ),
       ),
       actions: [
-        TextButton(
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(AppStrings.get('cancel', locale))),
+        ElevatedButton(
           onPressed: () {
             if (isKitchenNote) provider.setKitchenNote(controller.text);
             else provider.setOrderNote(controller.text);
             Navigator.of(context).pop();
           },
+          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFF6D00), foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
           child: Text(AppStrings.get('save', locale)),
         ),
       ],
@@ -868,7 +910,43 @@ class NoteDialog extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// BILL PRINT DIALOG (Thermal Receipt Preview)
+// CUSTOM ITEM DIALOG
+// ─────────────────────────────────────────────────────────────────
+class CustomItemDialog extends StatelessWidget {
+  const CustomItemDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final locale = context.watch<AppProvider>().locale;
+    final isBn = locale == 'bn';
+    const primaryOrange = Color(0xFFFF6D00);
+
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      title: Text(AppStrings.get('add_custom_item', locale), style: const TextStyle(fontWeight: FontWeight.bold)),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(decoration: InputDecoration(labelText: AppStrings.get('item_name', locale), border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)))),
+          const SizedBox(height: 12),
+          TextField(keyboardType: TextInputType.number, decoration: InputDecoration(labelText: AppStrings.get('price', locale), prefixText: '৳ ', border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)))),
+        ],
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(AppStrings.get('cancel', locale))),
+        ElevatedButton(
+          onPressed: () => Navigator.of(context).pop(),
+          style: ElevatedButton.styleFrom(backgroundColor: primaryOrange, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+          child: Text(AppStrings.get('add_to_cart', locale)),
+        ),
+      ],
+    );
+  }
+}
+
+
+// ─────────────────────────────────────────────────────────────────
+// BILL PRINT DIALOG (Professional Thermal Receipt)
 // ─────────────────────────────────────────────────────────────────
 class BillPrintDialog extends StatelessWidget {
   const BillPrintDialog({super.key});
@@ -880,96 +958,187 @@ class BillPrintDialog extends StatelessWidget {
     final isBn = locale == 'bn';
     const primaryOrange = Color(0xFFFF6D00);
 
-    return AlertDialog(
-      backgroundColor: context.cardBg,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      title: Row(
-        children: [
-          const Icon(Icons.print_rounded, color: primaryOrange),
-          const SizedBox(width: 10),
-          Text(AppStrings.get('bill_print', locale), style: const TextStyle(fontWeight: FontWeight.w800)),
-        ],
-      ),
-      content: SizedBox(
-        width: 350,
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      child: Container(
+        width: 400,
+        decoration: BoxDecoration(
+          color: context.cardBg,
+          borderRadius: BorderRadius.circular(20),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Receipt Preview Area
+            // Header
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(vertical: 16),
               decoration: BoxDecoration(
-                color: context.isDark ? Colors.grey.shade900 : Colors.grey.shade50,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: context.dividerColor),
+                color: primaryOrange.withOpacity(0.1),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+              ),
+              child: Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.receipt_long_rounded, color: primaryOrange),
+                    const SizedBox(width: 10),
+                    Text(
+                      AppStrings.get('bill_print', locale),
+                      style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: primaryOrange),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            
+            // Receipt Body (Paper Effect)
+            Container(
+              margin: const EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: context.isDark ? Colors.grey.shade900 : Colors.white,
+                borderRadius: BorderRadius.circular(4),
+                boxShadow: [
+                  BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 4)),
+                ],
               ),
               child: Column(
                 children: [
-                  Text(AppStrings.get('app_name', locale), style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
-                  Text(isBn ? 'বনানী শাখা, ঢাকা' : 'Banani Branch, Dhaka', style: const TextStyle(fontSize: 10)),
-                  const Divider(height: 20),
+                  Text(AppStrings.get('app_name', locale), style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
+                  Text(isBn ? 'বনানী শাখা, ঢাকা' : 'Banani Branch, Dhaka', style: const TextStyle(fontSize: 12)),
+                  const SizedBox(height: 10),
+                  const Text('------------------------------------------', style: TextStyle(color: Colors.grey)),
+                  
+                  _receiptInfoRow(AppStrings.get('table', locale), NumberUtils.toLocalized(provider.tableNumber, locale), isBn),
+                  _receiptInfoRow(AppStrings.get('waiter', locale), AppStrings.get(provider.waiterKey, locale), isBn),
+                  _receiptInfoRow(isBn ? 'তারিখ' : 'Date', NumberUtils.toLocalized(DateTime.now().toString().substring(0, 16), locale), isBn),
+                  
+                  const Text('------------------------------------------', style: TextStyle(color: Colors.grey)),
+                  const SizedBox(height: 10),
+                  
+                  // Items Header
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('${AppStrings.get('table', locale)}: ${NumberUtils.toLocalized(provider.tableNumber, locale)}', style: const TextStyle(fontWeight: FontWeight.bold)),
-                      Text(NumberUtils.toLocalized(DateTime.now().toString().substring(11, 16), locale)),
+                      Expanded(child: Text(isBn ? 'আইটেম' : 'Item', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12))),
+                      Text(isBn ? 'পরিমাণ' : 'Qty', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                      const SizedBox(width: 20),
+                      Text(isBn ? 'মূল্য' : 'Price', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
                     ],
                   ),
-                  const Divider(height: 20),
+                  const SizedBox(height: 8),
+                  
+                  // Cart Items
                   ...provider.cartItems.map((item) => Padding(
-                    padding: const EdgeInsets.only(bottom: 6),
+                    padding: const EdgeInsets.symmetric(vertical: 4),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(child: Text('${NumberUtils.toLocalized(item.quantity, locale)}x ${item.menuItem.localizedName(locale)}', style: const TextStyle(fontSize: 12))),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(item.menuItem.localizedName(locale), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                              if (item.modifiers.isNotEmpty)
+                                Text(
+                                  item.modifiers.map((m) => AppStrings.get(m, locale)).join(', '),
+                                  style: const TextStyle(fontSize: 10, color: Colors.grey),
+                                ),
+                            ],
+                          ),
+                        ),
+                        Text(NumberUtils.toLocalized(item.quantity, locale), style: const TextStyle(fontSize: 12)),
+                        const SizedBox(width: 20),
                         Text('৳${NumberUtils.toLocalized(item.totalPrice.toStringAsFixed(2), locale)}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   )),
-                  const Divider(height: 20),
-                  _ReceiptRow(label: AppStrings.get('subtotal', locale), value: '৳${NumberUtils.toLocalized(provider.subtotal.toStringAsFixed(2), locale)}', locale: locale),
-                  _ReceiptRow(label: AppStrings.get('tax', locale), value: '৳${NumberUtils.toLocalized(provider.tax.toStringAsFixed(2), locale)}', locale: locale),
-                  _ReceiptRow(label: AppStrings.get('total_payable', locale), value: '৳${NumberUtils.toLocalized(provider.totalPayable.toStringAsFixed(2), locale)}', isBold: true, locale: locale),
+                  
+                  const SizedBox(height: 10),
+                  const Text('------------------------------------------', style: TextStyle(color: Colors.grey)),
+                  
+                  _receiptPriceRow(AppStrings.get('subtotal', locale), '৳${NumberUtils.toLocalized(provider.subtotal.toStringAsFixed(2), locale)}', false),
+                  _receiptPriceRow(AppStrings.get('tax', locale), '৳${NumberUtils.toLocalized(provider.tax.toStringAsFixed(2), locale)}', false),
+                  _receiptPriceRow(AppStrings.get('total_payable', locale), '৳${NumberUtils.toLocalized(provider.totalPayable.toStringAsFixed(2), locale)}', true),
+                  
+                  const SizedBox(height: 20),
+                  // QR Code Placeholder
+                  Container(
+                    width: 80, height: 80,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.qr_code_2, size: 60, color: Colors.black54),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(isBn ? 'আসার জন্য ধন্যবাদ!' : 'Thank you for visiting!', style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic)),
                 ],
               ),
             ),
-            const SizedBox(height: 20),
-            Text(isBn ? 'প্রিন্টার সংযুক্ত এবং অনলাইন' : 'Printer Connected & Online', style: const TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold)),
+            
+            // Buttons
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20, bottom: 20),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                      child: Text(AppStrings.get('cancel', locale)),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(isBn ? 'রসিদ প্রিন্ট হচ্ছে...' : 'Printing receipt...'), backgroundColor: primaryOrange));
+                      },
+                      icon: const Icon(Icons.print, size: 18),
+                      label: Text(isBn ? 'প্রিন্ট করুন' : 'Print Now'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: primaryOrange,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
-      actions: [
-        TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(AppStrings.get('cancel', locale))),
-        ElevatedButton.icon(
-          onPressed: () {
-            Navigator.of(context).pop();
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(isBn ? 'রসিদ প্রিন্ট হচ্ছে...' : 'Printing receipt...'), backgroundColor: primaryOrange));
-          },
-          icon: const Icon(Icons.print, size: 18),
-          label: Text(isBn ? 'প্রিন্ট করুন' : 'Print Now'),
-          style: ElevatedButton.styleFrom(backgroundColor: primaryOrange, foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
-        ),
-      ],
     );
   }
-}
 
-class _ReceiptRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final bool isBold;
-  final String locale;
-  const _ReceiptRow({required this.label, required this.value, this.isBold = false, required this.locale});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _receiptInfoRow(String label, String value, bool isBn) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: TextStyle(fontSize: isBold ? 14 : 12, fontWeight: isBold ? FontWeight.w900 : FontWeight.normal)),
-          Text(value, style: TextStyle(fontSize: isBold ? 16 : 12, fontWeight: isBold ? FontWeight.w900 : FontWeight.bold)),
+          Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey, fontWeight: FontWeight.bold)),
+          Text(value, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+  }
+
+  Widget _receiptPriceRow(String label, String value, bool isTotal) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: TextStyle(fontSize: isTotal ? 14 : 12, fontWeight: isTotal ? FontWeight.w900 : FontWeight.bold)),
+          Text(value, style: TextStyle(fontSize: isTotal ? 16 : 12, fontWeight: isTotal ? FontWeight.w900 : FontWeight.bold)),
         ],
       ),
     );
@@ -977,22 +1146,6 @@ class _ReceiptRow extends StatelessWidget {
 }
 
 
-// ─────────────────────────────────────────────────────────────────
-// CUSTOM ITEM DIALOG
-// ─────────────────────────────────────────────────────────────────
-class CustomItemDialog extends StatelessWidget {
-  const CustomItemDialog({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final locale = context.watch<AppProvider>().locale;
-    return AlertDialog(
-      title: Text(AppStrings.get('add_custom_item', locale)),
-      content: Text('Custom Item UI'),
-      actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(AppStrings.get('close', locale)))],
-    );
-  }
-}
 
 
 // ─────────────────────────────────────────────────────────────────
