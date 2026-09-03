@@ -6,41 +6,45 @@ class PharmacyHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const primaryTeal = Color(0xFF009688); // Teal color from image
+    final buttonBg = primaryTeal.withOpacity(0.1);
+
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
       child: Row(
         children: [
-          // Logo
+          // ── LOGO ──
           Row(
             children: [
               Container(
-                width: 40,
-                height: 40,
+                width: 38,
+                height: 38,
                 decoration: const BoxDecoration(
-                  color: Color(0xFF009688), // Teal color from image
+                  color: primaryTeal,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.add_rounded, color: Colors.white, size: 28, weight: 800),
+                child: const Icon(Icons.add_rounded, color: Colors.white, size: 26, weight: 800),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
+                  const Text(
                     'MediCare',
                     style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: context.isDark ? Colors.white : const Color(0xFF009688),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
+                      color: primaryTeal,
+                      height: 1.1,
                     ),
                   ),
                   Text(
                     'Pharmacy',
                     style: TextStyle(
-                      fontSize: 12,
-                      color: context.textSecondary,
-                      fontWeight: FontWeight.w500,
+                      fontSize: 11,
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
@@ -48,40 +52,118 @@ class PharmacyHeader extends StatelessWidget {
             ],
           ),
           
-          const SizedBox(width: 64),
+          const SizedBox(width: 24),
           
-          // Search Bar
+          // ── SEARCH BAR ──
           Expanded(
             child: Container(
-              height: 48,
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              height: 42,
+              padding: const EdgeInsets.symmetric(horizontal: 14.0),
               decoration: BoxDecoration(
-                color: context.isDark ? context.scaffoldBg : Colors.grey.shade50,
-                borderRadius: BorderRadius.circular(24.0),
+                color: context.isDark ? context.scaffoldBg : Colors.white,
+                borderRadius: BorderRadius.circular(22.0),
                 border: Border.all(
-                  color: context.isDark ? context.dividerColor : Colors.grey.withOpacity(0.2),
+                  color: context.isDark ? context.dividerColor : Colors.grey.withOpacity(0.15),
                 ),
+                boxShadow: [
+                  if (!context.isDark)
+                    BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 4, offset: const Offset(0, 2)),
+                ],
               ),
               child: Row(
                 children: [
-                  Icon(Icons.search_rounded, color: context.textSecondary),
-                  const SizedBox(width: 12),
+                  Icon(Icons.search_rounded, color: Colors.grey.shade500, size: 20),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: TextField(
+                      style: const TextStyle(fontSize: 13),
                       decoration: InputDecoration(
                         hintText: 'Search medicine by name, brand or barcode...',
                         hintStyle: TextStyle(
-                          color: context.textHint,
-                          fontSize: 14,
+                          color: Colors.grey.shade400,
+                          fontSize: 13,
                         ),
                         border: InputBorder.none,
                         isDense: true,
+                        contentPadding: EdgeInsets.zero,
                       ),
                     ),
                   ),
-                  Icon(Icons.qr_code_scanner_rounded, color: context.textSecondary),
+                  Icon(Icons.qr_code_scanner_rounded, color: Colors.grey.shade500, size: 20),
                 ],
               ),
+            ),
+          ),
+
+          const SizedBox(width: 16),
+
+          // ── ACTION BUTTONS ──
+          _HeaderActionButton(
+            icon: Icons.camera_alt_outlined,
+            label: 'Scan Rx',
+            color: primaryTeal,
+            bgColor: buttonBg,
+          ),
+          const SizedBox(width: 8),
+          _HeaderActionButton(
+            icon: Icons.barcode_reader,
+            label: 'Scan Barcode',
+            color: primaryTeal,
+            bgColor: buttonBg,
+          ),
+          const SizedBox(width: 8),
+          _HeaderActionButton(
+            icon: Icons.refresh_rounded,
+            label: 'Quick Refill',
+            color: primaryTeal,
+            bgColor: buttonBg,
+          ),
+          const SizedBox(width: 8),
+          _HeaderActionButton(
+            icon: Icons.add_rounded,
+            label: 'Add Medicine',
+            color: primaryTeal,
+            bgColor: buttonBg,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HeaderActionButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final Color bgColor;
+
+  const _HeaderActionButton({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.bgColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 18, color: color),
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontSize: 12,
+              fontWeight: FontWeight.w700,
+              letterSpacing: -0.2,
             ),
           ),
         ],
