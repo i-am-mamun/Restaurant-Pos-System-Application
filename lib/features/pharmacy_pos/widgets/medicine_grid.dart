@@ -16,15 +16,21 @@ class MedicineGrid extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'All Medicines',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: context.textPrimary,
-              ),
+            Row(
+              children: [
+                Text(
+                  'All Medicines',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: context.textPrimary,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                _buildFilters(context),
+              ],
             ),
-            _buildFilters(context),
+            Icon(Icons.settings_outlined, color: context.textSecondary, size: 20),
           ],
         ),
         const SizedBox(height: 12),

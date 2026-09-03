@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/theme/theme_extensions.dart';
@@ -12,25 +13,28 @@ class FrequentlySoldSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              children: [
-                const Icon(Icons.local_fire_department_rounded, color: Colors.orange, size: 20),
-                const SizedBox(width: 8),
-                Text(
-                  'Frequently Sold',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                    color: context.textPrimary,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.local_fire_department_rounded, color: Colors.orange, size: 20),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Frequently Sold',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: context.textPrimary,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            Icon(Icons.settings_outlined, color: context.textSecondary, size: 20),
-          ],
+                ],
+              ),
+              Icon(Icons.settings_outlined, color: context.textSecondary, size: 20),
+            ],
+          ),
         ),
         const SizedBox(height: 12),
         SizedBox(
@@ -38,13 +42,25 @@ class FrequentlySoldSection extends StatelessWidget {
           child: Consumer<PharmacyProvider>(
             builder: (context, provider, _) {
               final items = provider.frequentlySold;
-              return ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: items.length,
-                separatorBuilder: (context, index) => const SizedBox(width: 12),
-                itemBuilder: (context, index) {
-                  return _MedicineCard(medicine: items[index]);
-                },
+              return ScrollConfiguration(
+                behavior: ScrollConfiguration.of(context).copyWith(
+                  dragDevices: {
+                    PointerDeviceKind.touch,
+                    PointerDeviceKind.mouse,
+                    PointerDeviceKind.trackpad,
+                    PointerDeviceKind.stylus,
+                  },
+                ),
+                child: ListView.separated(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: items.length,
+                  physics: const BouncingScrollPhysics(),
+                  separatorBuilder: (context, index) => const SizedBox(width: 12),
+                  itemBuilder: (context, index) {
+                    return _MedicineCard(medicine: items[index]);
+                  },
+                ),
               );
             },
           ),
@@ -53,6 +69,7 @@ class FrequentlySoldSection extends StatelessWidget {
     );
   }
 }
+
 
 class _MedicineCard extends StatelessWidget {
   final MedicineModel medicine;

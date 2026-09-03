@@ -5,7 +5,6 @@ import '../providers/pharmacy_provider.dart';
 
 import '../widgets/pharmacy_header.dart';
 import '../widgets/category_selector.dart';
-import '../widgets/frequently_sold_section.dart';
 import '../widgets/medicine_grid.dart';
 import '../widgets/dashboard_alerts.dart';
 import '../widgets/quick_actions_bar.dart';
@@ -60,8 +59,6 @@ class _PharmacyPOSScreenState extends State<PharmacyPOSScreen> {
                                   padding: EdgeInsets.symmetric(horizontal: 24.0),
                                   child: CategorySelector(),
                                 ),
-                                SizedBox(height: 16),
-                                FrequentlySoldSection(), // Will handle its own padding
                                 SizedBox(height: 16),
                                 Expanded(
                                   child: Padding(
