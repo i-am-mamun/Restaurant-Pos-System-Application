@@ -4,6 +4,8 @@ import '../../../core/providers/app_provider.dart';
 import '../../../core/localization/app_strings.dart';
 import '../../restaurant_pos/screens/pos_screen.dart';
 import '../../pharmacy_pos/screens/pharmacy_pos_screen.dart';
+import '../../grocery_pos/screens/grocery_pos_screen.dart';
+import '../../wholesaler_pos/screens/wholesaler_pos_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -177,10 +179,12 @@ class HomeScreen extends StatelessWidget {
                           description: AppStrings.get('grocery_pos_desc', locale),
                           icon: Icons.local_grocery_store_rounded,
                           color: const Color(0xFF2E7D32),
-                          isActive: false,
+                          isActive: true,
                           isDark: isDark,
-                          comingSoonLabel: AppStrings.get('coming_soon', locale),
-                          onTap: () => _snack(context, '🛒 ${AppStrings.get('grocery_pos', locale)} ${AppStrings.get('coming_soon_msg', locale)}'),
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const GroceryPOSScreen()),
+                          ),
                         ),
                         _ModuleCard(
                           title: AppStrings.get('pharmacy_pos', locale),
@@ -198,11 +202,13 @@ class HomeScreen extends StatelessWidget {
                           title: AppStrings.get('wholesaler_pos', locale),
                           description: AppStrings.get('wholesaler_pos_desc', locale),
                           icon: Icons.inventory_2_rounded,
-                          color: const Color(0xFF6A1B9A),
-                          isActive: false,
+                          color: const Color(0xFF4F46E5),
+                          isActive: true,
                           isDark: isDark,
-                          comingSoonLabel: AppStrings.get('coming_soon', locale),
-                          onTap: () => _snack(context, '📦 ${AppStrings.get('wholesaler_pos', locale)} ${AppStrings.get('coming_soon_msg', locale)}'),
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const WholesalerPOSScreen()),
+                          ),
                         ),
                         _ModuleCard(
                           title: AppStrings.get('fashion_retail', locale),
