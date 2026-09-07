@@ -5,6 +5,7 @@ import '../../../core/providers/app_provider.dart';
 import '../providers/wholesaler_provider.dart';
 import '../theme/wholesaler_colors.dart';
 import 'wholesaler_dialogs.dart';
+import 'wholesaler_footer_bar.dart';
 
 // ─────────────────────────────────────────────────────────────────
 // TOP HEADER  (title, order no, customer info, credit, time)
@@ -120,7 +121,7 @@ class _MobileHeader extends StatelessWidget {
             children: [
               _LogoOrderBlock(isDark: isDark, w: w, compact: true),
               const Spacer(),
-              _HeaderActions(isDark: isDark, app: app),
+              _HeaderActions(isDark: isDark, app: app, isMobile: true, w: w),
             ],
           ),
           const SizedBox(height: 8),
@@ -366,13 +367,30 @@ class _TimeBlock extends StatelessWidget {
 class _HeaderActions extends StatelessWidget {
   final bool isDark;
   final AppProvider app;
-  const _HeaderActions({required this.isDark, required this.app});
+  final bool isMobile;
+  final WholesalerProvider? w;
+  const _HeaderActions({
+    required this.isDark,
+    required this.app,
+    this.isMobile = false,
+    this.w,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        // On mobile: Quick Actions & Footer Options Button
+        if (isMobile && w != null) ...[
+          _HeaderBtn(
+            icon: Icons.dashboard_customize_rounded,
+            isDark: isDark,
+            isPrimary: true,
+            onTap: () => showWholesalerMobileOptions(context, w!, isDark),
+          ),
+          const SizedBox(width: 6),
+        ],
         _HeaderBtn(
           icon: app.isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
           isDark: isDark,
@@ -388,8 +406,14 @@ class _HeaderActions extends StatelessWidget {
 class _HeaderBtn extends StatelessWidget {
   final IconData icon;
   final bool isDark;
+  final bool isPrimary;
   final VoidCallback onTap;
-  const _HeaderBtn({required this.icon, required this.isDark, required this.onTap});
+  const _HeaderBtn({
+    required this.icon,
+    required this.isDark,
+    this.isPrimary = false,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -401,13 +425,33 @@ class _HeaderBtn extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: isDark
-                ? WholesalerColors.primary.withOpacity(0.12)
-                : WholesalerColors.primaryLight,
+            gradient: isPrimary ? WholesalerColors.primaryGradient : null,
+            color: isPrimary
+                ? null
+                : (isDark
+                    ? WholesalerColors.primary.withOpacity(0.12)
+                    : WholesalerColors.primaryLight),
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: WholesalerColors.border(isDark)),
+            border: Border.all(
+              color: isPrimary
+                  ? Colors.transparent
+                  : WholesalerColors.border(isDark),
+            ),
+            boxShadow: isPrimary
+                ? [
+                    BoxShadow(
+                      color: WholesalerColors.primary.withOpacity(0.4),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ]
+                : null,
           ),
-          child: Icon(icon, size: 18, color: WholesalerColors.primary),
+          child: Icon(
+            icon,
+            size: 18,
+            color: isPrimary ? Colors.white : WholesalerColors.primary,
+          ),
         ),
       ),
     );

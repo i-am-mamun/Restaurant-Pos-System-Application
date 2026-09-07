@@ -180,27 +180,32 @@ class _FilterRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        // Filters button
-        _FilterBtn(isDark: isDark),
-        const SizedBox(width: 8),
-        // Warehouse dropdown
-        _DropBtn(
-          label: w.selectedWarehouse,
-          isDark: isDark,
-          onTap: () => _showWarehousePicker(context, w, isDark),
-        ),
-        const SizedBox(width: 8),
-        // Low Stock toggle
-        _LowStockToggle(isDark: isDark, w: w),
-        const Spacer(),
-        // Sort
-        _DropBtn(label: 'Sort by: Popular', isDark: isDark, onTap: () {}),
-        const SizedBox(width: 8),
-        // Grid / List toggle
-        _ViewToggle(isDark: isDark, w: w),
-      ],
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      physics: const BouncingScrollPhysics(),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Filters button
+          _FilterBtn(isDark: isDark),
+          const SizedBox(width: 8),
+          // Warehouse dropdown
+          _DropBtn(
+            label: w.selectedWarehouse,
+            isDark: isDark,
+            onTap: () => _showWarehousePicker(context, w, isDark),
+          ),
+          const SizedBox(width: 8),
+          // Low Stock toggle
+          _LowStockToggle(isDark: isDark, w: w),
+          const SizedBox(width: 12),
+          // Sort
+          _DropBtn(label: 'Sort by: Popular', isDark: isDark, onTap: () {}),
+          const SizedBox(width: 8),
+          // Grid / List toggle
+          _ViewToggle(isDark: isDark, w: w),
+        ],
+      ),
     );
   }
 
