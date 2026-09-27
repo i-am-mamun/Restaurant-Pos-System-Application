@@ -100,20 +100,20 @@ class _DesktopTabletLayout extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.fromLTRB(
               isTablet ? 8 : 12,
-              8,
+              6,
               isTablet ? 8 : 12,
-              0,
+              8,
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // ── Left: Catalog ──────────────────────────────────────
+                // ── Left: Catalog + Footer ─────────────────────────────
                 Expanded(
                   flex: isTablet ? 58 : 63,
                   child: _CatalogPanel(isDark: isDark),
                 ),
                 SizedBox(width: isTablet ? 8 : 12),
-                // ── Right: Order Panel ─────────────────────────────────
+                // ── Right: Order Panel (Spans full height) ─────────────
                 Expanded(
                   flex: isTablet ? 42 : 37,
                   child: const WholesalerOrderPanel(),
@@ -122,9 +122,6 @@ class _DesktopTabletLayout extends StatelessWidget {
             ),
           ),
         ),
-
-        // Footer
-        const WholesalerFooterBar(),
       ],
     );
   }
@@ -154,11 +151,13 @@ class _CatalogPanel extends StatelessWidget {
             const WholesalerSearchBar(),
             // Category chips
             const WholesalerCategoryChips(),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             // Product grid / list
             const Expanded(child: WholesalerProductGrid()),
-            // Pagination
+            // Pagination dots
             const WholesalerPaginationDots(),
+            // Integrated Footer Bar (Quick Actions + Order Meta Info)
+            const WholesalerFooterBar(),
           ],
         ),
       ),
@@ -238,7 +237,6 @@ class _MobileLayout extends StatelessWidget {
             ),
           ),
         ),
-        const WholesalerFooterBar(),
       ],
     );
   }

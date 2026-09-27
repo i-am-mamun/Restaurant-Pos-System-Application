@@ -64,12 +64,13 @@ class WholesalerProductGrid extends StatelessWidget {
     }
 
     return GridView.builder(
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+      physics: const BouncingScrollPhysics(),
+      padding: const EdgeInsets.fromLTRB(14, 4, 14, 8),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxis,
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
-        childAspectRatio: 0.68,
+        childAspectRatio: 0.82,
       ),
       itemCount: products.length,
       itemBuilder: (_, i) => _ProductCard(
@@ -104,11 +105,11 @@ class _ProductCardState extends State<_ProductCard>
     super.initState();
     _ctrl = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 280 + (widget.index % 5) * 50),
+      duration: Duration(milliseconds: 250 + (widget.index % 5) * 40),
     );
     _scale = CurvedAnimation(parent: _ctrl, curve: Curves.easeOutBack);
     _opacity = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
-    Future.delayed(Duration(milliseconds: widget.index * 40), () {
+    Future.delayed(Duration(milliseconds: widget.index * 30), () {
       if (mounted) _ctrl.forward();
     });
   }
@@ -122,9 +123,9 @@ class _ProductCardState extends State<_ProductCard>
   Color get _statusColor {
     switch (widget.product.stockStatus) {
       case WStockStatus.inStock:
-        return WholesalerColors.inStock;
+        return const Color(0xFF16A34A);
       case WStockStatus.lowStock:
-        return WholesalerColors.lowStock;
+        return const Color(0xFFEA580C);
       case WStockStatus.outOfStock:
         return WholesalerColors.outOfStock;
     }
@@ -154,20 +155,18 @@ class _ProductCardState extends State<_ProductCard>
           onEnter: (_) => setState(() => _hovered = true),
           onExit: (_) => setState(() => _hovered = false),
           child: AnimatedScale(
-            scale: _hovered ? 1.03 : 1.0,
-            duration: const Duration(milliseconds: 180),
+            scale: _hovered ? 1.025 : 1.0,
+            duration: const Duration(milliseconds: 160),
             curve: Curves.easeOutCubic,
             child: GestureDetector(
               onTap: () => context.read<WholesalerProvider>().addProduct(p),
               child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
+                duration: const Duration(milliseconds: 180),
                 decoration: BoxDecoration(
                   color: isDark
-                      ? (_hovered
-                          ? const Color(0xFF252262)
-                          : WholesalerColors.inputBg(true))
+                      ? (_hovered ? const Color(0xFF262262) : const Color(0xFF1E1B4B))
                       : Colors.white,
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(14),
                   border: Border.all(
                     color: _hovered
                         ? WholesalerColors.primary.withValues(alpha: 0.5)
@@ -182,16 +181,23 @@ class _ProductCardState extends State<_ProductCard>
                             offset: const Offset(0, 8),
                           ),
                         ]
-                      : WholesalerColors.softShadow(isDark),
+                      : [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(isDark ? 0.25 : 0.04),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Image area
+                    // ── Image area ───────────────────────────────
                     Expanded(
-                      flex: 5,
+                      flex: 55,
                       child: Stack(
                         children: [
+                          // Product Image Container
                           Container(
                             width: double.infinity,
                             decoration: BoxDecoration(
@@ -199,32 +205,32 @@ class _ProductCardState extends State<_ProductCard>
                                   ? WholesalerColors.primary.withValues(alpha: 0.08)
                                   : const Color(0xFFF1F5FF),
                               borderRadius: const BorderRadius.vertical(
-                                  top: Radius.circular(15)),
+                                top: Radius.circular(13),
+                              ),
                             ),
-                            child: ClipRRect(
-                              borderRadius: const BorderRadius.vertical(
-                                  top: Radius.circular(15)),
+                            padding: const EdgeInsets.fromLTRB(12, 22, 12, 8),
+                            child: Center(
                               child: CachedNetworkImage(
                                 imageUrl: p.imageUrl,
                                 fit: BoxFit.cover,
                                 placeholder: (_, _) => Center(
                                   child: Text(p.emoji,
-                                      style: const TextStyle(fontSize: 36)),
+                                      style: const TextStyle(fontSize: 34)),
                                 ),
                                 errorWidget: (_, _, _) => Center(
                                   child: Text(p.emoji,
-                                      style: const TextStyle(fontSize: 36)),
+                                      style: const TextStyle(fontSize: 34)),
                                 ),
                               ),
                             ),
                           ),
-                          // Stock badge
+                          // Stock status badge
                           Positioned(
-                            top: 7,
-                            left: 7,
+                            top: 6,
+                            left: 6,
                             child: Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 6, vertical: 3),
+                                  horizontal: 6, vertical: 2.5),
                               decoration: BoxDecoration(
                                 color: _statusColor.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(6),
@@ -241,10 +247,10 @@ class _ProductCardState extends State<_ProductCard>
                               ),
                             ),
                           ),
-                          // B2B badge if bulk pricing active
+                          // B2B Pill at top right (subtle)
                           Positioned(
-                            top: 7,
-                            right: 7,
+                            top: 6,
+                            right: 6,
                             child: Container(
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 5, vertical: 2),
@@ -252,10 +258,10 @@ class _ProductCardState extends State<_ProductCard>
                                 color: WholesalerColors.primary.withValues(alpha: 0.85),
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              child: Text(
+                              child: const Text(
                                 'B2B',
-                                style: const TextStyle(
-                                  fontSize: 7,
+                                style: TextStyle(
+                                  fontSize: 7.5,
                                   fontWeight: FontWeight.w900,
                                   color: Colors.white,
                                 ),
@@ -265,42 +271,53 @@ class _ProductCardState extends State<_ProductCard>
                         ],
                       ),
                     ),
-                    // Info
+                    // ── Info area ────────────────────────────────
                     Expanded(
-                      flex: 4,
+                      flex: 45,
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(8, 7, 8, 8),
+                        padding: const EdgeInsets.fromLTRB(10, 6, 10, 8),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              p.name,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w800,
-                                color: WholesalerColors.textPrimary(isDark),
-                              ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  p.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 11.5,
+                                    fontWeight: FontWeight.w800,
+                                    color: WholesalerColors.textPrimary(isDark),
+                                    letterSpacing: -0.2,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  'SKU: ${p.sku}',
+                                  style: TextStyle(
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w500,
+                                    color: WholesalerColors.textSecondary(isDark),
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              'SKU: ${p.sku}',
-                              style: TextStyle(
-                                fontSize: 9,
-                                color: WholesalerColors.textSecondary(isDark),
-                              ),
-                            ),
-                            const Spacer(),
                             Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               children: [
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
-                                        '৳${p.b2bPrice.toStringAsFixed(2)}',
+                                        '৳${p.price.toStringAsFixed(2)}',
                                         style: TextStyle(
-                                          fontSize: 13,
+                                          fontSize: 13.5,
                                           fontWeight: FontWeight.w900,
                                           color: WholesalerColors.primary,
                                         ),
@@ -308,7 +325,7 @@ class _ProductCardState extends State<_ProductCard>
                                       if (p.bulkMinQty <= 50)
                                         Text(
                                           'Bulk ${p.bulkMinQty}+: ৳${p.bulkPrice.toStringAsFixed(0)}',
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontSize: 8,
                                             fontWeight: FontWeight.w600,
                                             color: WholesalerColors.accentGreen,
@@ -317,21 +334,13 @@ class _ProductCardState extends State<_ProductCard>
                                     ],
                                   ),
                                 ),
-                                // Add button
-                                AnimatedContainer(
-                                  duration: const Duration(milliseconds: 150),
-                                  width: 28,
-                                  height: 28,
+                                // Circular add button matching reference
+                                Container(
+                                  width: 26,
+                                  height: 26,
                                   decoration: BoxDecoration(
-                                    gradient: _hovered
-                                        ? WholesalerColors.primaryGradient
-                                        : LinearGradient(
-                                            colors: [
-                                              WholesalerColors.primary,
-                                              WholesalerColors.primaryDark,
-                                            ],
-                                          ),
-                                    borderRadius: BorderRadius.circular(9),
+                                    gradient: WholesalerColors.primaryGradient,
+                                    shape: BoxShape.circle,
                                     boxShadow: [
                                       BoxShadow(
                                         color: WholesalerColors.primary
@@ -341,8 +350,11 @@ class _ProductCardState extends State<_ProductCard>
                                       ),
                                     ],
                                   ),
-                                  child: const Icon(Icons.add_rounded,
-                                      color: Colors.white, size: 18),
+                                  child: const Icon(
+                                    Icons.add_rounded,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
                                 ),
                               ],
                             ),
