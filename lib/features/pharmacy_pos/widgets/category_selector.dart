@@ -40,7 +40,7 @@ class CategorySelector extends StatelessWidget {
                     color: isSelected ? color : (context.isDark ? context.cardBg : Colors.white),
                     borderRadius: BorderRadius.circular(24),
                     border: Border.all(
-                      color: isSelected ? color : (context.isDark ? context.dividerColor : Colors.grey.withOpacity(0.2)),
+                      color: isSelected ? color : (context.isDark ? context.dividerColor : Colors.grey.withValues(alpha: 0.2)),
                     ),
                   ),
                   child: Row(

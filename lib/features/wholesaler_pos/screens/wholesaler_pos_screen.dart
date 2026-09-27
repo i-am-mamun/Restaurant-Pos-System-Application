@@ -290,7 +290,7 @@ class _MobileCartFabState extends State<_MobileCartFab>
             borderRadius: BorderRadius.circular(30),
             boxShadow: [
               BoxShadow(
-                color: WholesalerColors.primary.withOpacity(0.5),
+                color: WholesalerColors.primary.withValues(alpha: 0.5),
                 blurRadius: 18,
                 offset: const Offset(0, 7),
               ),

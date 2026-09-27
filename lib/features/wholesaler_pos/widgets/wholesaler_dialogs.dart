@@ -42,7 +42,7 @@ class WCustomerDialog extends StatelessWidget {
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                   itemCount: w.customers.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 8),
+                  separatorBuilder: (_, _) => const SizedBox(height: 8),
                   itemBuilder: (_, i) => _CustomerCard(
                     customer: w.customers[i],
                     isSelected: w.customers[i].id == w.customer.id,
@@ -128,7 +128,7 @@ class _CustomerCard extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: isSelected
-              ? WholesalerColors.primary.withOpacity(isDark ? 0.2 : 0.08)
+              ? WholesalerColors.primary.withValues(alpha: isDark ? 0.2 : 0.08)
               : (isDark ? WholesalerColors.inputBg(true) : WholesalerColors.panelBg(false)),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
@@ -146,7 +146,7 @@ class _CustomerCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: tierColor.withOpacity(0.15),
+                    color: tierColor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(Icons.business_rounded, size: 16, color: tierColor),
@@ -173,9 +173,9 @@ class _CustomerCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
                   decoration: BoxDecoration(
-                    color: tierColor.withOpacity(0.15),
+                    color: tierColor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(7),
-                    border: Border.all(color: tierColor.withOpacity(0.4)),
+                    border: Border.all(color: tierColor.withValues(alpha: 0.4)),
                   ),
                   child: Text(customer.tierLabel,
                       style: TextStyle(
@@ -221,7 +221,7 @@ class _MiniCredit extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.08),
+          color: color.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
@@ -270,7 +270,7 @@ class _WHoldOrderDialogState extends State<WHoldOrderDialog> {
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: WholesalerColors.accentOrange.withOpacity(0.12),
+                  color: WholesalerColors.accentOrange.withValues(alpha: 0.12),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(Icons.pause_circle_filled_rounded, size: 32,
@@ -397,7 +397,7 @@ class WRecentOrdersDialog extends StatelessWidget {
                   : ListView.separated(
                       padding: const EdgeInsets.all(16),
                       itemCount: w.heldOrders.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 8),
+                      separatorBuilder: (_, _) => const SizedBox(height: 8),
                       itemBuilder: (_, i) {
                         final o = w.heldOrders[i];
                         return ListTile(
@@ -409,7 +409,7 @@ class WRecentOrdersDialog extends StatelessWidget {
                           leading: Container(
                             padding: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: WholesalerColors.accentOrange.withOpacity(0.12),
+                              color: WholesalerColors.accentOrange.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Icon(Icons.pause_rounded, size: 18,
@@ -477,7 +477,7 @@ class WOrderConfirmDialog extends StatelessWidget {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: WholesalerColors.primary.withOpacity(0.4),
+                      color: WholesalerColors.primary.withValues(alpha: 0.4),
                       blurRadius: 16,
                       offset: const Offset(0, 6),
                     ),
@@ -502,9 +502,9 @@ class WOrderConfirmDialog extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: WholesalerColors.primary.withOpacity(0.06),
+                  color: WholesalerColors.primary.withValues(alpha: 0.06),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: WholesalerColors.primary.withOpacity(0.2)),
+                  border: Border.all(color: WholesalerColors.primary.withValues(alpha: 0.2)),
                 ),
                 child: Column(
                   children: [

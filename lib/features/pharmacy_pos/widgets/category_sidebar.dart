@@ -83,7 +83,6 @@ class _CategorySidebarState extends State<CategorySidebar> {
               itemBuilder: (context, index) {
                 final cat = filteredCats[index];
                 final catName = cat['name'] as String;
-                final isAll = catName == 'All';
                 
                 return Consumer<PharmacyProvider>(
                   builder: (context, provider, _) {
@@ -125,7 +124,7 @@ class _CategorySidebarState extends State<CategorySidebar> {
                             Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: color.withOpacity(0.1),
+                                color: color.withValues(alpha: 0.1),
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(cat['icon'] as IconData, color: color, size: 18),
@@ -159,9 +158,9 @@ class _CategorySidebarState extends State<CategorySidebar> {
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
               decoration: BoxDecoration(
-                color: Colors.blue.withOpacity(0.06),
+                color: Colors.blue.withValues(alpha: 0.06),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.blue.withOpacity(0.12)),
+                border: Border.all(color: Colors.blue.withValues(alpha: 0.12)),
               ),
               child: Row(
                 children: [

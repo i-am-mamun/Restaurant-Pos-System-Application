@@ -32,6 +32,7 @@ class FooterActionBar extends StatelessWidget {
       _FooterAction('clear_cart_btn', 'F11', Icons.delete_outline_rounded, const Color(0xFFEF4444), () async {
         if (!gRequireCart(context)) return;
         if (await gConfirmClearCart(context)) {
+          if (!context.mounted) return;
           provider.clearCart();
           gSnack(context, AppStrings.get('clear_all', locale), color: const Color(0xFFEF4444));
         }
@@ -101,7 +102,7 @@ class _FooterBtnState extends State<_FooterBtn> {
         child: Container(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
           decoration: BoxDecoration(
-            color: a.color.withOpacity(widget.isDark ? 0.15 : 0.08),
+            color: a.color.withValues(alpha: widget.isDark ? 0.15 : 0.08),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Column(

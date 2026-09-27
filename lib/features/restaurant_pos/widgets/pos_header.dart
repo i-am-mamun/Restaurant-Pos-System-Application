@@ -351,7 +351,7 @@ class _RightIcons extends StatelessWidget {
             },
             style: TextButton.styleFrom(
               foregroundColor: Colors.white,
-              backgroundColor: Colors.white.withOpacity(0.1),
+              backgroundColor: Colors.white.withValues(alpha: 0.1),
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
             ),

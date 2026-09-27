@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/theme_extensions.dart';
 
 class GenericAlternativeBox extends StatelessWidget {
   const GenericAlternativeBox({super.key});
@@ -13,7 +12,7 @@ class GenericAlternativeBox extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFFF1FDFB), // Very light teal
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: tealColor.withOpacity(0.1)),
+        border: Border.all(color: tealColor.withValues(alpha: 0.1)),
       ),
       child: Row(
         children: [

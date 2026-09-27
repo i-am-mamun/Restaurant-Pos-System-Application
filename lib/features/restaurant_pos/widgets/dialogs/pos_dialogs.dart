@@ -41,7 +41,7 @@ class TableSelectionDialog extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: primaryOrange.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(color: primaryOrange.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
             child: Icon(Icons.table_restaurant_rounded, color: primaryOrange),
           ),
           const SizedBox(width: 12),
@@ -84,7 +84,7 @@ class TableSelectionDialog extends StatelessWidget {
                       child: Container(
                         width: 105,
                         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
-                        decoration: BoxDecoration(color: cardColor, borderRadius: BorderRadius.circular(14), border: Border.all(color: borderColor, width: 2), boxShadow: isCurrent ? [BoxShadow(color: primaryOrange.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 3))] : []),
+                        decoration: BoxDecoration(color: cardColor, borderRadius: BorderRadius.circular(14), border: Border.all(color: borderColor, width: 2), boxShadow: isCurrent ? [BoxShadow(color: primaryOrange.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 3))] : []),
                         child: Column(
                           children: [
                             Text(NumberUtils.toLocalized(tableName, locale), style: TextStyle(color: textColor, fontWeight: FontWeight.w900, fontSize: 15)),
@@ -92,9 +92,9 @@ class TableSelectionDialog extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.person, size: 12, color: textColor.withOpacity(0.8)),
+                                Icon(Icons.person, size: 12, color: textColor.withValues(alpha: 0.8)),
                                 const SizedBox(width: 2),
-                                Text('${NumberUtils.toLocalized(t['capacity'], locale)} ${AppStrings.get('seats', locale)}', style: TextStyle(color: textColor.withOpacity(0.8), fontSize: 11, fontWeight: FontWeight.w600)),
+                                Text('${NumberUtils.toLocalized(t['capacity'], locale)} ${AppStrings.get('seats', locale)}', style: TextStyle(color: textColor.withValues(alpha: 0.8), fontSize: 11, fontWeight: FontWeight.w600)),
                               ],
                             ),
                           ],
@@ -143,7 +143,7 @@ class WaiterSelectionDialog extends StatelessWidget {
       contentPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       title: Row(
         children: [
-          Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: primaryOrange.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.person_outline_rounded, color: primaryOrange)),
+          Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: primaryOrange.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.person_outline_rounded, color: primaryOrange)),
           const SizedBox(width: 12),
           Expanded(child: Text(AppStrings.get('select_server', locale), style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18))),
         ],
@@ -159,7 +159,7 @@ class WaiterSelectionDialog extends StatelessWidget {
               final isSelected = provider.waiterKey == waiterKey;
               return Container(
                 margin: const EdgeInsets.only(bottom: 8),
-                decoration: BoxDecoration(color: isSelected ? primaryOrange.withOpacity(0.08) : Colors.grey.shade50, borderRadius: BorderRadius.circular(12), border: Border.all(color: isSelected ? primaryOrange : Colors.grey.shade200, width: 1.5)),
+                decoration: BoxDecoration(color: isSelected ? primaryOrange.withValues(alpha: 0.08) : Colors.grey.shade50, borderRadius: BorderRadius.circular(12), border: Border.all(color: isSelected ? primaryOrange : Colors.grey.shade200, width: 1.5)),
                 child: ListTile(
                   leading: Text(w['avatar']!, style: const TextStyle(fontSize: 24)),
                   title: Text(waiterName, style: TextStyle(fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600, color: isSelected ? primaryOrange : Colors.black87)),
@@ -196,10 +196,10 @@ class HeldOrdersDialog extends StatelessWidget {
       contentPadding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       title: Row(
         children: [
-          Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: primaryOrange.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.pause_circle_outline_rounded, color: primaryOrange)),
+          Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: primaryOrange.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.pause_circle_outline_rounded, color: primaryOrange)),
           const SizedBox(width: 12),
           Expanded(child: Text(AppStrings.get('held_orders', locale), style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18))),
-          Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), decoration: BoxDecoration(color: primaryOrange.withOpacity(0.1), borderRadius: BorderRadius.circular(12)), child: Text('${NumberUtils.toLocalized(provider.heldOrders.length, locale)} ${isBn ? 'হোল্ড' : 'Held'}', style: TextStyle(color: primaryOrange, fontWeight: FontWeight.bold, fontSize: 12))),
+          Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4), decoration: BoxDecoration(color: primaryOrange.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(12)), child: Text('${NumberUtils.toLocalized(provider.heldOrders.length, locale)} ${isBn ? 'হোল্ড' : 'Held'}', style: TextStyle(color: primaryOrange, fontWeight: FontWeight.bold, fontSize: 12))),
         ],
       ),
       content: SizedBox(
@@ -215,7 +215,7 @@ class HeldOrdersDialog extends StatelessWidget {
                   return Container(
                     margin: const EdgeInsets.only(bottom: 12),
                     padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14), border: Border.all(color: Colors.grey.shade200), boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 6, offset: const Offset(0, 2))]),
+                    decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(14), border: Border.all(color: Colors.grey.shade200), boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 6, offset: const Offset(0, 2))]),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -272,13 +272,13 @@ class _SplitBillDialogState extends State<SplitBillDialog> {
 
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      title: Row(children: [Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: primaryOrange.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.call_split_rounded, color: primaryOrange)), const SizedBox(width: 12), Text(AppStrings.get('split_bill', locale), style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18))]),
+      title: Row(children: [Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: primaryOrange.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.call_split_rounded, color: primaryOrange)), const SizedBox(width: 12), Text(AppStrings.get('split_bill', locale), style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18))]),
       content: SizedBox(
         width: 380,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(padding: const EdgeInsets.all(16), decoration: BoxDecoration(color: primaryOrange.withOpacity(0.06), borderRadius: BorderRadius.circular(14), border: Border.all(color: primaryOrange.withOpacity(0.2))), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text('${AppStrings.get('total_bill', locale)}:', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)), Text('৳${NumberUtils.toLocalized(total.toStringAsFixed(2), locale)}', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20, color: primaryOrange))])),
+            Container(padding: const EdgeInsets.all(16), decoration: BoxDecoration(color: primaryOrange.withValues(alpha: 0.06), borderRadius: BorderRadius.circular(14), border: Border.all(color: primaryOrange.withValues(alpha: 0.2))), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text('${AppStrings.get('total_bill', locale)}:', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)), Text('৳${NumberUtils.toLocalized(total.toStringAsFixed(2), locale)}', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20, color: primaryOrange))])),
             const SizedBox(height: 20),
             Text(AppStrings.get('split_equally', locale), style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
             const SizedBox(height: 12),
@@ -310,7 +310,7 @@ class TransferOrderDialog extends StatelessWidget {
 
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      title: Row(children: [Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: primaryOrange.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.sync_alt_rounded, color: primaryOrange)), const SizedBox(width: 12), Expanded(child: Text(AppStrings.get('transfer_order', locale), style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18)))]),
+      title: Row(children: [Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: primaryOrange.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)), child: Icon(Icons.sync_alt_rounded, color: primaryOrange)), const SizedBox(width: 12), Expanded(child: Text(AppStrings.get('transfer_order', locale), style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18)))]),
       content: SizedBox(
         width: 360,
         child: Column(
@@ -384,7 +384,7 @@ class _CheckoutPaymentDialogState extends State<CheckoutPaymentDialog> {
         children: [
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: primaryOrange.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(color: primaryOrange.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
             child: const Icon(Icons.payments_rounded, color: primaryOrange),
           ),
           const SizedBox(width: 12),
@@ -410,9 +410,9 @@ class _CheckoutPaymentDialogState extends State<CheckoutPaymentDialog> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: primaryOrange.withOpacity(0.06),
+                  color: primaryOrange.withValues(alpha: 0.06),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: primaryOrange.withOpacity(0.15)),
+                  border: Border.all(color: primaryOrange.withValues(alpha: 0.15)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -517,10 +517,10 @@ class _CheckoutPaymentDialogState extends State<CheckoutPaymentDialog> {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: _cashTendered >= total && total > 0
-                        ? Colors.green.withOpacity(context.isDark ? 0.15 : 0.08) 
+                        ? Colors.green.withValues(alpha: context.isDark ? 0.15 : 0.08) 
                         : context.inputBg,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: _cashTendered >= total && total > 0 ? Colors.green.withOpacity(0.3) : context.borderColor),
+                    border: Border.all(color: _cashTendered >= total && total > 0 ? Colors.green.withValues(alpha: 0.3) : context.borderColor),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -604,7 +604,7 @@ class _CheckoutPaymentDialogState extends State<CheckoutPaymentDialog> {
             color: isSel ? primaryOrange : context.inputBg,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: isSel ? primaryOrange : context.borderColor),
-            boxShadow: isSel ? [BoxShadow(color: primaryOrange.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 3))] : [],
+            boxShadow: isSel ? [BoxShadow(color: primaryOrange.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 3))] : [],
           ),
           child: Column(
             children: [
@@ -642,7 +642,7 @@ class _CheckoutPaymentDialogState extends State<CheckoutPaymentDialog> {
           children: [
             Container(
               width: 72, height: 72,
-              decoration: BoxDecoration(color: Colors.green.withOpacity(0.12), shape: BoxShape.circle),
+              decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.12), shape: BoxShape.circle),
               child: const Icon(Icons.check_circle_rounded, color: Colors.green, size: 48),
             ),
             const SizedBox(height: 16),
@@ -690,7 +690,7 @@ class NotificationListDialog extends StatelessWidget {
     final isBn = locale == 'bn';
     final primaryOrange = const Color(0xFFFF6D00);
     final notifications = [{'title': isBn ? 'রান্নাঘরের অর্ডার তৈরি' : 'Kitchen Order Ready', 'subtitle': isBn ? 'টেবিল T-02 এর অর্ডার পরিবেশনের জন্য তৈরি' : 'Table T-02 order is ready to serve', 'time': isBn ? '২ মিনিট আগে' : '2 mins ago'}, {'title': isBn ? 'বিল অনুরোধ' : 'Bill Requested', 'subtitle': isBn ? 'টেবিল T-05 বিল প্রিন্টের অনুরোধ করেছে' : 'Table T-05 requested bill print', 'time': isBn ? '৫ মিনিট আগে' : '5 mins ago'}, {'title': isBn ? 'নতুন ডেলিভারি অর্ডার' : 'New Delivery Order', 'subtitle': isBn ? 'অর্ডার #ORD-9812 ডেলিভারির মাধ্যমে' : 'Order #ORD-9812 via Delivery', 'time': isBn ? '১২ মিনিট আগে' : '12 mins ago'}];
-    return AlertDialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)), title: Row(children: [Icon(Icons.notifications_rounded, color: primaryOrange), const SizedBox(width: 12), Expanded(child: Text(isBn ? 'বিজ্ঞপ্তি' : 'Notifications', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)))]), content: SizedBox(width: 360, child: Column(mainAxisSize: MainAxisSize.min, children: notifications.map<Widget>((n) { return ListTile(contentPadding: EdgeInsets.zero, leading: CircleAvatar(backgroundColor: primaryOrange.withOpacity(0.1), child: Icon(Icons.notifications_active, color: primaryOrange, size: 18)), title: Text(n['title']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)), subtitle: Text(n['subtitle']!, style: const TextStyle(fontSize: 11)), trailing: Text(n['time']!, style: const TextStyle(fontSize: 10, color: Colors.grey))); }).toList())), actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(AppStrings.get('close', locale)))]);
+    return AlertDialog(shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)), title: Row(children: [Icon(Icons.notifications_rounded, color: primaryOrange), const SizedBox(width: 12), Expanded(child: Text(isBn ? 'বিজ্ঞপ্তি' : 'Notifications', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)))]), content: SizedBox(width: 360, child: Column(mainAxisSize: MainAxisSize.min, children: notifications.map<Widget>((n) { return ListTile(contentPadding: EdgeInsets.zero, leading: CircleAvatar(backgroundColor: primaryOrange.withValues(alpha: 0.1), child: Icon(Icons.notifications_active, color: primaryOrange, size: 18)), title: Text(n['title']!, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)), subtitle: Text(n['subtitle']!, style: const TextStyle(fontSize: 11)), trailing: Text(n['time']!, style: const TextStyle(fontSize: 10, color: Colors.grey))); }).toList())), actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(AppStrings.get('close', locale)))]);
   }
 }
 
@@ -749,7 +749,7 @@ class CouponDialog extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(color: primaryOrange.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+            decoration: BoxDecoration(color: primaryOrange.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
             child: Icon(Icons.local_offer_rounded, color: primaryOrange),
           ),
           const SizedBox(width: 12),
@@ -823,9 +823,9 @@ class DiscountDialog extends StatelessWidget {
             width: 70,
             padding: const EdgeInsets.symmetric(vertical: 16),
             decoration: BoxDecoration(
-              color: primaryOrange.withOpacity(0.1),
+              color: primaryOrange.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: primaryOrange.withOpacity(0.3)),
+              border: Border.all(color: primaryOrange.withValues(alpha: 0.3)),
             ),
             child: Text(
               '${NumberUtils.toLocalized(p, locale)}%',
@@ -897,8 +897,11 @@ class NoteDialog extends StatelessWidget {
         TextButton(onPressed: () => Navigator.of(context).pop(), child: Text(AppStrings.get('cancel', locale))),
         ElevatedButton(
           onPressed: () {
-            if (isKitchenNote) provider.setKitchenNote(controller.text);
-            else provider.setOrderNote(controller.text);
+            if (isKitchenNote) {
+              provider.setKitchenNote(controller.text);
+            } else {
+              provider.setOrderNote(controller.text);
+            }
             Navigator.of(context).pop();
           },
           style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFF6D00), foregroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
@@ -918,7 +921,6 @@ class CustomItemDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final locale = context.watch<AppProvider>().locale;
-    final isBn = locale == 'bn';
     const primaryOrange = Color(0xFFFF6D00);
 
     return AlertDialog(
@@ -973,7 +975,7 @@ class BillPrintDialog extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(vertical: 16),
               decoration: BoxDecoration(
-                color: primaryOrange.withOpacity(0.1),
+                color: primaryOrange.withValues(alpha: 0.1),
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
               ),
               child: Center(
@@ -999,7 +1001,7 @@ class BillPrintDialog extends StatelessWidget {
                 color: context.isDark ? Colors.grey.shade900 : Colors.white,
                 borderRadius: BorderRadius.circular(4),
                 boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 4)),
+                  BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, 4)),
                 ],
               ),
               child: Column(
@@ -1174,7 +1176,7 @@ class _ItemCustomizationDialogState extends State<ItemCustomizationDialog> {
     const primaryOrange = Color(0xFFFF6D00);
     return AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      title: Row(children: [Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: primaryOrange.withOpacity(0.1), borderRadius: BorderRadius.circular(10)), child: const Icon(Icons.tune_rounded, color: primaryOrange)), const SizedBox(width: 12), Expanded(child: Text(AppStrings.get('customize_item', locale), style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18)))]),
+      title: Row(children: [Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: primaryOrange.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)), child: const Icon(Icons.tune_rounded, color: primaryOrange)), const SizedBox(width: 12), Expanded(child: Text(AppStrings.get('customize_item', locale), style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18)))]),
       content: SizedBox(
         width: 400,
         child: SingleChildScrollView(

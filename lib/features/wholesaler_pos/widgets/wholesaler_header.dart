@@ -150,7 +150,7 @@ class _LogoOrderBlock extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: WholesalerColors.primary.withOpacity(0.4),
+                color: WholesalerColors.primary.withValues(alpha: 0.4),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -215,11 +215,11 @@ class _CustomerInfoBlock extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
         decoration: BoxDecoration(
           color: isDark
-              ? WholesalerColors.primary.withOpacity(0.1)
+              ? WholesalerColors.primary.withValues(alpha: 0.1)
               : WholesalerColors.primaryLight,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: WholesalerColors.primary.withOpacity(0.25),
+            color: WholesalerColors.primary.withValues(alpha: 0.25),
           ),
         ),
         child: Row(
@@ -250,9 +250,9 @@ class _CustomerInfoBlock extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                         decoration: BoxDecoration(
-                          color: tierColor.withOpacity(0.15),
+                          color: tierColor.withValues(alpha: 0.15),
                           borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: tierColor.withOpacity(0.4)),
+                          border: Border.all(color: tierColor.withValues(alpha: 0.4)),
                         ),
                         child: Text(
                           w.customer.tierLabel,
@@ -402,7 +402,7 @@ class _HeaderBtn extends StatelessWidget {
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: isDark
-                ? WholesalerColors.primary.withOpacity(0.12)
+                ? WholesalerColors.primary.withValues(alpha: 0.12)
                 : WholesalerColors.primaryLight,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: WholesalerColors.border(isDark)),
@@ -446,14 +446,14 @@ class WholesalerStatsBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       decoration: BoxDecoration(
         color: isDark
-            ? WholesalerColors.inputBg(true).withOpacity(0.7)
+            ? WholesalerColors.inputBg(true).withValues(alpha: 0.7)
             : WholesalerColors.panelBg(false),
         border: Border(bottom: BorderSide(color: WholesalerColors.border(isDark))),
       ),
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: stats.length,
-        separatorBuilder: (_, __) => Padding(
+        separatorBuilder: (_, _) => Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           child: VerticalDivider(
             color: WholesalerColors.border(isDark),
@@ -490,7 +490,7 @@ class _StatItem extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(6),
             decoration: BoxDecoration(
-              color: s.color.withOpacity(0.12),
+              color: s.color.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(s.icon, size: 14, color: s.color),

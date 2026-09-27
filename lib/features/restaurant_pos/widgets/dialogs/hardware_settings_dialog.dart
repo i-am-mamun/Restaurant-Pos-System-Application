@@ -56,7 +56,7 @@ class _HardwareSettingsDialogState extends State<HardwareSettingsDialog> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: primaryOrange.withOpacity(0.1),
+              color: primaryOrange.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Icon(Icons.settings_input_composite_rounded, color: primaryOrange),
@@ -288,7 +288,7 @@ class _HardwareTile extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: enabled ? primaryOrange.withOpacity(0.1) : Colors.grey.shade100,
+                color: enabled ? primaryOrange.withValues(alpha: 0.1) : Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(9),
               ),
               child: Icon(icon, size: 20, color: enabled ? primaryOrange : Colors.grey.shade400),
@@ -317,7 +317,7 @@ class _HardwareTile extends StatelessWidget {
                 ],
               ),
             ),
-            Switch(value: enabled, onChanged: onToggle, activeColor: primaryOrange),
+            Switch(value: enabled, onChanged: onToggle, activeThumbColor: primaryOrange),
           ],
         ),
         if (enabled) ...[
@@ -326,7 +326,7 @@ class _HardwareTile extends StatelessWidget {
             children: [
               Expanded(
                 child: DropdownButtonFormField<String>(
-                  value: selectedConnection,
+                  initialValue: selectedConnection,
                   isDense: true,
                   decoration: InputDecoration(
                     labelText: AppStrings.get('connection_type', locale),
@@ -394,7 +394,7 @@ class _KitchenPrinterTile extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: enabled ? primaryOrange.withOpacity(0.1) : Colors.grey.shade100,
+                color: enabled ? primaryOrange.withValues(alpha: 0.1) : Colors.grey.shade100,
                 borderRadius: BorderRadius.circular(9),
               ),
               child: Icon(Icons.kitchen_rounded, size: 20, color: enabled ? primaryOrange : Colors.grey.shade400),
@@ -426,7 +426,7 @@ class _KitchenPrinterTile extends StatelessWidget {
                 ],
               ),
             ),
-            Switch(value: enabled, onChanged: onToggle, activeColor: primaryOrange),
+            Switch(value: enabled, onChanged: onToggle, activeThumbColor: primaryOrange),
           ],
         ),
         if (enabled) ...[

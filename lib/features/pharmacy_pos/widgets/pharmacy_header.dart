@@ -9,7 +9,7 @@ class PharmacyHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const primaryTeal = Color(0xFF009688);
-    final buttonBg = primaryTeal.withOpacity(0.1);
+    final buttonBg = primaryTeal.withValues(alpha: 0.1);
     final appProvider = context.watch<AppProvider>();
 
     return Container(
@@ -67,11 +67,11 @@ class PharmacyHeader extends StatelessWidget {
                 color: context.isDark ? context.scaffoldBg : Colors.white,
                 borderRadius: BorderRadius.circular(22.0),
                 border: Border.all(
-                  color: context.isDark ? context.dividerColor : Colors.grey.withOpacity(0.15),
+                  color: context.isDark ? context.dividerColor : Colors.grey.withValues(alpha: 0.15),
                 ),
                 boxShadow: [
                   if (!context.isDark)
-                    BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 4, offset: const Offset(0, 2)),
+                    BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 4, offset: const Offset(0, 2)),
                 ],
               ),
               child: Row(

@@ -181,13 +181,13 @@ class _ProductCardState extends State<_ProductCard>
               borderRadius: BorderRadius.circular(16),
               border: Border.all(
                 color: _hovered
-                    ? GroceryColors.primary.withOpacity(0.4)
+                    ? GroceryColors.primary.withValues(alpha: 0.4)
                     : GroceryColors.border(isDark),
               ),
               boxShadow: _hovered
                   ? [
                       BoxShadow(
-                        color: GroceryColors.primary.withOpacity(0.2),
+                        color: GroceryColors.primary.withValues(alpha: 0.2),
                         blurRadius: 16,
                         offset: const Offset(0, 8),
                       ),
@@ -210,7 +210,7 @@ class _ProductCardState extends State<_ProductCard>
                           width: double.infinity,
                           decoration: BoxDecoration(
                             color: isDark
-                                ? GroceryColors.primary.withOpacity(0.08)
+                                ? GroceryColors.primary.withValues(alpha: 0.08)
                                 : _bgTint,
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -219,10 +219,10 @@ class _ProductCardState extends State<_ProductCard>
                             child: CachedNetworkImage(
                               imageUrl: p.imageUrl,
                               fit: BoxFit.cover,
-                              placeholder: (_, __) => Center(
+                              placeholder: (_, _) => Center(
                                 child: Text(p.emoji, style: const TextStyle(fontSize: 36)),
                               ),
-                              errorWidget: (_, __, ___) => Center(
+                              errorWidget: (_, _, _) => Center(
                                 child: Text(p.emoji, style: const TextStyle(fontSize: 36)),
                               ),
                             ),
@@ -270,7 +270,7 @@ class _ProductCardState extends State<_ProductCard>
                               borderRadius: BorderRadius.circular(8),
                               boxShadow: [
                                 BoxShadow(
-                                  color: GroceryColors.primary.withOpacity(0.4),
+                                  color: GroceryColors.primary.withValues(alpha: 0.4),
                                   blurRadius: 6,
                                   offset: const Offset(0, 2),
                                 ),

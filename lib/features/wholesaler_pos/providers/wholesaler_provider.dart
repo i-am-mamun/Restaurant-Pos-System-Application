@@ -397,7 +397,7 @@ class WholesalerProvider extends ChangeNotifier {
     final n = _heldOrders.length + _orderCount;
     return 'SO-2505-000${n.toString().padLeft(2, '0')}';
   }
-  int _orderCount = 1;
+  final int _orderCount = 1;
 
   bool holdCurrentOrder(String note) {
     if (_items.isEmpty) return false;
@@ -434,7 +434,7 @@ class WholesalerProvider extends ChangeNotifier {
   String get paymentTerm => _paymentTerm;
   void setPaymentTerm(String p) { _paymentTerm = p; notifyListeners(); }
 
-  double _commission = 2.5;
+  final double _commission = 2.5;
   double get commission => _commission;
   double get commissionAmount => grandTotal * (_commission / 100);
 

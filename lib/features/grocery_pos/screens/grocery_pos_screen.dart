@@ -237,7 +237,7 @@ class _MobileCartFab extends StatelessWidget {
           borderRadius: BorderRadius.circular(28),
           boxShadow: [
             BoxShadow(
-              color: GroceryColors.primary.withOpacity(0.45),
+              color: GroceryColors.primary.withValues(alpha: 0.45),
               blurRadius: 16,
               offset: const Offset(0, 6),
             ),

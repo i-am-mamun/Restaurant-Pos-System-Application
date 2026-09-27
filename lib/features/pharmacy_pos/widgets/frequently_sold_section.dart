@@ -85,7 +85,7 @@ class _MedicineCard extends StatelessWidget {
         color: context.isDark ? context.cardBg : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: context.isDark ? context.dividerColor : Colors.grey.withOpacity(0.2),
+          color: context.isDark ? context.dividerColor : Colors.grey.withValues(alpha: 0.2),
         ),
       ),
       child: Column(

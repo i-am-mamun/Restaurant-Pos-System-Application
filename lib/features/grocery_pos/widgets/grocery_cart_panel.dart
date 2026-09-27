@@ -127,10 +127,11 @@ class _CartHeader extends StatelessWidget {
           _SmallBtn(
             label: AppStrings.get('clear_cart_btn', locale),
             color: const Color(0xFFEF4444),
-            bg: const Color(0xFFEF4444).withOpacity(0.1),
+            bg: const Color(0xFFEF4444).withValues(alpha: 0.1),
             onTap: () async {
               if (!gRequireCart(context)) return;
               if (await gConfirmClearCart(context)) {
+                if (!context.mounted) return;
                 context.read<GroceryProvider>().clearCart();
               }
             },
@@ -151,7 +152,7 @@ class _CartHeader extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
-                color: GroceryColors.primary.withOpacity(0.1),
+                color: GroceryColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Badge(
@@ -184,7 +185,7 @@ class _SmallBtn extends StatelessWidget {
         decoration: BoxDecoration(
           color: bg,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Text(
           label,
@@ -224,7 +225,7 @@ class _CartList extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       itemCount: cart.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 6),
+      separatorBuilder: (_, _) => const SizedBox(height: 6),
       itemBuilder: (context, index) {
         return _CartRow(item: cart[index], locale: locale, isDark: isDark);
       },
@@ -260,11 +261,11 @@ class _CartRow extends StatelessWidget {
               child: CachedNetworkImage(
                 imageUrl: p.imageUrl,
                 fit: BoxFit.cover,
-                placeholder: (_, __) => Container(
+                placeholder: (_, _) => Container(
                   color: GroceryColors.mint,
                   child: Center(child: Text(p.emoji, style: const TextStyle(fontSize: 18))),
                 ),
-                errorWidget: (_, __, ___) => Container(
+                errorWidget: (_, _, _) => Container(
                   color: GroceryColors.mint,
                   child: Center(child: Text(p.emoji, style: const TextStyle(fontSize: 18))),
                 ),
@@ -308,7 +309,7 @@ class _CartRow extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
                   decoration: BoxDecoration(
-                    color: GroceryColors.primary.withOpacity(0.15),
+                    color: GroceryColors.primary.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: Text(
@@ -619,7 +620,7 @@ class _AdjustmentInputsState extends State<_AdjustmentInputs> {
               borderRadius: BorderRadius.circular(8),
               boxShadow: [
                 BoxShadow(
-                  color: GroceryColors.primary.withOpacity(0.3),
+                  color: GroceryColors.primary.withValues(alpha: 0.3),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -711,7 +712,7 @@ class _NumpadAndTools extends StatelessWidget {
                   margin: const EdgeInsets.only(bottom: 6),
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   decoration: BoxDecoration(
-                    color: GroceryColors.primary.withOpacity(0.08),
+                    color: GroceryColors.primary.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
@@ -774,7 +775,7 @@ class _NumpadAndTools extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10),
                         boxShadow: [
                           BoxShadow(
-                            color: GroceryColors.primary.withOpacity(0.35),
+                            color: GroceryColors.primary.withValues(alpha: 0.35),
                             blurRadius: 8,
                             offset: const Offset(0, 3),
                           ),
@@ -833,7 +834,7 @@ class _NumKeyState extends State<_NumKey> {
           alignment: Alignment.center,
           decoration: BoxDecoration(
             color: widget.isSpecial
-                ? GroceryColors.primary.withOpacity(0.12)
+                ? GroceryColors.primary.withValues(alpha: 0.12)
                 : (widget.isDark ? GroceryColors.inputBg(true) : Colors.white),
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: GroceryColors.border(widget.isDark)),
@@ -929,7 +930,7 @@ class _PaymentSummary extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: GroceryColors.primary.withOpacity(0.15),
+                color: GroceryColors.primary.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
@@ -986,7 +987,7 @@ class _PaymentMethods extends StatelessWidget {
                 boxShadow: isSel
                     ? [
                         BoxShadow(
-                          color: GroceryColors.primary.withOpacity(0.3),
+                          color: GroceryColors.primary.withValues(alpha: 0.3),
                           blurRadius: 8,
                           offset: const Offset(0, 3),
                         ),
@@ -1051,7 +1052,7 @@ class _PayButtons extends StatelessWidget {
                 borderRadius: BorderRadius.circular(14),
                 boxShadow: [
                   BoxShadow(
-                    color: GroceryColors.primary.withOpacity(0.45),
+                    color: GroceryColors.primary.withValues(alpha: 0.45),
                     blurRadius: 14,
                     offset: const Offset(0, 6),
                   ),
@@ -1096,7 +1097,7 @@ class _PayButtons extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isDark ? GroceryColors.inputBg(true) : Colors.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: GroceryColors.primary.withOpacity(0.4)),
+                border: Border.all(color: GroceryColors.primary.withValues(alpha: 0.4)),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

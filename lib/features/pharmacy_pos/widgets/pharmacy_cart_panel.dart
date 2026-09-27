@@ -14,7 +14,7 @@ class PharmacyCartPanel extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           if (!context.isDark)
-            BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 15, offset: const Offset(0, 4)),
+            BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 15, offset: const Offset(0, 4)),
         ],
       ),
       child: Column(
@@ -202,7 +202,7 @@ class PharmacyCartPanel extends StatelessWidget {
                       // Product Image
                       ClipRRect(
                         borderRadius: BorderRadius.circular(6),
-                        child: Image.network(item.medicine.imagePath, width: 36, height: 36, fit: BoxFit.contain, errorBuilder: (_, __, ___) => const Icon(Icons.medication)),
+                        child: Image.network(item.medicine.imagePath, width: 36, height: 36, fit: BoxFit.contain, errorBuilder: (_, _, _) => const Icon(Icons.medication)),
                       ),
                       const SizedBox(width: 12),
                       // Name & Info
@@ -301,7 +301,7 @@ class PharmacyCartPanel extends StatelessWidget {
         children: [
           Icon(icon, size: 14, color: color),
           const SizedBox(width: 8),
-          Text(text, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: color.withOpacity(0.9))),
+          Text(text, style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: color.withValues(alpha: 0.9))),
         ],
       ),
     );

@@ -119,7 +119,7 @@ class _QuickActionCardState extends State<_QuickActionCard> {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: a.color.withOpacity(0.12),
+                  color: a.color.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(a.icon, size: 18, color: a.color),

@@ -26,7 +26,7 @@ class GroceryHeader extends StatelessWidget {
         vertical: 10,
       ),
       decoration: BoxDecoration(
-        color: GroceryColors.cardBg(isDark).withOpacity(0.92),
+        color: GroceryColors.cardBg(isDark).withValues(alpha: 0.92),
         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
         border: Border(
           bottom: BorderSide(color: GroceryColors.border(isDark), width: 1),
@@ -93,7 +93,7 @@ class _Logo extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: GroceryColors.primary.withOpacity(0.35),
+                color: GroceryColors.primary.withValues(alpha: 0.35),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -162,7 +162,7 @@ class _SearchBar extends StatelessWidget {
                 hintText: AppStrings.get('g_search_hint', locale),
                 hintStyle: TextStyle(
                   fontSize: 12,
-                  color: GroceryColors.textSecondary(isDark).withOpacity(0.7),
+                  color: GroceryColors.textSecondary(isDark).withValues(alpha: 0.7),
                 ),
                 border: InputBorder.none,
                 isDense: true,
@@ -189,7 +189,7 @@ class _SearchBar extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: GroceryColors.primary.withOpacity(0.12),
+                    color: GroceryColors.primary.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(18),
                   ),
                   child: const Icon(Icons.qr_code_scanner_rounded, size: 18, color: GroceryColors.primary),
@@ -316,7 +316,7 @@ class _StatusTile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: data.color.withOpacity(0.12),
+                  color: data.color.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(data.icon, size: 14, color: data.color),
@@ -400,7 +400,7 @@ class _LangChip extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
-                color: GroceryColors.primary.withOpacity(0.3),
+                color: GroceryColors.primary.withValues(alpha: 0.3),
                 blurRadius: 6,
                 offset: const Offset(0, 2),
               ),

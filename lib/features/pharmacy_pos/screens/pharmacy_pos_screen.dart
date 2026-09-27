@@ -39,7 +39,7 @@ class _PharmacyPOSScreenState extends State<PharmacyPOSScreen> {
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           if (!context.isDark)
-                            BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 15, offset: const Offset(0, 4)),
+                            BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 15, offset: const Offset(0, 4)),
                         ],
                       ),
                       child: Column(

@@ -31,7 +31,7 @@ class HomeScreen extends StatelessWidget {
                 color: surfaceColor,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(isDark ? 0.3 : 0.06),
+                    color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
@@ -42,7 +42,7 @@ class HomeScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFF6D00).withOpacity(0.12),
+                      color: const Color(0xFFFF6D00).withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(
@@ -69,7 +69,7 @@ class HomeScreen extends StatelessWidget {
                           AppStrings.get('app_subtitle', locale),
                           style: TextStyle(
                             fontSize: 13,
-                            color: theme.colorScheme.onSurface.withOpacity(0.55),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.55),
                             fontWeight: FontWeight.w500,
                           ),
                           overflow: TextOverflow.ellipsis,
@@ -83,7 +83,7 @@ class HomeScreen extends StatelessWidget {
                     IconButton(
                       icon: Icon(
                         appProvider.isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
-                        color: theme.colorScheme.onSurface.withOpacity(0.7),
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                       onPressed: () => appProvider.toggleTheme(),
                       tooltip: AppStrings.get(appProvider.isDarkMode ? 'light_mode' : 'dark_mode', locale),
@@ -97,7 +97,7 @@ class HomeScreen extends StatelessWidget {
                   // 3-dot menu for mobile (Settings, Theme, Lang)
                   if (MediaQuery.of(context).size.width < 600)
                     PopupMenuButton<String>(
-                      icon: Icon(Icons.more_vert_rounded, color: theme.colorScheme.onSurface.withOpacity(0.7)),
+                      icon: Icon(Icons.more_vert_rounded, color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
                       color: surfaceColor,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       onSelected: (val) {
@@ -285,16 +285,16 @@ class _HeaderLangButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         decoration: BoxDecoration(
-          color: theme.colorScheme.onSurface.withOpacity(0.05),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: theme.colorScheme.onSurface.withOpacity(0.1)),
+          border: Border.all(color: theme.colorScheme.onSurface.withValues(alpha: 0.1)),
         ),
         child: Text(
           appProvider.locale == 'en' ? 'BN' : 'EN',
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w800,
-            color: theme.colorScheme.onSurface.withOpacity(0.8),
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
           ),
         ),
       ),
@@ -336,7 +336,7 @@ class _SettingsDialog extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: primaryOrange.withOpacity(0.1),
+                color: primaryOrange.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Icon(Icons.tune_rounded, color: primaryOrange, size: 20),
@@ -353,7 +353,7 @@ class _SettingsDialog extends StatelessWidget {
               ),
             ),
             IconButton(
-              icon: Icon(Icons.close_rounded, color: textColor.withOpacity(0.5)),
+              icon: Icon(Icons.close_rounded, color: textColor.withValues(alpha: 0.5)),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],
@@ -380,7 +380,7 @@ class _SettingsDialog extends StatelessWidget {
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: isDark
-                          ? Colors.indigo.shade900.withOpacity(0.5)
+                          ? Colors.indigo.shade900.withValues(alpha: 0.5)
                           : Colors.indigo.shade50,
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -404,7 +404,7 @@ class _SettingsDialog extends StatelessWidget {
                   Switch(
                     value: isDark,
                     onChanged: (_) => appProvider.toggleTheme(),
-                    activeColor: primaryOrange,
+                    activeThumbColor: primaryOrange,
                   ),
                 ],
               ),
@@ -460,10 +460,10 @@ class _SettingsDialog extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF006400).withOpacity(isDark ? 0.2 : 0.07),
+                  color: const Color(0xFF006400).withValues(alpha: isDark ? 0.2 : 0.07),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: const Color(0xFF006400).withOpacity(0.25),
+                    color: const Color(0xFF006400).withValues(alpha: 0.25),
                   ),
                 ),
                 child: Row(
@@ -486,7 +486,7 @@ class _SettingsDialog extends StatelessWidget {
                             locale == 'en' ? 'Fixed — cannot be changed' : 'নির্ধারিত — পরিবর্তন করা যাবে না',
                             style: TextStyle(
                               fontSize: 11,
-                              color: const Color(0xFF006400).withOpacity(0.75),
+                              color: const Color(0xFF006400).withValues(alpha: 0.75),
                             ),
                           ),
                         ],
@@ -522,14 +522,14 @@ class _SettingsSectionHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
       child: Row(
         children: [
-          Icon(icon, size: 14, color: textColor.withOpacity(0.45)),
+          Icon(icon, size: 14, color: textColor.withValues(alpha: 0.45)),
           const SizedBox(width: 6),
           Text(
             label.toUpperCase(),
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w800,
-              color: textColor.withOpacity(0.45),
+              color: textColor.withValues(alpha: 0.45),
               letterSpacing: 0.8,
             ),
           ),
@@ -566,7 +566,7 @@ class _LangButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
           color: selected
-              ? primaryOrange.withOpacity(isDark ? 0.2 : 0.1)
+              ? primaryOrange.withValues(alpha: isDark ? 0.2 : 0.1)
               : (isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade100),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
@@ -583,7 +583,7 @@ class _LangButton extends StatelessWidget {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
-                color: selected ? primaryOrange : Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                color: selected ? primaryOrange : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
               ),
             ),
           ],
@@ -623,7 +623,7 @@ class _ModuleCard extends StatelessWidget {
     final textColor = isDark ? Colors.white : Colors.black87;
     final subtextColor = isDark ? Colors.grey.shade400 : Colors.grey.shade500;
     final borderColor = isActive
-        ? color.withOpacity(0.4)
+        ? color.withValues(alpha: 0.4)
         : (isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade200);
 
     return GestureDetector(
@@ -640,8 +640,8 @@ class _ModuleCard extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: isActive
-                  ? color.withOpacity(isDark ? 0.25 : 0.15)
-                  : Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+                  ? color.withValues(alpha: isDark ? 0.25 : 0.15)
+                  : Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
               blurRadius: 16,
               offset: const Offset(0, 8),
             ),
@@ -658,7 +658,7 @@ class _ModuleCard extends StatelessWidget {
                   padding: const EdgeInsets.all(11),
                   decoration: BoxDecoration(
                     color: isActive
-                        ? color.withOpacity(isDark ? 0.2 : 0.1)
+                        ? color.withValues(alpha: isDark ? 0.2 : 0.1)
                         : (isDark ? const Color(0xFF2A2A2A) : Colors.grey.shade100),
                     borderRadius: BorderRadius.circular(13),
                   ),

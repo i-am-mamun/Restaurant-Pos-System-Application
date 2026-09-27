@@ -80,10 +80,10 @@ class _OrderPanelHeader extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(7),
                 decoration: BoxDecoration(
-                  color: WholesalerColors.accentRed.withOpacity(0.1),
+                  color: WholesalerColors.accentRed.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                      color: WholesalerColors.accentRed.withOpacity(0.3)),
+                      color: WholesalerColors.accentRed.withValues(alpha: 0.3)),
                 ),
                 child: Icon(Icons.delete_outline_rounded,
                     size: 16, color: WholesalerColors.accentRed),
@@ -138,9 +138,9 @@ class _SmallBtn extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
         decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
+          color: color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: color.withOpacity(0.3)),
+          border: Border.all(color: color.withValues(alpha: 0.3)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -183,7 +183,7 @@ class _OrderItemsList extends StatelessWidget {
             Text('Click product cards to add',
                 style: TextStyle(
                   fontSize: 11,
-                  color: WholesalerColors.textSecondary(isDark).withOpacity(0.6),
+                  color: WholesalerColors.textSecondary(isDark).withValues(alpha: 0.6),
                 )),
           ],
         ),
@@ -193,7 +193,7 @@ class _OrderItemsList extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       itemCount: w.items.length,
-      separatorBuilder: (_, __) => Divider(
+      separatorBuilder: (_, _) => Divider(
           height: 1, color: WholesalerColors.divider(isDark)),
       itemBuilder: (_, i) => _OrderItemRow(
         item: w.items[i],
@@ -254,7 +254,7 @@ class _OrderItemRowState extends State<_OrderItemRow>
                 child: Container(
                   width: 38,
                   height: 38,
-                  color: WholesalerColors.primary.withOpacity(0.08),
+                  color: WholesalerColors.primary.withValues(alpha: 0.08),
                   child: Center(child: Text(p.emoji, style: const TextStyle(fontSize: 20))),
                 ),
               ),
@@ -392,9 +392,9 @@ class _QtyBtnState extends State<_QtyBtn> {
           width: 20,
           height: 20,
           decoration: BoxDecoration(
-            color: widget.color.withOpacity(0.12),
+            color: widget.color.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(5),
-            border: Border.all(color: widget.color.withOpacity(0.35)),
+            border: Border.all(color: widget.color.withValues(alpha: 0.35)),
           ),
           child: Icon(widget.icon, size: 12, color: widget.color),
         ),
@@ -575,7 +575,7 @@ class _ActionButtonsState extends State<_ActionButtons> {
                         : Colors.white,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: WholesalerColors.primary.withOpacity(0.4),
+                      color: WholesalerColors.primary.withValues(alpha: 0.4),
                       width: 1.5,
                     ),
                     boxShadow: WholesalerColors.softShadow(isDark),
@@ -586,7 +586,7 @@ class _ActionButtonsState extends State<_ActionButtons> {
                       Container(
                         padding: const EdgeInsets.all(5),
                         decoration: BoxDecoration(
-                          color: WholesalerColors.primary.withOpacity(0.1),
+                          color: WholesalerColors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(7),
                         ),
                         child: Icon(Icons.pause_rounded,
@@ -636,7 +636,7 @@ class _ActionButtonsState extends State<_ActionButtons> {
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
-                        color: WholesalerColors.primary.withOpacity(0.4),
+                        color: WholesalerColors.primary.withValues(alpha: 0.4),
                         blurRadius: 12,
                         offset: const Offset(0, 5),
                       ),

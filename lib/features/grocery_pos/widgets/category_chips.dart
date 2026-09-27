@@ -30,7 +30,7 @@ class CategoryChips extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
         itemCount: _categories.length + 1,
-        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        separatorBuilder: (_, _) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
           if (index == _categories.length) {
             return _Chip(
@@ -132,7 +132,7 @@ class _Chip extends StatelessWidget {
           boxShadow: selected
               ? [
                   BoxShadow(
-                    color: GroceryColors.primary.withOpacity(0.35),
+                    color: GroceryColors.primary.withValues(alpha: 0.35),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),

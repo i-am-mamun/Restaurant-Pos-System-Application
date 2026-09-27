@@ -36,7 +36,7 @@ class GroceryColors {
     if (isDark) {
       return [
         BoxShadow(
-          color: Colors.black.withOpacity(0.35 * elevation),
+          color: Colors.black.withValues(alpha: 0.35 * elevation),
           blurRadius: 12 * elevation,
           offset: Offset(0, 4 * elevation),
         ),
@@ -44,12 +44,12 @@ class GroceryColors {
     }
     return [
       BoxShadow(
-        color: const Color(0xFF22C55E).withOpacity(0.06 * elevation),
+        color: const Color(0xFF22C55E).withValues(alpha: 0.06 * elevation),
         blurRadius: 8 * elevation,
         offset: Offset(0, 2 * elevation),
       ),
       BoxShadow(
-        color: Colors.black.withOpacity(0.04 * elevation),
+        color: Colors.black.withValues(alpha: 0.04 * elevation),
         blurRadius: 16 * elevation,
         offset: Offset(0, 6 * elevation),
       ),

@@ -20,11 +20,17 @@ class WholesalerProductGrid extends StatelessWidget {
 
     // Grid cross axis calculation
     int crossAxis;
-    if (width >= 1400) crossAxis = 5;
-    else if (width >= 1100) crossAxis = 4;
-    else if (width >= 800) crossAxis = 3;
-    else if (width >= 550) crossAxis = 3;
-    else crossAxis = 2;
+    if (width >= 1400) {
+      crossAxis = 5;
+    } else if (width >= 1100) {
+      crossAxis = 4;
+    } else if (width >= 800) {
+      crossAxis = 3;
+    } else if (width >= 550) {
+      crossAxis = 3;
+    } else {
+      crossAxis = 2;
+    }
 
     if (products.isEmpty) {
       return Center(
@@ -48,7 +54,7 @@ class WholesalerProductGrid extends StatelessWidget {
       return ListView.separated(
         padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
         itemCount: products.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 8),
+        separatorBuilder: (_, _) => const SizedBox(height: 8),
         itemBuilder: (_, i) => _ProductListTile(
           product: products[i],
           isDark: isDark,
@@ -164,14 +170,14 @@ class _ProductCardState extends State<_ProductCard>
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
                     color: _hovered
-                        ? WholesalerColors.primary.withOpacity(0.5)
+                        ? WholesalerColors.primary.withValues(alpha: 0.5)
                         : WholesalerColors.border(isDark),
                     width: _hovered ? 1.5 : 1,
                   ),
                   boxShadow: _hovered
                       ? [
                           BoxShadow(
-                            color: WholesalerColors.primary.withOpacity(0.25),
+                            color: WholesalerColors.primary.withValues(alpha: 0.25),
                             blurRadius: 20,
                             offset: const Offset(0, 8),
                           ),
@@ -190,7 +196,7 @@ class _ProductCardState extends State<_ProductCard>
                             width: double.infinity,
                             decoration: BoxDecoration(
                               color: isDark
-                                  ? WholesalerColors.primary.withOpacity(0.08)
+                                  ? WholesalerColors.primary.withValues(alpha: 0.08)
                                   : const Color(0xFFF1F5FF),
                               borderRadius: const BorderRadius.vertical(
                                   top: Radius.circular(15)),
@@ -201,11 +207,11 @@ class _ProductCardState extends State<_ProductCard>
                               child: CachedNetworkImage(
                                 imageUrl: p.imageUrl,
                                 fit: BoxFit.cover,
-                                placeholder: (_, __) => Center(
+                                placeholder: (_, _) => Center(
                                   child: Text(p.emoji,
                                       style: const TextStyle(fontSize: 36)),
                                 ),
-                                errorWidget: (_, __, ___) => Center(
+                                errorWidget: (_, _, _) => Center(
                                   child: Text(p.emoji,
                                       style: const TextStyle(fontSize: 36)),
                                 ),
@@ -220,10 +226,10 @@ class _ProductCardState extends State<_ProductCard>
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 6, vertical: 3),
                               decoration: BoxDecoration(
-                                color: _statusColor.withOpacity(0.15),
+                                color: _statusColor.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(6),
                                 border: Border.all(
-                                    color: _statusColor.withOpacity(0.3)),
+                                    color: _statusColor.withValues(alpha: 0.3)),
                               ),
                               child: Text(
                                 _statusLabel,
@@ -243,7 +249,7 @@ class _ProductCardState extends State<_ProductCard>
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 5, vertical: 2),
                               decoration: BoxDecoration(
-                                color: WholesalerColors.primary.withOpacity(0.85),
+                                color: WholesalerColors.primary.withValues(alpha: 0.85),
                                 borderRadius: BorderRadius.circular(5),
                               ),
                               child: Text(
@@ -329,7 +335,7 @@ class _ProductCardState extends State<_ProductCard>
                                     boxShadow: [
                                       BoxShadow(
                                         color: WholesalerColors.primary
-                                            .withOpacity(0.4),
+                                            .withValues(alpha: 0.4),
                                         blurRadius: 8,
                                         offset: const Offset(0, 3),
                                       ),
@@ -407,7 +413,7 @@ class _ProductListTileState extends State<_ProductListTile>
                   : Colors.white,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: _hovered ? WholesalerColors.primary.withOpacity(0.4) : WholesalerColors.border(isDark),
+                color: _hovered ? WholesalerColors.primary.withValues(alpha: 0.4) : WholesalerColors.border(isDark),
               ),
               boxShadow: WholesalerColors.softShadow(isDark),
             ),
@@ -417,11 +423,11 @@ class _ProductListTileState extends State<_ProductListTile>
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
                     width: 48, height: 48,
-                    color: WholesalerColors.primary.withOpacity(0.08),
+                    color: WholesalerColors.primary.withValues(alpha: 0.08),
                     child: CachedNetworkImage(
                       imageUrl: p.imageUrl, fit: BoxFit.cover,
-                      placeholder: (_, __) => Center(child: Text(p.emoji, style: const TextStyle(fontSize: 24))),
-                      errorWidget: (_, __, ___) => Center(child: Text(p.emoji, style: const TextStyle(fontSize: 24))),
+                      placeholder: (_, _) => Center(child: Text(p.emoji, style: const TextStyle(fontSize: 24))),
+                      errorWidget: (_, _, _) => Center(child: Text(p.emoji, style: const TextStyle(fontSize: 24))),
                     ),
                   ),
                 ),

@@ -40,7 +40,7 @@ class WholesalerColors {
       isDark ? const Color(0xFFE0E7FF) : const Color(0xFF1E1B4B);
 
   static Color textSecondary(bool isDark) =>
-      isDark ? const Color(0xFF818CF8).withOpacity(0.8) : const Color(0xFF64748B);
+      isDark ? const Color(0xFF818CF8).withValues(alpha: 0.8) : const Color(0xFF64748B);
 
   static Color border(bool isDark) =>
       isDark ? const Color(0xFF2E2B6B) : const Color(0xFFE2E8F0);
@@ -53,7 +53,7 @@ class WholesalerColors {
     if (isDark) {
       return [
         BoxShadow(
-          color: Colors.black.withOpacity(0.4 * elevation),
+          color: Colors.black.withValues(alpha: 0.4 * elevation),
           blurRadius: 12 * elevation,
           offset: Offset(0, 4 * elevation),
         ),
@@ -61,12 +61,12 @@ class WholesalerColors {
     }
     return [
       BoxShadow(
-        color: const Color(0xFF4F46E5).withOpacity(0.07 * elevation),
+        color: const Color(0xFF4F46E5).withValues(alpha: 0.07 * elevation),
         blurRadius: 10 * elevation,
         offset: Offset(0, 3 * elevation),
       ),
       BoxShadow(
-        color: Colors.black.withOpacity(0.04 * elevation),
+        color: Colors.black.withValues(alpha: 0.04 * elevation),
         blurRadius: 20 * elevation,
         offset: Offset(0, 6 * elevation),
       ),
@@ -125,29 +125,29 @@ class WholesalerColors {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isDark
-              ? const Color(0xFF3730A3).withOpacity(0.5)
+              ? const Color(0xFF3730A3).withValues(alpha: 0.5)
               : const Color(0xFFE2E8F0),
         ),
         boxShadow: [
           if (!isDark) ...[
             BoxShadow(
-              color: const Color(0xFF4F46E5).withOpacity(0.08),
+              color: const Color(0xFF4F46E5).withValues(alpha: 0.08),
               blurRadius: 24,
               offset: const Offset(0, 8),
             ),
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withValues(alpha: 0.05),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
           ] else ...[
             BoxShadow(
-              color: Colors.black.withOpacity(0.45),
+              color: Colors.black.withValues(alpha: 0.45),
               blurRadius: 20,
               offset: const Offset(0, 8),
             ),
             BoxShadow(
-              color: const Color(0xFF4F46E5).withOpacity(0.15),
+              color: const Color(0xFF4F46E5).withValues(alpha: 0.15),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),

@@ -22,12 +22,12 @@ class WholesalerFooterBar extends StatelessWidget {
       duration: const Duration(milliseconds: 300),
       decoration: BoxDecoration(
         color: isDark
-            ? WholesalerColors.inputBg(true).withOpacity(0.8)
+            ? WholesalerColors.inputBg(true).withValues(alpha: 0.8)
             : Colors.white,
         border: Border(top: BorderSide(color: WholesalerColors.border(isDark))),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.4 : 0.06),
+            color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.06),
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
@@ -219,9 +219,9 @@ class _FooterBtnState extends State<_FooterBtn> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
           decoration: BoxDecoration(
-            color: a.color.withOpacity(widget.isDark ? 0.12 : 0.07),
+            color: a.color.withValues(alpha: widget.isDark ? 0.12 : 0.07),
             borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: a.color.withOpacity(0.2)),
+            border: Border.all(color: a.color.withValues(alpha: 0.2)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -229,7 +229,7 @@ class _FooterBtnState extends State<_FooterBtn> {
               Container(
                 padding: const EdgeInsets.all(5),
                 decoration: BoxDecoration(
-                  color: a.color.withOpacity(0.15),
+                  color: a.color.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(7),
                 ),
                 child: Icon(a.icon, size: 14, color: a.color),
@@ -328,7 +328,7 @@ class _MetaChip extends StatelessWidget {
             margin: const EdgeInsets.only(top: 1),
             padding: const EdgeInsets.all(4),
             decoration: BoxDecoration(
-              color: item.color.withOpacity(0.12),
+              color: item.color.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(6),
             ),
             child: Icon(item.icon, size: 11, color: item.color),

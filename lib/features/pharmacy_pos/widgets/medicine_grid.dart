@@ -164,7 +164,7 @@ class _MedicineCard extends StatelessWidget {
         border: Border.all(color: context.dividerColor, width: 1.2),
         boxShadow: [
           if (!context.isDark)
-            BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 8, offset: const Offset(0, 2)),
+            BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 8, offset: const Offset(0, 2)),
         ],
       ),
       child: Column(
@@ -188,7 +188,7 @@ class _MedicineCard extends StatelessWidget {
                       child: Image.network(
                         medicine.imagePath,
                         fit: BoxFit.contain,
-                        errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.medication, size: 36, color: Colors.grey)),
+                        errorBuilder: (_, _, _) => const Center(child: Icon(Icons.medication, size: 36, color: Colors.grey)),
                       ),
                     ),
                   ),

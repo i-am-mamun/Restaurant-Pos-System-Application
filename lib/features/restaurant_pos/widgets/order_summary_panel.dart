@@ -49,7 +49,7 @@ class OrderSummaryPanel extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(context.isDark ? 0.4 : 0.03),
+              color: Colors.black.withValues(alpha: context.isDark ? 0.4 : 0.03),
               blurRadius: 8,
               offset: const Offset(0, 3),
             ),
@@ -100,7 +100,7 @@ class _OrderSummaryHeader extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: primaryOrange.withOpacity(0.08),
+                  color: primaryOrange.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -216,7 +216,7 @@ class _OrderItemRow extends StatelessWidget {
                     width: 24, height: 24,
                     margin: const EdgeInsets.only(top: 2),
                     decoration: BoxDecoration(
-                      color: primaryOrange.withOpacity(0.12),
+                      color: primaryOrange.withValues(alpha: 0.12),
                       shape: BoxShape.circle,
                     ),
                     child: Center(
@@ -361,7 +361,7 @@ class _OrderNoteField extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: context.inputBg,
-              border: Border.all(color: const Color(0xFFFF6D00).withOpacity(0.2), width: 1.5),
+              border: Border.all(color: const Color(0xFFFF6D00).withValues(alpha: 0.2), width: 1.5),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Row(

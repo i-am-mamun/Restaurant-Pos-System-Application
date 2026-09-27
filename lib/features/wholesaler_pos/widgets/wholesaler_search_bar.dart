@@ -81,7 +81,7 @@ class _SearchInput extends StatelessWidget {
                 hintText: 'Search by product name, SKU, barcode',
                 hintStyle: TextStyle(
                   fontSize: 12,
-                  color: WholesalerColors.textSecondary(isDark).withOpacity(0.7),
+                  color: WholesalerColors.textSecondary(isDark).withValues(alpha: 0.7),
                 ),
                 border: InputBorder.none,
                 isDense: true,
@@ -96,7 +96,7 @@ class _SearchInput extends StatelessWidget {
               margin: const EdgeInsets.all(5),
               padding: const EdgeInsets.all(7),
               decoration: BoxDecoration(
-                color: WholesalerColors.primary.withOpacity(0.1),
+                color: WholesalerColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Icon(Icons.qr_code_scanner_rounded, size: 16, color: WholesalerColors.primary),
@@ -129,7 +129,7 @@ class _NavTabs extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: tabs.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 6),
+        separatorBuilder: (_, _) => const SizedBox(width: 6),
         itemBuilder: (_, i) {
           final isFirst = i == 0;
           return Container(
@@ -144,7 +144,7 @@ class _NavTabs extends StatelessWidget {
                     : WholesalerColors.border(isDark),
               ),
               boxShadow: isFirst
-                  ? [BoxShadow(color: WholesalerColors.primary.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 3))]
+                  ? [BoxShadow(color: WholesalerColors.primary.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 3))]
                   : WholesalerColors.softShadow(isDark),
             ),
             child: Row(
@@ -340,12 +340,12 @@ class _LowStockToggle extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
         decoration: BoxDecoration(
           color: w.showLowStockOnly
-              ? WholesalerColors.accentOrange.withOpacity(0.15)
+              ? WholesalerColors.accentOrange.withValues(alpha: 0.15)
               : (isDark ? WholesalerColors.inputBg(true) : Colors.white),
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: w.showLowStockOnly
-                ? WholesalerColors.accentOrange.withOpacity(0.5)
+                ? WholesalerColors.accentOrange.withValues(alpha: 0.5)
                 : WholesalerColors.border(isDark),
           ),
         ),
@@ -476,7 +476,7 @@ class WholesalerCategoryChips extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
         itemCount: _cats.length + 1,
-        separatorBuilder: (_, __) => const SizedBox(width: 7),
+        separatorBuilder: (_, _) => const SizedBox(width: 7),
         itemBuilder: (ctx, i) {
           if (i == _cats.length) {
             return _CategoryChip(
@@ -528,7 +528,7 @@ class _CategoryChip extends StatelessWidget {
             color: selected ? Colors.transparent : WholesalerColors.border(isDark),
           ),
           boxShadow: selected
-              ? [BoxShadow(color: WholesalerColors.primary.withOpacity(0.35), blurRadius: 10, offset: const Offset(0, 4))]
+              ? [BoxShadow(color: WholesalerColors.primary.withValues(alpha: 0.35), blurRadius: 10, offset: const Offset(0, 4))]
               : WholesalerColors.softShadow(isDark),
         ),
         child: Row(

@@ -130,7 +130,7 @@ class AppTheme {
             states.contains(WidgetState.selected) ? AppColors.primary : Colors.grey),
         trackColor: WidgetStateProperty.resolveWith((states) =>
             states.contains(WidgetState.selected)
-                ? AppColors.primary.withOpacity(0.4)
+                ? AppColors.primary.withValues(alpha: 0.4)
                 : darkBorder),
       ),
     );

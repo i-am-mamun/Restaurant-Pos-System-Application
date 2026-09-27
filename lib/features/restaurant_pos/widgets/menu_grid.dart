@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../../core/providers/pos_provider.dart';
 import '../../../core/providers/app_provider.dart';
-import '../../../core/localization/app_strings.dart';
 import '../../../core/models/menu_item.dart';
 import '../../../core/theme/theme_extensions.dart';
 import '../../../core/utils/number_utils.dart';

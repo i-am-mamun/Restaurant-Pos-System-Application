@@ -115,7 +115,7 @@ class _GroceryCheckoutDialogState extends State<GroceryCheckoutDialog> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: GroceryColors.primary.withOpacity(0.12),
+              color: GroceryColors.primary.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(10),
             ),
             child: const Icon(Icons.payments_rounded, color: GroceryColors.primary),
@@ -142,9 +142,9 @@ class _GroceryCheckoutDialogState extends State<GroceryCheckoutDialog> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: GroceryColors.primary.withOpacity(0.08),
+                  color: GroceryColors.primary.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: GroceryColors.primary.withOpacity(0.2)),
+                  border: Border.all(color: GroceryColors.primary.withValues(alpha: 0.2)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -236,12 +236,12 @@ class _GroceryCheckoutDialogState extends State<GroceryCheckoutDialog> {
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
                     color: _cashTendered >= total && total > 0
-                        ? Colors.green.withOpacity(0.1)
+                        ? Colors.green.withValues(alpha: 0.1)
                         : GroceryColors.inputBg(isDark),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: _cashTendered >= total && total > 0
-                          ? Colors.green.withOpacity(0.35)
+                          ? Colors.green.withValues(alpha: 0.35)
                           : GroceryColors.border(isDark),
                     ),
                   ),
@@ -375,7 +375,7 @@ class _GroceryCheckoutDialogState extends State<GroceryCheckoutDialog> {
           gradient: sel ? GroceryColors.primaryGradient : null,
           color: sel ? null : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: sel ? Colors.transparent : GroceryColors.primary.withOpacity(0.3)),
+          border: Border.all(color: sel ? Colors.transparent : GroceryColors.primary.withValues(alpha: 0.3)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -410,7 +410,7 @@ class GroceryPaymentSuccessDialog extends StatelessWidget {
           Container(
             width: 72,
             height: 72,
-            decoration: BoxDecoration(color: Colors.green.withOpacity(0.12), shape: BoxShape.circle),
+            decoration: BoxDecoration(color: Colors.green.withValues(alpha: 0.12), shape: BoxShape.circle),
             child: const Icon(Icons.check_circle_rounded, color: Colors.green, size: 48),
           ),
           const SizedBox(height: 14),
@@ -513,7 +513,7 @@ class GroceryBillPrintDialog extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(vertical: 14),
               decoration: BoxDecoration(
-                color: GroceryColors.primary.withOpacity(0.1),
+                color: GroceryColors.primary.withValues(alpha: 0.1),
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
               ),
               child: Row(
@@ -534,7 +534,7 @@ class GroceryBillPrintDialog extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isDark ? const Color(0xFF1A1A1A) : Colors.white,
                     borderRadius: BorderRadius.circular(6),
-                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 10)],
+                    boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 10)],
                   ),
                   child: Column(
                     children: [
@@ -692,7 +692,7 @@ class GroceryHeldBillsDialog extends StatelessWidget {
             ? Center(child: Text(AppStrings.get('no_held_orders', locale)))
             : ListView.separated(
                 itemCount: held.length,
-                separatorBuilder: (_, __) => const SizedBox(height: 8),
+                separatorBuilder: (_, _) => const SizedBox(height: 8),
                 itemBuilder: (context, i) {
                   final b = held[i];
                   return Container(
@@ -792,13 +792,13 @@ class GrocerySalesHistoryDialog extends StatelessWidget {
             ? Center(child: Text(isBn ? 'কোনো সেল নেই' : 'No sales yet'))
             : ListView.separated(
                 itemCount: sales.length,
-                separatorBuilder: (_, __) => Divider(color: GroceryColors.border(isDark)),
+                separatorBuilder: (_, _) => Divider(color: GroceryColors.border(isDark)),
                 itemBuilder: (context, i) {
                   final s = sales[i];
                   return ListTile(
                     contentPadding: EdgeInsets.zero,
                     leading: CircleAvatar(
-                      backgroundColor: GroceryColors.primary.withOpacity(0.12),
+                      backgroundColor: GroceryColors.primary.withValues(alpha: 0.12),
                       child: const Icon(Icons.check, color: GroceryColors.primary, size: 18),
                     ),
                     title: Text(s.invoiceNo, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13)),
@@ -862,13 +862,13 @@ class GroceryCustomerDialog extends StatelessWidget {
             return Container(
               margin: const EdgeInsets.only(bottom: 8),
               decoration: BoxDecoration(
-                color: sel ? GroceryColors.primary.withOpacity(0.1) : null,
+                color: sel ? GroceryColors.primary.withValues(alpha: 0.1) : null,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: sel ? GroceryColors.primary : GroceryColors.border(isDark)),
               ),
               child: ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: GroceryColors.primary.withOpacity(0.15),
+                  backgroundColor: GroceryColors.primary.withValues(alpha: 0.15),
                   child: Text(c.name[0], style: const TextStyle(color: GroceryColors.primaryDark, fontWeight: FontWeight.w900)),
                 ),
                 title: Text(c.localizedName(locale), style: TextStyle(fontWeight: sel ? FontWeight.w800 : FontWeight.w600)),
@@ -976,9 +976,9 @@ class GroceryDiscountDialog extends StatelessWidget {
               width: 70,
               padding: const EdgeInsets.symmetric(vertical: 14),
               decoration: BoxDecoration(
-                color: GroceryColors.primary.withOpacity(0.1),
+                color: GroceryColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: GroceryColors.primary.withOpacity(0.3)),
+                border: Border.all(color: GroceryColors.primary.withValues(alpha: 0.3)),
               ),
               child: Text(
                 '${NumberUtils.toLocalized(p, locale)}%',

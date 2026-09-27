@@ -17,7 +17,7 @@ class PharmacyFooter extends StatelessWidget {
       decoration: BoxDecoration(
         color: context.isDark ? context.cardBg : Colors.white,
         border: Border(
-          top: BorderSide(color: context.isDark ? context.dividerColor : Colors.grey.withOpacity(0.2)),
+          top: BorderSide(color: context.isDark ? context.dividerColor : Colors.grey.withValues(alpha: 0.2)),
         ),
       ),
       child: Row(
@@ -54,7 +54,7 @@ class PharmacyFooter extends StatelessWidget {
                 context,
                 icon: Icons.person,
                 iconColor: Colors.blue.shade400,
-                iconBg: Colors.blue.withOpacity(0.1),
+                iconBg: Colors.blue.withValues(alpha: 0.1),
                 label: 'Cashier',
                 value: 'Ahmed R.',
               ),
@@ -63,7 +63,7 @@ class PharmacyFooter extends StatelessWidget {
                 context,
                 icon: Icons.computer,
                 iconColor: Colors.indigo.shade400,
-                iconBg: Colors.indigo.withOpacity(0.1),
+                iconBg: Colors.indigo.withValues(alpha: 0.1),
                 label: 'Terminal',
                 value: 'PC-01',
               ),
@@ -72,7 +72,7 @@ class PharmacyFooter extends StatelessWidget {
                 context,
                 icon: Icons.cloud_done,
                 iconColor: Colors.green,
-                iconBg: Colors.green.withOpacity(0.1),
+                iconBg: Colors.green.withValues(alpha: 0.1),
                 label: 'Sync Status',
                 value: 'Online',
                 valueColor: Colors.green,
@@ -82,7 +82,7 @@ class PharmacyFooter extends StatelessWidget {
                 context,
                 icon: Icons.access_time_rounded,
                 iconColor: Colors.purple.shade400,
-                iconBg: Colors.purple.withOpacity(0.1),
+                iconBg: Colors.purple.withValues(alpha: 0.1),
                 label: 'Last Backup',
                 value: '11:30 AM',
               ),
@@ -126,7 +126,7 @@ class PharmacyFooter extends StatelessWidget {
       width: 1,
       height: 24,
       margin: const EdgeInsets.symmetric(horizontal: 24),
-      color: context.isDark ? context.dividerColor : Colors.grey.withOpacity(0.2),
+      color: context.isDark ? context.dividerColor : Colors.grey.withValues(alpha: 0.2),
     );
   }
 

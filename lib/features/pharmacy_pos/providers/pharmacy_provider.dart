@@ -119,6 +119,7 @@ class PharmacyProvider extends ChangeNotifier {
   String get selectedFilter => _selectedFilter;
   List<PharmacyCartItem> get cart => _cart;
   double get globalDiscount => _globalDiscount;
+  List<MedicineModel> get frequentlySold => _allMedicines.take(6).toList();
 
   void setSearchQuery(String query) { _searchQuery = query; notifyListeners(); }
   void setCategory(String category) { _selectedCategory = category; notifyListeners(); }
