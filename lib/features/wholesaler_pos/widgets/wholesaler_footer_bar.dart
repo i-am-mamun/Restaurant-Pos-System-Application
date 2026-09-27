@@ -31,7 +31,7 @@ class WholesalerFooterBar extends StatelessWidget {
             blurRadius: 16,
             offset: const Offset(0, -4),
           ),
-        ),
+        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -204,12 +204,13 @@ class _FooterBtn extends StatefulWidget {
 }
 
 class _FooterBtnState extends State<_FooterBtn> {
-  bool _hovered = false;
   bool _pressed = false;
 
   @override
   Widget build(BuildContext context) {
     final a = widget.action;
+    final isDark = widget.isDark;
+
     return GestureDetector(
       onTapDown: (_) => setState(() => _pressed = true),
       onTapUp: (_) => setState(() => _pressed = false),
@@ -221,7 +222,7 @@ class _FooterBtnState extends State<_FooterBtn> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
           decoration: BoxDecoration(
-            color: a.color.withValues(alpha: widget.isDark ? 0.12 : 0.07),
+            color: a.color.withValues(alpha: isDark ? 0.12 : 0.07),
             borderRadius: BorderRadius.circular(10),
             border: Border.all(color: a.color.withValues(alpha: 0.2)),
           ),
@@ -229,70 +230,42 @@ class _FooterBtnState extends State<_FooterBtn> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                padding: const EdgeInsets.all(5),
+                width: 24,
+                height: 24,
                 decoration: BoxDecoration(
-                  color: a.color.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(7),
+                  color: a.color.withValues(alpha: isDark ? 0.2 : 0.12),
+                  borderRadius: BorderRadius.circular(6),
                 ),
-                child: Icon(a.icon, size: 14, color: a.color),
+                child: Center(
+                  child: Icon(a.icon, size: 13, color: a.color),
+                ),
               ),
-              boxShadow: _hovered
-                  ? [
-                      BoxShadow(
-                        color: a.color.withOpacity(0.2),
-                        blurRadius: 10,
-                        offset: const Offset(0, 3),
-                      ),
-                    ]
-                  : [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(isDark ? 0.2 : 0.03),
-                        blurRadius: 4,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 24,
-                  height: 24,
-                  decoration: BoxDecoration(
-                    color: a.color.withOpacity(isDark ? 0.2 : 0.12),
-                    borderRadius: BorderRadius.circular(6),
+              const SizedBox(width: 7),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    a.label,
+                    style: TextStyle(
+                      fontSize: 10.5,
+                      fontWeight: FontWeight.w700,
+                      color: WholesalerColors.textPrimary(isDark),
+                      letterSpacing: -0.1,
+                    ),
                   ),
-                  child: Center(
-                    child: Icon(a.icon, size: 13, color: a.color),
-                  ),
-                ),
-                const SizedBox(width: 7),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
+                  if (a.sublabel.isNotEmpty)
                     Text(
-                      a.label,
+                      a.sublabel,
                       style: TextStyle(
-                        fontSize: 10.5,
-                        fontWeight: FontWeight.w700,
-                        color: WholesalerColors.textPrimary(isDark),
-                        letterSpacing: -0.1,
+                        fontSize: 8,
+                        fontWeight: FontWeight.w500,
+                        color: WholesalerColors.textSecondary(isDark),
                       ),
                     ),
-                    if (a.sublabel.isNotEmpty)
-                      Text(
-                        a.sublabel,
-                        style: TextStyle(
-                          fontSize: 8,
-                          fontWeight: FontWeight.w500,
-                          color: WholesalerColors.textSecondary(isDark),
-                        ),
-                      ),
-                  ],
-                ),
-              ],
-            ),
+                ],
+              ),
+            ],
           ),
         ),
       ),
@@ -395,11 +368,11 @@ class _MetaChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark
             ? const Color(0xFF1C1947)
-            : const Color(0xFFF1F5F9).withOpacity(0.8),
+            : const Color(0xFFF1F5F9).withValues(alpha: 0.8),
         borderRadius: BorderRadius.circular(7),
         border: Border.all(
           color: isDark
-              ? Colors.white.withOpacity(0.06)
+              ? Colors.white.withValues(alpha: 0.06)
               : const Color(0xFFE2E8F0),
           width: 0.8,
         ),
@@ -612,7 +585,7 @@ class _MobileOptionsSheet extends StatelessWidget {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(isDark ? 0.6 : 0.15),
+            color: Colors.black.withValues(alpha: isDark ? 0.6 : 0.15),
             blurRadius: 30,
             offset: const Offset(0, -6),
           ),
@@ -629,8 +602,8 @@ class _MobileOptionsSheet extends StatelessWidget {
               height: 4,
               decoration: BoxDecoration(
                 color: isDark
-                    ? Colors.white.withOpacity(0.2)
-                    : Colors.black.withOpacity(0.15),
+                    ? Colors.white.withValues(alpha: 0.2)
+                    : Colors.black.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -729,7 +702,7 @@ class _MobileOptionsSheet extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: isDark
-                                  ? Colors.white.withOpacity(0.08)
+                                  ? Colors.white.withValues(alpha: 0.08)
                                   : const Color(0xFFE2E8F0),
                             ),
                           ),
@@ -739,7 +712,7 @@ class _MobileOptionsSheet extends StatelessWidget {
                               Container(
                                 padding: const EdgeInsets.all(6),
                                 decoration: BoxDecoration(
-                                  color: a.$4.withOpacity(isDark ? 0.25 : 0.12),
+                                  color: a.$4.withValues(alpha: isDark ? 0.25 : 0.12),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Icon(a.$1, size: 18, color: a.$4),
@@ -793,7 +766,7 @@ class _MobileOptionsSheet extends StatelessWidget {
                       borderRadius: BorderRadius.circular(14),
                       border: Border.all(
                         color: isDark
-                            ? Colors.white.withOpacity(0.08)
+                            ? Colors.white.withValues(alpha: 0.08)
                             : const Color(0xFFE2E8F0),
                       ),
                     ),
@@ -804,7 +777,7 @@ class _MobileOptionsSheet extends StatelessWidget {
                             Divider(
                               height: 14,
                               color: isDark
-                                  ? Colors.white.withOpacity(0.06)
+                                  ? Colors.white.withValues(alpha: 0.06)
                                   : const Color(0xFFE2E8F0),
                             ),
                           Row(
@@ -812,7 +785,7 @@ class _MobileOptionsSheet extends StatelessWidget {
                               Container(
                                 padding: const EdgeInsets.all(5),
                                 decoration: BoxDecoration(
-                                  color: meta[i].$4.withOpacity(isDark ? 0.2 : 0.1),
+                                  color: meta[i].$4.withValues(alpha: isDark ? 0.2 : 0.1),
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Icon(meta[i].$1, size: 13, color: meta[i].$4),

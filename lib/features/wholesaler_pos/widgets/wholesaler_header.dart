@@ -437,7 +437,7 @@ class _HeaderBtn extends StatelessWidget {
             boxShadow: isPrimary
                 ? [
                     BoxShadow(
-                      color: WholesalerColors.primary.withOpacity(0.4),
+                      color: WholesalerColors.primary.withValues(alpha: 0.4),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
